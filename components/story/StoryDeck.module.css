@@ -1,0 +1,201 @@
+.stage {
+  position: relative;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Fixed rather than absolute: the blur spills across the whole page, so the
+   story page keeps every ancestor of the deck free of transforms. */
+.glow {
+  position: fixed;
+  inset: -80px;
+  z-index: 0;
+  filter: blur(80px);
+  opacity: 0.4;
+  pointer-events: none;
+  /* The empty-frame colour would tint the whole page while images load. */
+  --tile: transparent;
+}
+
+.glowSlide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.glowOn {
+  opacity: 1;
+}
+
+.glowImage {
+  width: 100%;
+  height: 100%;
+}
+
+/* The lift is on the deck, not the stage: a transform there would turn the
+   stage into the containing block for the fixed backdrop. */
+.frame {
+  z-index: 1;
+  /* Vertical drags still scroll; horizontal ones are the deck's swipe. */
+  touch-action: pan-y;
+  animation: pop 0.9s var(--ease) both;
+}
+
+.tap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.tap:focus-visible {
+  outline-offset: -6px;
+}
+
+.previous {
+  left: 0;
+  width: 40%;
+}
+
+.next {
+  right: 0;
+  width: 60%;
+}
+
+.streamed i {
+  transition: width 0.25s linear;
+}
+
+/* The header band sits over the tap zones, so only its controls take clicks. */
+.top {
+  pointer-events: none;
+  position: absolute;
+  left: 14px;
+  right: 12px;
+  top: calc(var(--deck-top, 12px) + 12px);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  pointer-events: auto;
+}
+
+.control {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.45s var(--ease);
+}
+
+.control:hover,
+.control:focus-visible {
+  opacity: 1;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* The shade covers a third of the deck; taps through it still advance. */
+  pointer-events: none;
+}
+
+.bottom a,
+.bottom button {
+  pointer-events: auto;
+}
+
+.caption {
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(244, 243, 239, 0.84);
+}
+
+.end {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(11, 11, 10, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: fade 0.6s var(--ease) both;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.endLabel {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.replay {
+  height: 44px;
+  padding: 0 24px;
+  border: 1px solid var(--fg);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  transition:
+    background 0.5s var(--ease),
+    color 0.5s var(--ease);
+}
+
+.replay:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+@media (max-width: 860px) {
+  .stage {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+  }
+
+  .frame {
+    animation: none;
+    --deck-radius: 0;
+    --deck-top: calc(12px + env(safe-area-inset-top));
+    --shade-pad: 120px 16px calc(28px + env(safe-area-inset-bottom));
+    --shade-bg: linear-gradient(transparent, rgba(11, 11, 10, 0.92) 45%);
+  }
+
+  .glow {
+    display: none;
+  }
+}

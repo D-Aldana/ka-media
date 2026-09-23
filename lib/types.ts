@@ -51,6 +51,12 @@ export type LatestGame = GameSummary & {
   stories: StoryItem[];
 };
 
+export type GamePage = {
+  game: LatestGame;
+  /** The next game in date order, wrapping to the newest at the end. */
+  next: GameSummary | null;
+};
+
 export type SportSummary = {
   sport: Sport;
   count: number;

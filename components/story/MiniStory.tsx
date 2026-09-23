@@ -6,7 +6,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CoverImage } from "@/components/ui/CoverImage";
 import type { ContentImage, StoryItem } from "@/lib/types";
 
+import deck from "./deck.module.css";
 import styles from "./MiniStory.module.css";
+import { splitStatLine } from "./statLine";
 
 const IMAGE_DURATION = 5000;
 
@@ -70,7 +72,7 @@ export function MiniStory({
     return () => window.clearTimeout(timer);
   }, [autoplay, paused, index, slides.length]);
 
-  const deckClasses = [styles.deck, paused && styles.paused]
+  const deckClasses = [deck.deck, paused && deck.paused]
     .filter(Boolean)
     .join(" ");
 
@@ -91,25 +93,25 @@ export function MiniStory({
         {slides.map((slide, i) => (
           <span
             key={slide.key}
-            className={`${styles.slide} ${i === index ? styles.on : ""}`}
+            className={`${deck.slide} ${i === index ? deck.on : ""}`}
           >
             <CoverImage
               image={slide.image}
-              className={styles.media}
+              className={deck.media}
               sizes={sizes}
               decorative
             />
           </span>
         ))}
 
-        <span className={styles.bars} aria-hidden="true">
+        <span className={deck.bars} aria-hidden="true">
           {slides.map((slide, i) => (
             <span
               key={`bar-${slide.key}`}
               className={[
-                styles.bar,
-                i < index && styles.done,
-                autoplay && i === index && styles.now,
+                deck.bar,
+                i < index && deck.done,
+                autoplay && i === index && deck.now,
               ]
                 .filter(Boolean)
                 .join(" ")}
@@ -119,17 +121,18 @@ export function MiniStory({
           ))}
         </span>
 
-        <span className={styles.who} aria-hidden="true">
-          <span className={styles.avatar}>ka</span>
+        <span className={`${deck.who} ${styles.handle}`} aria-hidden="true">
+          <span className={deck.avatar}>ka</span>
           {handle.replace(/^@/, "")}
         </span>
 
         {statLine && (
-          <span className={styles.shade} aria-hidden="true">
+          <span
+            className={`${deck.shade} ${styles.statLine}`}
+            aria-hidden="true"
+          >
             {splitStatLine(statLine).map((line) => (
-              <span key={line} style={{ display: "block" }}>
-                {line}
-              </span>
+              <span key={line}>{line}</span>
             ))}
           </span>
         )}
@@ -142,9 +145,3 @@ function posterOf(item: StoryItem): ContentImage | null {
   return item._type === "storyImage" ? item.image : item.poster;
 }
 
-/** "52pts/10reb vs lord tweedsmuir" reads as two lines in the design. */
-function splitStatLine(statLine: string): string[] {
-  const at = statLine.indexOf(" vs ");
-  if (at === -1) return [statLine];
-  return [statLine.slice(0, at), statLine.slice(at + 1)];
-}

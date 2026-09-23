@@ -26,6 +26,9 @@ const sportOrder = [
   "soccer",
 ] as const;
 
+/** Mux's own public demo asset, so the deck has something real to play. */
+const DEMO_PLAYBACK_ID = "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe";
+
 export const settings: Settings = {
   email: "hello@kamedia.ca",
   instagramUrl: "https://www.instagram.com/kamedia._/",
@@ -33,41 +36,85 @@ export const settings: Settings = {
   location: "Prince George, BC",
 };
 
-export const featured: GameSummary[] = sportOrder.map((sport, i) => ({
-  _id: `featured-${i + 1}`,
-  title: i === 0 ? "[Team] vs Lord Tweedsmuir" : "[Team] vs [Opponent]",
-  slug: i === 0 ? "senior-boys-vs-lord-tweedsmuir-2026-01-14" : `game-${i + 1}`,
+function storiesFor(gameIndex: number): StoryItem[] {
+  const items: StoryItem[] = [
+    {
+      _key: `g${gameIndex}-s1`,
+      _type: "storyImage",
+      image: null,
+      caption: "[First frame — the tip-off, the walk-out, the warm-up.]",
+    },
+    {
+      _key: `g${gameIndex}-s2`,
+      _type: "storyImage",
+      image: null,
+      caption: null,
+    },
+    {
+      _key: `g${gameIndex}-s3`,
+      _type: "storyImage",
+      image: null,
+      caption: "[Last frame — the bench, the scoreboard, the walk off.]",
+    },
+  ];
+
+  // Only some games have a reel, the way `hasVideo` varies in the Work grid.
+  if (gameIndex % 3 === 0) {
+    items.splice(1, 0, {
+      _key: `g${gameIndex}-reel`,
+      _type: "storyVideo",
+      playbackId: DEMO_PLAYBACK_ID,
+      poster: null,
+      duration: 15,
+      caption: "[Highlight reel — the play that decided it.]",
+    });
+  }
+
+  return items;
+}
+
+/** Newest first, the order every query returns games in. */
+export const games: LatestGame[] = sportOrder.map((sport, i) => {
+  const first = i === 0;
+  const date = new Date(Date.UTC(2026, 0, 14));
+  date.setUTCDate(date.getUTCDate() - i * 11);
+
+  return {
+    _id: `game-${i + 1}`,
+    title: first ? "[Team] vs Lord Tweedsmuir" : "[Team] vs [Opponent]",
+    slug: first ? "senior-boys-vs-lord-tweedsmuir-2026-01-14" : `game-${i + 1}`,
+    sport,
+    code: `${String(i + 1).padStart(2, "0")}A`,
+    date: date.toISOString().slice(0, 10),
+    statLine: first ? "52pts/10reb vs lord tweedsmuir" : "[stat] vs [opponent]",
+    blurb: first
+      ? "[One line about the game — the moment, the rivalry, what was on the line.]"
+      : "[One line about the game.]",
+    cover: null,
+    stories: storiesFor(i),
+  };
+});
+
+export function toSummary({
+  _id,
+  title,
+  slug,
   sport,
-  code: `${String(i + 1).padStart(2, "0")}A`,
-  cover: null,
-}));
+  code,
+  cover,
+}: LatestGame): GameSummary {
+  return { _id, title, slug, sport, code, cover };
+}
+
+export const featured: GameSummary[] = games.map(toSummary);
+
+export const latest: LatestGame = games[0];
 
 export const sports: SportSummary[] = [
   { sport: "basketball", count: 5, cover: null },
   { sport: "soccer", count: 4, cover: null },
   { sport: "football", count: 3, cover: null },
 ];
-
-const latestStories: StoryItem[] = [1, 2, 3].map((n) => ({
-  _key: `story-${n}`,
-  _type: "storyImage",
-  image: null,
-  caption: null,
-}));
-
-export const latest: LatestGame = {
-  _id: "latest",
-  title: "[Team] vs Lord Tweedsmuir",
-  slug: "senior-boys-vs-lord-tweedsmuir-2026-01-14",
-  sport: "basketball",
-  code: "01A",
-  date: "2026-01-14",
-  statLine: "52pts/10reb vs lord tweedsmuir",
-  blurb:
-    "[One line about the game — the moment, the rivalry, what was on the line.]",
-  cover: null,
-  stories: latestStories,
-};
 
 export const about: AboutSummary = {
   headline:

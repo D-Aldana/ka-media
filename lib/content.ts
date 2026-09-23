@@ -1,5 +1,5 @@
 import * as placeholder from "./placeholder-content";
-import type { HomeData, Settings } from "./types";
+import type { GamePage, HomeData, Settings } from "./types";
 
 /**
  * The only seam between the UI and the CMS. Sanity is not wired up yet, so
@@ -38,5 +38,25 @@ export async function getHomeData(): Promise<HomeData> {
     sports: placeholder.sports,
     latest: placeholder.latest,
     about: placeholder.about,
+  };
+}
+
+export async function getGameSlugs(): Promise<string[]> {
+  return placeholder.games.map((game) => game.slug);
+}
+
+/**
+ * The next game is the one after this in date order, wrapping to the newest so
+ * the oldest game still has somewhere to send a visitor.
+ */
+export async function getGame(slug: string): Promise<GamePage | null> {
+  const games = placeholder.games;
+  const at = games.findIndex((game) => game.slug === slug);
+  if (at === -1) return null;
+
+  const next = games.length > 1 ? games[(at + 1) % games.length] : null;
+  return {
+    game: games[at],
+    next: next ? placeholder.toSummary(next) : null,
   };
 }
