@@ -1,0 +1,83 @@
+.track {
+  overflow: hidden;
+}
+
+/* The list is rendered twice; -50% lands exactly on the second copy. */
+.strip {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  padding-left: var(--pad);
+  animation: slide 60s linear infinite;
+}
+
+@keyframes slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.track:hover .strip {
+  animation-play-state: paused;
+}
+
+.frame {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cap {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.media {
+  height: 375px;
+}
+
+.track:hover .media img {
+  filter: brightness(0.55);
+}
+
+.track .frame:hover .media img,
+.track .frame:focus-visible .media img {
+  filter: none;
+  transform: scale(1.05);
+}
+
+@media (max-width: 860px) {
+  .strip {
+    gap: 12px;
+    animation-duration: 45s;
+  }
+
+  .frame {
+    width: 220px;
+    gap: 8px;
+  }
+
+  .cap {
+    font-size: 12px;
+  }
+
+  .media {
+    height: 275px;
+  }
+}
+
+/* No drift; the strip becomes a plain scroller instead. */
+@media (prefers-reduced-motion: reduce) {
+  .strip {
+    animation: none !important;
+  }
+
+  .track {
+    overflow-x: auto;
+  }
+}

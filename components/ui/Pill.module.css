@@ -1,0 +1,39 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 0 28px;
+  border: 1px solid var(--fg);
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background 0.5s var(--ease),
+    color 0.5s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.pill:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.pill:active {
+  transform: scale(0.97);
+}
+
+.solid {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+  font-weight: 600;
+}
+
+@media (max-width: 860px) {
+  .pill {
+    height: 52px;
+    width: 100%;
+  }
+}
