@@ -27,6 +27,7 @@
 /* Each page marks itself with data-route, so the nav can underline it
    without any client-side routing state. */
 body:has([data-route="work"]) .link[data-nav="work"],
+body:has([data-route="story"]) .link[data-nav="story"],
 body:has([data-route="about"]) .link[data-nav="about"],
 body:has([data-route="contact"]) .link[data-nav="contact"] {
   background-size: 100% 1px;

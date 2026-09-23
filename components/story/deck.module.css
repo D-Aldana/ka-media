@@ -1,0 +1,121 @@
+/*
+ * Chrome shared by MiniStory and StoryDeck: the crossfading slide stack, the
+ * segmented progress bars, the `ka` handle chip and the bottom shade. Sizing,
+ * motion gating and everything interactive stays in each component's own module.
+ */
+
+.deck {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Set by StoryDeck so the full-screen mobile deck can square its corners
+     without fighting this file's specificity. */
+  border-radius: var(--deck-radius, 16px);
+  background: #171716;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.05);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 1.6s var(--ease);
+}
+
+.on {
+  opacity: 1;
+  transform: none;
+}
+
+.media {
+  width: 100%;
+  height: 100%;
+}
+
+.bars {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  /* Nudged down by StoryDeck so the full-screen deck clears the notch. */
+  top: var(--deck-top, 12px);
+  z-index: 3;
+  display: flex;
+  gap: 4px;
+}
+
+.bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(244, 243, 239, 0.3);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--fg);
+}
+
+.done i {
+  width: 100%;
+}
+
+/* The active bar with nothing to animate — reduced motion, or a paused reel. */
+.full i {
+  width: 100%;
+}
+
+.now i {
+  animation: fill var(--dur, 5s) linear forwards;
+}
+
+.paused .now i {
+  animation-play-state: paused;
+}
+
+@keyframes fill {
+  to {
+    width: 100%;
+  }
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.shade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  padding: var(--shade-pad, 80px 20px 22px);
+  background: var(
+    --shade-bg,
+    linear-gradient(transparent, rgba(11, 11, 10, 0.85))
+  );
+}
