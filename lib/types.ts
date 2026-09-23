@@ -20,7 +20,7 @@ export type StoryItem =
   | {
       _key: string;
       _type: "storyImage";
-      image: ContentImage;
+      image: ContentImage | null;
       caption: string | null;
     }
   | {
@@ -40,7 +40,7 @@ export type GameSummary = {
   sport: Sport;
   /** Derived from date order at query time (01A, 02A …), never stored. */
   code: string;
-  cover: ContentImage;
+  cover: ContentImage | null;
 };
 
 export type LatestGame = GameSummary & {

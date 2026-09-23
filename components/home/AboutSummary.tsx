@@ -8,19 +8,13 @@ export function AboutSummary({ about }: { about: AboutSummaryType }) {
   return (
     <section className={styles.section}>
       <div className={styles.split}>
-        {about.portrait ? (
-          <Reveal className={styles.portrait}>
-            <CoverImage
-              image={about.portrait}
-              className={styles.fill}
-              sizes="(max-width: 860px) calc(100vw - 32px), 45vw"
-            />
-          </Reveal>
-        ) : (
-          <Reveal className={`${styles.portrait} ${styles.portraitEmpty}`}>
-            <span>[portrait of Krystien on the sideline]</span>
-          </Reveal>
-        )}
+        <Reveal className={styles.portrait}>
+          <CoverImage
+            image={about.portrait}
+            className={styles.fill}
+            sizes="(max-width: 860px) calc(100vw - 32px), 45vw"
+          />
+        </Reveal>
 
         <Reveal className={styles.copy}>
           <div className={styles.intro}>

@@ -14,22 +14,9 @@
   aspect-ratio: 4 / 5;
 }
 
-/* Until a portrait is set, the slot keeps its shape as a flat tile. */
 .fill {
   width: 100%;
   height: 100%;
-}
-
-.portraitEmpty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  text-align: center;
-  background: var(--tile);
-  font-family: var(--font-mono);
-  font-size: 14px;
-  color: var(--mute);
 }
 
 .copy {

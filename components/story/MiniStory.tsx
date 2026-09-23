@@ -35,7 +35,10 @@ export function MiniStory({
   className,
   sizes,
 }: Props) {
-  const slides = useMemo(() => stories.map(posterOf).filter(isImage), [stories]);
+  const slides = useMemo(
+    () => stories.map((item) => ({ key: item._key, image: posterOf(item) })),
+    [stories],
+  );
 
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -85,13 +88,13 @@ export function MiniStory({
         className={deckClasses}
         style={{ "--dur": `${IMAGE_DURATION}ms` } as React.CSSProperties}
       >
-        {slides.map((image, i) => (
+        {slides.map((slide, i) => (
           <span
-            key={image.url + i}
+            key={slide.key}
             className={`${styles.slide} ${i === index ? styles.on : ""}`}
           >
             <CoverImage
-              image={image}
+              image={slide.image}
               className={styles.media}
               sizes={sizes}
               decorative
@@ -100,9 +103,9 @@ export function MiniStory({
         ))}
 
         <span className={styles.bars} aria-hidden="true">
-          {slides.map((image, i) => (
+          {slides.map((slide, i) => (
             <span
-              key={`bar-${image.url}-${i}`}
+              key={`bar-${slide.key}`}
               className={[
                 styles.bar,
                 i < index && styles.done,
@@ -137,10 +140,6 @@ export function MiniStory({
 
 function posterOf(item: StoryItem): ContentImage | null {
   return item._type === "storyImage" ? item.image : item.poster;
-}
-
-function isImage(image: ContentImage | null): image is ContentImage {
-  return image !== null;
 }
 
 /** "52pts/10reb vs lord tweedsmuir" reads as two lines in the design. */

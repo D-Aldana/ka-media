@@ -23,13 +23,11 @@ export function SportTiles({ sports }: { sports: SportSummary[] }) {
             href={`/work?sport=${tile.sport}`}
             className={styles.tile}
           >
-            {tile.cover && (
-              <CoverImage
-                image={tile.cover}
-                className={styles.media}
-                sizes="(max-width: 860px) 270px, (max-width: 1440px) 30vw, 432px"
-              />
-            )}
+            <CoverImage
+              image={tile.cover}
+              className={styles.media}
+              sizes="(max-width: 860px) 270px, (max-width: 1440px) 30vw, 432px"
+            />
             <span className={styles.row}>
               <span className={styles.name}>
                 {tile.sport[0].toUpperCase() + tile.sport.slice(1)}
