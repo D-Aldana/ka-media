@@ -7,6 +7,7 @@ import { StoryDeck } from "@/components/story/StoryDeck";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { UnderlineLink } from "@/components/ui/UnderlineLink";
 import { getGame, getGameSlugs, getSettings } from "@/lib/content";
+import { formatDate } from "@/lib/format";
 import type { GameSummary } from "@/lib/types";
 
 import styles from "./page.module.css";
@@ -168,15 +169,4 @@ function MobileNextCard({ game }: { game: GameSummary }) {
       <span aria-hidden="true">→</span>
     </Link>
   );
-}
-
-function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  })
-    .format(new Date(iso))
-    .toLowerCase();
 }

@@ -37,8 +37,8 @@ type Props = {
 /**
  * The full deck: tap zones, arrow keys, swipe, and real Mux playback for reels.
  * Images run on a fixed timer; a video drives its own bar from `timeupdate`.
- * Under reduced motion nothing advances on its own — the tap zones, arrow keys
- * and the play control are the only way through.
+ * Under reduced motion nothing advances on its own — on image slides the tap
+ * zones and arrow keys are the only way through; reels still get a play control.
  */
 export function StoryDeck({
   stories,
@@ -57,6 +57,8 @@ export function StoryDeck({
   const [index, setIndex] = useState(0);
   const [finished, setFinished] = useState(false);
   const [autoAdvance, setAutoAdvance] = useState(false);
+  // False through SSR, so the active bar stays blank rather than flashing full.
+  const [motionKnown, setMotionKnown] = useState(false);
   const [wantPlay, setWantPlay] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -70,7 +72,7 @@ export function StoryDeck({
   const bar = useRef<HTMLElement>(null);
   const remaining = useRef(IMAGE_DURATION);
   const startedAt = useRef(0);
-  const swiped = useRef(false);
+  const swipedAt = useRef(0);
   const press = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export function StoryDeck({
     const apply = () => {
       setAutoAdvance(!query.matches);
       setWantPlay(!query.matches);
+      setMotionKnown(true);
     };
     apply();
     query.addEventListener("change", apply);
@@ -101,15 +104,26 @@ export function StoryDeck({
   const restart = useCallback(() => {
     setFinished(false);
     setIndex(0);
+    // A one-story deck is already at 0, so the reset effect below won't fire.
+    remaining.current = IMAGE_DURATION;
+    startedAt.current = Date.now();
   }, []);
 
   useEffect(() => {
     remaining.current = IMAGE_DURATION;
     startedAt.current = Date.now();
-    if (bar.current) bar.current.style.width = "0%";
     // A reel the visitor chose to play doesn't license the next one to start.
     if (!autoAdvance) setWantPlay(false);
   }, [index, autoAdvance]);
+
+  // Only a reel drives its bar inline; drop that width on the way out so the
+  // `.done`/`.full` class rules aren't outranked by a stale value.
+  useEffect(() => {
+    const segment = bar.current;
+    return () => {
+      segment?.style.removeProperty("width");
+    };
+  }, [index, finished]);
 
   // Images only: a video advances itself when it reaches its capped length.
   useEffect(() => {
@@ -140,6 +154,8 @@ export function StoryDeck({
           previous();
           break;
         case " ":
+          // Space belongs to whatever control is focused, if any.
+          if (target?.closest("button, a, summary")) return;
           setWantPlay((playing) => !playing);
           break;
         case "Escape":
@@ -161,7 +177,6 @@ export function StoryDeck({
 
   const onPointerDown = (event: React.PointerEvent) => {
     press.current = { x: event.clientX, y: event.clientY };
-    swiped.current = false;
     setPressed(true);
   };
 
@@ -176,7 +191,7 @@ export function StoryDeck({
     if (Math.abs(dx) < SWIPE || Math.abs(dx) <= Math.abs(dy)) return;
 
     // Keeps the tap zone under the finger from firing a second move.
-    swiped.current = true;
+    swipedAt.current = Date.now();
     if (dx < 0) next();
     else previous();
   };
@@ -187,10 +202,7 @@ export function StoryDeck({
   };
 
   const tap = (move: () => void) => () => {
-    if (swiped.current) {
-      swiped.current = false;
-      return;
-    }
+    if (Date.now() - swipedAt.current < 300) return;
     move();
   };
 
@@ -198,25 +210,28 @@ export function StoryDeck({
     if (finished || i < index) return `${deck.bar} ${deck.done}`;
     if (i > index) return deck.bar;
     if (isVideo) return `${deck.bar} ${styles.streamed}`;
+    if (!motionKnown) return deck.bar;
     return `${deck.bar} ${autoAdvance ? deck.now : deck.full}`;
   };
 
   return (
     <div className={[styles.stage, className].filter(Boolean).join(" ")}>
       <div className={styles.glow} aria-hidden="true">
-        {stories.map((item, i) => (
-          <span
-            key={`glow-${item._key}`}
-            className={`${styles.glowSlide} ${i === index ? styles.glowOn : ""}`}
-          >
-            <CoverImage
-              image={posterOf(item)}
-              className={styles.glowImage}
-              sizes="120px"
-              decorative
-            />
-          </span>
-        ))}
+        {stories.map((item, i) =>
+          Math.abs(i - index) > 1 ? null : (
+            <span
+              key={`glow-${item._key}`}
+              className={`${styles.glowSlide} ${i === index ? styles.glowOn : ""}`}
+            >
+              <CoverImage
+                image={posterOf(item)}
+                className={styles.glowImage}
+                sizes="120px"
+                decorative
+              />
+            </span>
+          ),
+        )}
       </div>
 
       <section

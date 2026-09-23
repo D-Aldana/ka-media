@@ -1,6 +1,7 @@
 import { MiniStory } from "@/components/story/MiniStory";
 import { Reveal } from "@/components/ui/Reveal";
 import { UnderlineLink } from "@/components/ui/UnderlineLink";
+import { formatDate } from "@/lib/format";
 import type { LatestGame as LatestGameType, Settings } from "@/lib/types";
 
 import styles from "./LatestGame.module.css";
@@ -41,15 +42,4 @@ export function LatestGame({ game, settings }: Props) {
       </div>
     </section>
   );
-}
-
-function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  })
-    .format(new Date(iso))
-    .toLowerCase();
 }
