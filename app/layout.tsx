@@ -1,63 +1,46 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Courier_Prime, Hanken_Grotesk } from "next/font/google";
+
+import { Footer } from "@/components/site/Footer";
+import { Header } from "@/components/site/Header";
+import { getSettings } from "@/lib/content";
+
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const hanken = Hanken_Grotesk({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "800"],
+  variable: "--font-hanken",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const courier = Courier_Prime({
   subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-courier",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "KAMedia | Portfolio",
+  title: {
+    default: "kamedia — game-day photo & film",
+    template: "%s · kamedia",
+  },
   description:
-    "KAMedia | Professional sports photography and videography specializing in cinematic storytelling. View photo galleries, highlight reels, and contact for bookings.",
-  keywords: [
-    "KAMedia",
-    "UNBC",
-    "Photography",
-    "Basketball",
-    "Hockey",
-    "Football",
-    "Volleyball",
-    "Soccer",
-    "Athletics",
-    "Videography",
-    "Prince George",
-    "Sports Photography",
-    "Videography",
-    "Cinematic Storytelling",
-    "Photo Galleries",
-    "Highlight Reels",
-    "Professional Photographer",
-    "Sports Videographer",
-    "Event Coverage",
-    "Athlete Portraits",
-    "Action Shots",
-    "Sports Events",
-    "Photography Services",
-    "UNBC",
-    "Prince George Photographer",
-    "Sports Highlights",
-    "Visual Storytelling",
-    "KAMedia Portfolio",
-    "Krystien Aldana",
-  ],
+    "Krystien Aldana shoots basketball, soccer and football in Prince George, BC — game-day photography, highlight films and social-ready edits.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+  const settings = await getSettings();
+
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className={`${hanken.variable} ${courier.variable}`}>
+        <Header settings={settings} />
+        <main>{children}</main>
+        <Footer settings={settings} />
       </body>
     </html>
   );

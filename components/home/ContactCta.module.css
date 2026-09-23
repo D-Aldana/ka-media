@@ -1,0 +1,39 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  padding: 110px var(--pad);
+  border-top: 1px solid var(--line);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--mute);
+}
+
+.heading {
+  font-size: clamp(52px, 8.5vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  font-size: 18px;
+}
+
+@media (max-width: 860px) {
+  .section {
+    gap: 28px;
+    padding: 72px var(--pad);
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}
