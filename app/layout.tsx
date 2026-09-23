@@ -36,8 +36,8 @@ export default async function RootLayout({
   const settings = await getSettings();
 
   return (
-    <html lang="en">
-      <body className={`${hanken.variable} ${courier.variable}`}>
+    <html lang="en" className={`${hanken.variable} ${courier.variable}`}>
+      <body>
         <Header settings={settings} />
         <main>{children}</main>
         <Footer settings={settings} />
