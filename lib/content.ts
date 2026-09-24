@@ -1,5 +1,5 @@
 import * as placeholder from "./placeholder-content";
-import type { GamePage, HomeData, Settings, WorkGame } from "./types";
+import type { AboutPage, GamePage, HomeData, Settings, WorkGame } from "./types";
 
 /**
  * The only seam between the UI and the CMS. Sanity is not wired up yet, so
@@ -30,6 +30,18 @@ import type { GamePage, HomeData, Settings, WorkGame } from "./types";
  *     "hasVideo": count(stories[_type=="storyVideo"]) > 0
  *   }
  *
+ * getAboutPage():
+ *   *[_type=="about"][0]{name, quote, bio, portrait,
+ *                        services[]{_key, title, description}, photos[0...3]}
+ *
+ * Two fields here are not in the PRD's `about` singleton: `name` for the
+ * heading, and `quote` for the pull quote. The PRD annotates `headline` as the
+ * quote, but the design gives the home summary and the About page different
+ * lines, so `headline` stays the short home one and `quote` is the About one.
+ *
+ * `bio` is portable text, so it comes back as blocks. getAboutPage flattens
+ * them to paragraphs — the page takes strings and stays as it is.
+ *
  * Two things are computed after the query rather than in it: the `code`
  * (01A, 02A…) comes from each game's position in date order, and images are
  * mapped to `ContentImage` by `lib/image.ts`.
@@ -45,6 +57,10 @@ export async function getHomeData(): Promise<HomeData> {
     latest: placeholder.latest,
     about: placeholder.about,
   };
+}
+
+export async function getAboutPage(): Promise<AboutPage> {
+  return placeholder.aboutPage;
 }
 
 export async function getWorkGames(): Promise<WorkGame[]> {

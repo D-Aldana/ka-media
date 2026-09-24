@@ -74,12 +74,26 @@ export type SportSummary = {
 export type Service = {
   _key: string;
   title: string;
+  /** Only the About page shows this; the home summary lists titles alone. */
+  description: string;
 };
 
 export type AboutSummary = {
   headline: string;
   portrait: ContentImage | null;
   services: Service[];
+};
+
+export type AboutPage = {
+  name: string;
+  /** The pull quote under the name. Longer than the home `headline`. */
+  quote: string;
+  /** Paragraphs. `getAboutPage` flattens the portable text into these. */
+  bio: string[];
+  portrait: ContentImage | null;
+  services: Service[];
+  /** Three 4:5 frames under "What I shoot". */
+  photos: (ContentImage | null)[];
 };
 
 export type Settings = {

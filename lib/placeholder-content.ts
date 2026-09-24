@@ -7,9 +7,11 @@
  * slot renders as an empty tile at its real size.
  */
 import type {
+  AboutPage,
   AboutSummary,
   GameSummary,
   LatestGame,
+  Service,
   Settings,
   SportSummary,
   StoryItem,
@@ -125,13 +127,42 @@ export const sports: SportSummary[] = SPORTS.map((sport) => ({
   cover: null,
 }));
 
+const services: Service[] = [
+  {
+    _key: "svc-1",
+    title: "Game-day photography",
+    description:
+      "Action, emotion and sideline moments — edited and ready to post, print or send to press.",
+  },
+  {
+    _key: "svc-2",
+    title: "Highlight & recruiting films",
+    description:
+      "Game films, season mixtapes and recruiting reels cut to put an athlete’s best plays up front.",
+  },
+  {
+    _key: "svc-3",
+    title: "Social-ready edits",
+    description:
+      "Vertical cuts and photo sets sized for Instagram, TikTok and team pages — so the moment lands the same night.",
+  },
+];
+
 export const about: AboutSummary = {
   headline:
     "kamedia is Krystien Aldana — a sports photographer and filmmaker in Prince George, BC, shooting the raw seconds after the whistle.",
   portrait: null,
-  services: [
-    { _key: "svc-1", title: "Game-day photography" },
-    { _key: "svc-2", title: "Highlight & recruiting films" },
-    { _key: "svc-3", title: "Social-ready edits" },
+  services,
+};
+
+export const aboutPage: AboutPage = {
+  name: "Krystien Aldana",
+  quote:
+    "I shoot the raw seconds after the whistle — the celebrations, the heartbreak, the nets coming down.",
+  bio: [
+    "[A few sentences in his own words: how he got into sports photography, who he shoots for — schools, clubs, athletes, families — and what he looks for on game day.]",
   ],
+  portrait: null,
+  services,
+  photos: [null, null, null],
 };
