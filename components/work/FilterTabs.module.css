@@ -1,0 +1,43 @@
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  font-size: 14px;
+  white-space: nowrap;
+  transition:
+    background 0.45s ease,
+    color 0.45s ease,
+    border-color 0.45s ease;
+}
+
+.chip:hover {
+  border-color: var(--fg);
+}
+
+.on {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+@media (max-width: 860px) {
+  /* Swipe row that bleeds past the page padding. */
+  .tabs {
+    overflow-x: auto;
+    margin: 0 calc(var(--pad) * -1);
+    padding: 0 var(--pad);
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+}

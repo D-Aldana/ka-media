@@ -1,0 +1,109 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  transition:
+    opacity 0.7s var(--ease),
+    filter 0.7s ease,
+    transform 0.7s var(--ease);
+}
+
+.off {
+  opacity: 0.1;
+  filter: grayscale(1);
+  transform: scale(0.97);
+  pointer-events: none;
+}
+
+.frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+}
+
+.cover {
+  position: absolute;
+  inset: 0;
+}
+
+.card:hover .cover img,
+.card:focus-visible .cover img {
+  transform: scale(1.05);
+}
+
+.play {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(11, 11, 10, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 56px 18px 16px;
+  background: linear-gradient(transparent, rgba(11, 11, 10, 0.85));
+  font-family: var(--font-mono);
+  font-size: 20px;
+  line-height: 1.2;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
+}
+
+.card:hover .stat,
+.card:focus-visible .stat {
+  opacity: 1;
+  transform: none;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 14px;
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.title {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+
+@media (max-width: 860px) {
+  /* The stat line has no hover to wait for on a phone. */
+  .stat {
+    opacity: 1;
+    transform: none;
+    font-size: 14px;
+    padding: 36px 10px 10px;
+  }
+
+  .play {
+    width: 28px;
+    height: 28px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+}
