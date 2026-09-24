@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 import { FilterTabs } from "@/components/work/FilterTabs";
 import { GameCard } from "@/components/work/GameCard";
-import { Reveal } from "@/components/ui/Reveal";
 import { getWorkGames } from "@/lib/content";
+import { sportLabel } from "@/lib/format";
 import { SPORTS, type Sport } from "@/lib/types";
 
 import styles from "./page.module.css";
@@ -23,7 +23,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   return {
-    title: `${sport[0].toUpperCase() + sport.slice(1)} · Work`,
+    title: `${sportLabel(sport)} · Work`,
     description: `Every ${sport} game shot in Prince George, BC. Tap through any game as a story.`,
   };
 }
@@ -62,19 +62,22 @@ export default async function WorkPage({ searchParams }: Props) {
         <FilterTabs active={active} counts={counts} total={games.length} />
       </div>
 
-      {shown === 0 ? (
-        <p className={styles.empty}>No {active} games yet.</p>
-      ) : (
-        <Reveal className={styles.grid}>
-          {games.map((game) => (
-            <GameCard
-              key={game._id}
-              game={game}
-              dimmed={active !== "all" && game.sport !== active}
-            />
-          ))}
-        </Reveal>
+      {shown === 0 && (
+        <p className={styles.empty}>
+          {active === "all" ? "No games yet." : `No ${active} games yet.`}
+        </p>
       )}
+
+      <div className={styles.grid}>
+        {games.map((game, index) => (
+          <GameCard
+            key={game._id}
+            game={game}
+            dimmed={active !== "all" && game.sport !== active}
+            priority={index < 4}
+          />
+        ))}
+      </div>
     </section>
   );
 }

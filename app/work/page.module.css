@@ -40,7 +40,10 @@
   line-height: 0.95;
 }
 
+/* Rises with the page rather than on scroll, so the grid is visible without
+   JS and the first-row covers are never faded while they load. */
 .grid {
+  animation: pageIn 0.8s var(--ease) 0.24s both;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 24px;
@@ -48,7 +51,7 @@
 }
 
 .empty {
-  padding: 56px 0 120px;
+  padding: 0 0 40px;
   font-size: 24px;
   color: var(--mute);
 }
@@ -77,7 +80,7 @@
   }
 
   .empty {
-    padding: 32px 0 72px;
+    padding: 0 0 24px;
     font-size: 20px;
   }
 }

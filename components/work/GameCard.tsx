@@ -11,9 +11,11 @@ type Props = {
   game: WorkGame;
   /** Filtered out: the card stays in place and fades back rather than moving. */
   dimmed?: boolean;
+  /** Set on the first row, which holds the LCP image. */
+  priority?: boolean;
 };
 
-export function GameCard({ game, dimmed = false }: Props) {
+export function GameCard({ game, dimmed = false, priority = false }: Props) {
   return (
     <Link
       href={`/work/${game.slug}`}
@@ -26,6 +28,7 @@ export function GameCard({ game, dimmed = false }: Props) {
           image={game.cover}
           className={styles.cover}
           sizes="(max-width: 860px) 45vw, 22vw"
+          priority={priority}
           decorative
         />
         {game.hasVideo && (
