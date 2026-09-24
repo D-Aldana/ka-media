@@ -12,7 +12,7 @@ import type { GamePage, HomeData, Settings, WorkGame } from "./types";
  * getHomeData():
  *   {
  *     "featured": *[_type=="game" && featured && !hidden]
- *       | order(date desc)[0...10]{title,"slug":slug.current,sport,cover},
+ *       | order(date desc)[0...10]{_id,title,"slug":slug.current,sport,cover},
  *     "sports": [
  *       {"sport":"basketball",
  *        "count": count(*[_type=="game" && sport=="basketball" && !hidden]),
@@ -26,7 +26,7 @@ import type { GamePage, HomeData, Settings, WorkGame } from "./types";
  *
  * getWorkGames():
  *   *[_type=="game" && !hidden] | order(date desc){
- *     title, "slug": slug.current, sport, date, statLine, cover,
+ *     _id, title, "slug": slug.current, sport, date, statLine, cover,
  *     "hasVideo": count(stories[_type=="storyVideo"]) > 0
  *   }
  *

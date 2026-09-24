@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { sportLabel } from "@/lib/format";
 import { SPORTS, type Sport } from "@/lib/types";
 
 import styles from "./FilterTabs.module.css";
@@ -19,7 +20,7 @@ export function FilterTabs({ active, counts, total }: Props) {
     { key: "all", label: "All", href: "/work", count: total },
     ...SPORTS.map((sport) => ({
       key: sport,
-      label: sport[0].toUpperCase() + sport.slice(1),
+      label: sportLabel(sport),
       href: `/work?sport=${sport}`,
       count: counts[sport],
     })),
@@ -36,7 +37,7 @@ export function FilterTabs({ active, counts, total }: Props) {
           className={[styles.chip, tab.key === active && styles.on]
             .filter(Boolean)
             .join(" ")}
-          aria-current={tab.key === active ? "true" : undefined}
+          aria-current={tab.key === active ? "page" : undefined}
         >
           {tab.label} {tab.count}
         </Link>
