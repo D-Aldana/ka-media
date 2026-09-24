@@ -41,9 +41,19 @@
 }
 
 /* Rises with the page rather than on scroll, so the grid is visible without
-   JS and the first-row covers are never faded while they load. */
+   JS. Transform only: holding the covers at opacity 0 through the delay would
+   push LCP out by the length of the delay. */
+@keyframes gridRise {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: none;
+  }
+}
+
 .grid {
-  animation: pageIn 0.8s var(--ease) 0.24s both;
+  animation: gridRise 0.8s var(--ease) 0.24s both;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 24px;

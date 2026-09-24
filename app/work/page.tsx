@@ -49,6 +49,15 @@ export default async function WorkPage({ searchParams }: Props) {
 
   const shown = active === "all" ? games.length : counts[active];
 
+  /* The first cards the visitor actually reads, which is not the first four
+     grid positions once a filter dims the top of the list. */
+  const eager = new Set(
+    games
+      .filter((game) => active === "all" || game.sport === active)
+      .slice(0, 4)
+      .map((game) => game._id),
+  );
+
   return (
     <section className={styles.page} data-route="work">
       <div className={styles.head}>
@@ -69,12 +78,12 @@ export default async function WorkPage({ searchParams }: Props) {
       )}
 
       <div className={styles.grid}>
-        {games.map((game, index) => (
+        {games.map((game) => (
           <GameCard
             key={game._id}
             game={game}
             dimmed={active !== "all" && game.sport !== active}
-            priority={index < 4}
+            priority={eager.has(game._id)}
           />
         ))}
       </div>
