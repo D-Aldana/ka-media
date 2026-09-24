@@ -22,8 +22,8 @@ export function Hero({ featured, settings }: Props) {
           <span>Basketball, soccer, football</span>
           <span>{settings.location}</span>
         </p>
-        <Pill href="/book" variant="solid" className={styles.cta}>
-          Book a game
+        <Pill href="/contact" variant="solid" className={styles.cta}>
+          Get in touch
         </Pill>
       </div>
     </section>

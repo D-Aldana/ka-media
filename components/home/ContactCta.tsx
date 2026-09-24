@@ -15,7 +15,7 @@ export function ContactCta({ settings }: { settings: Settings }) {
         <h2 className={styles.heading}>Let&rsquo;s work together.</h2>
       </Reveal>
       <Reveal className={styles.row}>
-        <Pill href="/book">Book a game</Pill>
+        <Pill href="/contact">Get in touch</Pill>
         <UnderlineLink href={`mailto:${settings.email}`}>
           {settings.email}
         </UnderlineLink>
