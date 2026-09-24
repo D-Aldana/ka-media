@@ -77,7 +77,7 @@ export default async function AboutPage() {
           <h2 className={styles.ctaHeading}>Got a game coming up?</h2>
         </Reveal>
         <Reveal className={styles.ctaAction}>
-          <Pill href="/book">Book a game →</Pill>
+          <Pill href="/contact">Get in touch →</Pill>
         </Reveal>
       </section>
     </div>

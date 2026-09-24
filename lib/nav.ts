@@ -5,7 +5,7 @@ export const NAV_LINKS: { key: RouteKey; label: string; href: string }[] = [
   { key: "work", label: "Work", href: "/work" },
   { key: "story", label: "Stories", href: "/#latest" },
   { key: "about", label: "About", href: "/about" },
-  { key: "contact", label: "Contact", href: "/book" },
+  { key: "contact", label: "Contact", href: "/contact" },
 ];
 
 export const MENU_LINKS: { label: string; href: string }[] = [
@@ -13,5 +13,5 @@ export const MENU_LINKS: { label: string; href: string }[] = [
   { label: "Work", href: "/work" },
   { label: "Stories", href: "/#latest" },
   { label: "About", href: "/about" },
-  { label: "Book a game", href: "/book" },
+  { label: "Contact", href: "/contact" },
 ];
