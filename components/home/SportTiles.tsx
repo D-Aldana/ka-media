@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Reveal } from "@/components/ui/Reveal";
+import { sportLabel } from "@/lib/format";
 import type { SportSummary } from "@/lib/types";
 
 import styles from "./SportTiles.module.css";
@@ -29,9 +30,7 @@ export function SportTiles({ sports }: { sports: SportSummary[] }) {
               sizes="(max-width: 860px) 270px, (max-width: 1440px) 30vw, 432px"
             />
             <span className={styles.row}>
-              <span className={styles.name}>
-                {tile.sport[0].toUpperCase() + tile.sport.slice(1)}
-              </span>
+              <span className={styles.name}>{sportLabel(tile.sport)}</span>
               <span className={styles.count}>{tile.count} games →</span>
             </span>
           </Link>

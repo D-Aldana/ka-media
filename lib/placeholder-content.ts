@@ -13,7 +13,9 @@ import type {
   Settings,
   SportSummary,
   StoryItem,
+  WorkGame,
 } from "./types";
+import { SPORTS } from "./types";
 
 const sportOrder = [
   "basketball",
@@ -106,15 +108,22 @@ export function toSummary({
   return { _id, title, slug, sport, code, cover };
 }
 
+export const workGames: WorkGame[] = games.map((game) => ({
+  ...toSummary(game),
+  date: game.date,
+  statLine: game.statLine,
+  hasVideo: game.stories.some((item) => item._type === "storyVideo"),
+}));
+
 export const featured: GameSummary[] = games.map(toSummary);
 
 export const latest: LatestGame = games[0];
 
-export const sports: SportSummary[] = [
-  { sport: "basketball", count: 5, cover: null },
-  { sport: "soccer", count: 4, cover: null },
-  { sport: "football", count: 3, cover: null },
-];
+export const sports: SportSummary[] = SPORTS.map((sport) => ({
+  sport,
+  count: games.filter((game) => game.sport === sport).length,
+  cover: null,
+}));
 
 export const about: AboutSummary = {
   headline:

@@ -1,0 +1,96 @@
+.page {
+  padding: 96px var(--pad) 140px;
+  animation: pageIn 0.8s var(--ease) both;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 56px;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--mute);
+}
+
+.title {
+  font-size: 112px;
+  letter-spacing: -5px;
+  line-height: 0.95;
+}
+
+/* Rises with the page rather than on scroll, so the grid is visible without
+   JS. Transform only: holding the covers at opacity 0 through the delay would
+   push LCP out by the length of the delay. */
+@keyframes gridRise {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.grid {
+  animation: gridRise 0.8s var(--ease) 0.24s both;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 56px;
+}
+
+.empty {
+  padding: 0 0 40px;
+  font-size: 24px;
+  color: var(--mute);
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 32px var(--pad) 72px;
+  }
+
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .title {
+    font-size: 72px;
+    letter-spacing: -3.5px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
+    row-gap: 28px;
+  }
+
+  .empty {
+    padding: 0 0 24px;
+    font-size: 20px;
+  }
+}

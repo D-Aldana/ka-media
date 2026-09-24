@@ -1,5 +1,5 @@
 import * as placeholder from "./placeholder-content";
-import type { GamePage, HomeData, Settings } from "./types";
+import type { GamePage, HomeData, Settings, WorkGame } from "./types";
 
 /**
  * The only seam between the UI and the CMS. Sanity is not wired up yet, so
@@ -12,7 +12,7 @@ import type { GamePage, HomeData, Settings } from "./types";
  * getHomeData():
  *   {
  *     "featured": *[_type=="game" && featured && !hidden]
- *       | order(date desc)[0...10]{title,"slug":slug.current,sport,cover},
+ *       | order(date desc)[0...10]{_id,title,"slug":slug.current,sport,cover},
  *     "sports": [
  *       {"sport":"basketball",
  *        "count": count(*[_type=="game" && sport=="basketball" && !hidden]),
@@ -22,6 +22,12 @@ import type { GamePage, HomeData, Settings } from "./types";
  *     "latest": coalesce(*[_type=="settings"][0].latestGame->,
  *                        *[_type=="game" && !hidden] | order(date desc)[0]){...},
  *     "about": *[_type=="about"][0]{headline, portrait, services}
+ *   }
+ *
+ * getWorkGames():
+ *   *[_type=="game" && !hidden] | order(date desc){
+ *     _id, title, "slug": slug.current, sport, date, statLine, cover,
+ *     "hasVideo": count(stories[_type=="storyVideo"]) > 0
  *   }
  *
  * Two things are computed after the query rather than in it: the `code`
@@ -39,6 +45,10 @@ export async function getHomeData(): Promise<HomeData> {
     latest: placeholder.latest,
     about: placeholder.about,
   };
+}
+
+export async function getWorkGames(): Promise<WorkGame[]> {
+  return placeholder.workGames;
 }
 
 export async function getGameSlugs(): Promise<string[]> {

@@ -43,6 +43,14 @@ export type GameSummary = {
   cover: ContentImage | null;
 };
 
+/** A card in the Work grid: the summary plus what the card labels. */
+export type WorkGame = GameSummary & {
+  /** ISO date, `YYYY-MM-DD`. */
+  date: string;
+  statLine: string | null;
+  hasVideo: boolean;
+};
+
 export type LatestGame = GameSummary & {
   /** ISO date, `YYYY-MM-DD`. */
   date: string;
