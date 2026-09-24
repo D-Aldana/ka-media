@@ -34,7 +34,7 @@ const sportOrder = [
 const DEMO_PLAYBACK_ID = "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe";
 
 export const settings: Settings = {
-  email: "hello@ka-media.ca",
+  email: "aldanakrystien@gmail.com",
   instagramUrl: "https://www.instagram.com/kamedia._/",
   instagramHandle: "@kamedia._",
   location: "Prince George, BC",
