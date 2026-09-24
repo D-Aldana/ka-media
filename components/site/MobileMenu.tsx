@@ -93,7 +93,7 @@ export function MobileMenu({ settings }: { settings: Settings }) {
         inert={!open}
       >
         <div className={styles.top}>
-          <span className={styles.wordmark}>kamedia</span>
+          <span className={styles.wordmark}>ka-media</span>
           <button
             ref={closeRef}
             type="button"

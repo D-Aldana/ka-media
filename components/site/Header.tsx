@@ -11,7 +11,7 @@ export function Header({ settings }: { settings: Settings }) {
   return (
     <header className={styles.nav} id="top">
       <Link href="/" className={styles.wordmark}>
-        kamedia
+        ka-media
       </Link>
 
       <nav className={styles.links} aria-label="Main">
