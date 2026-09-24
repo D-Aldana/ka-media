@@ -82,6 +82,21 @@ svg {
   outline-offset: 3px;
 }
 
+/* The story page owns the whole viewport: no footer, and no nav on mobile. */
+body:has([data-route="story"]) footer {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  body:has([data-route="story"]) {
+    overflow: hidden;
+  }
+
+  body:has([data-route="story"]) header {
+    display: none;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

@@ -204,11 +204,6 @@
   font-weight: 500;
 }
 
-/* The story page owns the whole viewport: no footer, and no nav on mobile. */
-:global(body:has([data-route="story"]) footer) {
-  display: none;
-}
-
 @media (max-width: 860px) {
   .page {
     display: block;
@@ -232,13 +227,5 @@
   .mobileClose,
   .mobileInfo {
     display: flex;
-  }
-
-  :global(body:has([data-route="story"]) header) {
-    display: none;
-  }
-
-  :global(body:has([data-route="story"])) {
-    overflow: hidden;
   }
 }
