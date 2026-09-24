@@ -88,7 +88,7 @@ export type AboutPage = {
   name: string;
   /** The pull quote under the name. Longer than the home `headline`. */
   quote: string;
-  /** Portable text, flattened to paragraphs until Sanity is wired up. */
+  /** Paragraphs. `getAboutPage` flattens the portable text into these. */
   bio: string[];
   portrait: ContentImage | null;
   services: Service[];

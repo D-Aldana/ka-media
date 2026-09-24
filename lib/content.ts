@@ -32,11 +32,15 @@ import type { AboutPage, GamePage, HomeData, Settings, WorkGame } from "./types"
  *
  * getAboutPage():
  *   *[_type=="about"][0]{name, quote, bio, portrait,
- *                        services[]{_key, title, description}, photos[]}
+ *                        services[]{_key, title, description}, photos[0...3]}
  *
- * The About page needs three fields the PRD's `about` singleton does not list:
- * `name` for the heading, `quote` for the pull quote (the home summary keeps
- * the shorter `headline`), and a description per service.
+ * Two fields here are not in the PRD's `about` singleton: `name` for the
+ * heading, and `quote` for the pull quote. The PRD annotates `headline` as the
+ * quote, but the design gives the home summary and the About page different
+ * lines, so `headline` stays the short home one and `quote` is the About one.
+ *
+ * `bio` is portable text, so it comes back as blocks. getAboutPage flattens
+ * them to paragraphs — the page takes strings and stays as it is.
  *
  * Two things are computed after the query rather than in it: the `code`
  * (01A, 02A…) comes from each game's position in date order, and images are

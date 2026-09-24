@@ -21,8 +21,22 @@
   padding: 72px var(--pad) 0;
 }
 
+/* `start` keeps the 4:5 crop once the bio grows taller than the portrait.
+   Transform only: the page fade already covers opacity, and holding the LCP
+   portrait at 0 would delay it. */
 .portrait {
+  align-self: start;
   aspect-ratio: 4 / 5;
+  animation: lift 1.1s var(--ease) both;
+}
+
+@keyframes lift {
+  from {
+    transform: translateY(28px);
+  }
+  to {
+    transform: none;
+  }
 }
 
 /* Sits on the bottom of the portrait, as in the design. */

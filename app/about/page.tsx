@@ -21,7 +21,7 @@ export default async function AboutPage() {
       <section className={styles.hero}>
         <CoverImage
           image={about.portrait}
-          className={`${styles.portrait} ${styles.rise}`}
+          className={styles.portrait}
           sizes="(max-width: 860px) calc(100vw - 32px), 45vw"
           priority
         />
@@ -37,8 +37,8 @@ export default async function AboutPage() {
             {about.quote}
           </p>
           <div className={`${styles.bio} ${styles.rise} ${styles.d3}`}>
-            {about.bio.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {about.bio.map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
             ))}
           </div>
         </div>
@@ -62,13 +62,12 @@ export default async function AboutPage() {
       </section>
 
       <Reveal className={styles.photos}>
-        {about.photos.map((photo, index) => (
+        {about.photos.slice(0, 3).map((photo, index) => (
           <CoverImage
             key={photo?.url ?? index}
             image={photo}
             className={styles.photo}
-            sizes="(max-width: 860px) 270px, 30vw"
-            decorative
+            sizes="(max-width: 860px) 260px, 30vw"
           />
         ))}
       </Reveal>
