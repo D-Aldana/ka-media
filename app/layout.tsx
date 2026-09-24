@@ -23,8 +23,8 @@ const courier = Courier_Prime({
 
 export const metadata: Metadata = {
   title: {
-    default: "kamedia — game-day photo & film",
-    template: "%s · kamedia",
+    default: "ka-media — game-day photo & film",
+    template: "%s · ka-media",
   },
   description:
     "Krystien Aldana shoots basketball, soccer and football in Prince George, BC — game-day photography, highlight films and social-ready edits.",

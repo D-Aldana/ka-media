@@ -34,7 +34,7 @@ const sportOrder = [
 const DEMO_PLAYBACK_ID = "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe";
 
 export const settings: Settings = {
-  email: "hello@kamedia.ca",
+  email: "aldanakrystien@gmail.com",
   instagramUrl: "https://www.instagram.com/kamedia._/",
   instagramHandle: "@kamedia._",
   location: "Prince George, BC",
@@ -150,7 +150,7 @@ const services: Service[] = [
 
 export const about: AboutSummary = {
   headline:
-    "kamedia is Krystien Aldana — a sports photographer and filmmaker in Prince George, BC, shooting the raw seconds after the whistle.",
+    "ka-media is Krystien Aldana — a sports photographer and filmmaker in Prince George, BC, shooting the raw seconds after the whistle.",
   portrait: null,
   services,
 };

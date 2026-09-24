@@ -7,7 +7,7 @@ export function Footer({ settings }: { settings: Settings }) {
   return (
     <footer className={styles.footer}>
       <span>
-        © {new Date().getFullYear()} kamedia · {settings.location}
+        © {new Date().getFullYear()} ka-media · {settings.location}
       </span>
       <div className={styles.links}>
         <UnderlineLink href={settings.instagramUrl}>Instagram</UnderlineLink>
