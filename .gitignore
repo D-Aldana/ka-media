@@ -45,3 +45,6 @@ docs/
 
 # claude
 .claude/
+
+# keep the example, ignore real env files
+!.env.example

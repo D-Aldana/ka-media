@@ -10,9 +10,15 @@
   },
   "dependencies": {
     "@mux/mux-player-react": "^3.13.2",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^5.31.2",
     "next": "15.5.9",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "next-sanity": "^11.6.13",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sanity": "^5.31.2",
+    "sanity-plugin-mux-input": "^5.0.12",
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
