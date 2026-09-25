@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next";
+
 import type { Metadata } from "next";
 import { Courier_Prime, Hanken_Grotesk } from "next/font/google";
 
@@ -41,6 +43,7 @@ export default async function RootLayout({
         <Header settings={settings} />
         <main>{children}</main>
         <Footer settings={settings} />
+        <Analytics />
       </body>
     </html>
   );
