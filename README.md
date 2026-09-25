@@ -45,7 +45,7 @@ is the only module that talks to it — components take plain types from
 
 | Variable | Used for |
 | --- | --- |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | The project to read. Unset means the site renders `lib/placeholder-content.ts` instead, which is a local convenience only. |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | The project to read — the id in the project URL at [sanity.io/manage](https://www.sanity.io/manage), or from `npx sanity projects list`. Unset means the site renders `lib/placeholder-content.ts` instead, which is a local convenience only. |
 | `NEXT_PUBLIC_SANITY_DATASET` | Defaults to `production`. |
 | `SANITY_REVALIDATE_SECRET` | Shared with the publish webhook below. Unset means the webhook 401s, so publishes won't go live until the hourly revalidate catches up. |
 
