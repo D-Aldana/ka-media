@@ -1,0 +1,43 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 140px 56px;
+}
+
+.code {
+  font-family: var(--font-courier), monospace;
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.headline {
+  margin: 0;
+  font-size: 112px;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+}
+
+.blurb {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--mute);
+}
+
+.link {
+  margin-top: 16px;
+  font-family: var(--font-courier), monospace;
+  font-size: 14px;
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 72px 16px;
+  }
+
+  .headline {
+    font-size: 72px;
+  }
+}

@@ -13,7 +13,6 @@ import {
 } from "./queries";
 import type {
   AboutPage,
-  AboutSummary,
   GamePage,
   GameSummary,
   HomeData,
@@ -31,10 +30,14 @@ import { SPORTS } from "./types";
  * The only seam between the UI and the CMS. Each function reads Sanity and
  * maps the projection onto the types the components already take.
  *
- * Content falls back to `placeholder-content.ts` section by section: when no
- * project is configured, when a read fails, and when a document simply is not
- * there yet. A half-populated dataset therefore never renders a half-empty
- * page.
+ * One rule about placeholders: `placeholder-content.ts` stands in only when no
+ * project is configured, which is a local convenience. Once a project is set,
+ * the site shows what is actually in the dataset — an empty dataset renders
+ * empty sections rather than games that link nowhere.
+ *
+ * Reads are not caught. A failure during the build fails it loudly, and a
+ * failure while revalidating leaves the last good page in place, both of which
+ * beat quietly publishing an empty site.
  *
  * Two things are computed here rather than in GROQ: the `code` (01A, 02A …)
  * from each game's `rank` in date order, and images mapped to `ContentImage`.
@@ -51,21 +54,33 @@ const TAGS = { game: "game", about: "about", settings: "settings" };
  */
 const REVALIDATE = 3600;
 
-async function fetchFrom<T>(
+/** Shown before Krystien has filled in Settings; never a fabricated link. */
+const EMPTY_SETTINGS: Settings = {
+  email: "",
+  instagramUrl: "",
+  instagramHandle: "",
+  location: "",
+  contactIntro: null,
+};
+
+const EMPTY_ABOUT: AboutPage = {
+  name: "",
+  quote: "",
+  bio: [],
+  portrait: null,
+  services: [],
+  photos: [],
+};
+
+function fetchFrom<T>(
   query: string,
   params: Record<string, unknown>,
   tags: string[],
   fresh = false,
-): Promise<T | null> {
-  try {
-    return await (fresh ? freshClient : client).fetch<T>(query, params, {
-      next: fresh ? { revalidate: 0 } : { revalidate: REVALIDATE, tags },
-    });
-  } catch (error) {
-    // A portfolio is better served stale than 500ing on a blip from Sanity.
-    console.error("Sanity read failed", { query: query.slice(0, 60), error });
-    return null;
-  }
+): Promise<T> {
+  return (fresh ? freshClient : client).fetch<T>(query, params, {
+    next: fresh ? { revalidate: 0 } : { revalidate: REVALIDATE, tags },
+  });
 }
 
 /** Position in date-desc order becomes the 01A code the design prints. */
@@ -162,18 +177,18 @@ export async function getSettings(): Promise<Settings> {
   if (!isSanityConfigured) return placeholder.settings;
 
   const raw = await fetchFrom<Settings | null>(SETTINGS_QUERY, {}, [TAGS.settings]);
-  return raw ?? placeholder.settings;
+  return raw ?? EMPTY_SETTINGS;
 }
 
 export async function getHomeData(): Promise<HomeData> {
-  const fallback = {
-    featured: placeholder.featured,
-    sports: placeholder.sports,
-    latest: placeholder.latest,
-    about: placeholder.about,
-  };
-
-  if (!isSanityConfigured) return fallback;
+  if (!isSanityConfigured) {
+    return {
+      featured: placeholder.featured,
+      sports: placeholder.sports,
+      latest: placeholder.latest,
+      about: placeholder.about,
+    };
+  }
 
   const raw = await fetchFrom<{
     featured: RawSummary[] | null;
@@ -186,39 +201,24 @@ export async function getHomeData(): Promise<HomeData> {
     } | null;
   }>(HOME_QUERY, {}, [TAGS.game, TAGS.about, TAGS.settings]);
 
-  if (!raw) return fallback;
-
-  const games = (raw.featured ?? []).map(toSummary);
-  const hasGames = (raw.sports ?? []).some((entry) => entry.count > 0);
-
-  // With no games published, placeholder covers stand in for the whole strip
-  // rather than leaving the hero and the tiles empty next to live copy.
-  const sports: SportSummary[] = hasGames
-    ? SPORTS.map((sport) => {
-        const match = raw.sports?.find((entry) => entry.sport === sport);
-        return {
-          sport,
-          count: match?.count ?? 0,
-          cover: toContentImage(match?.cover),
-        };
-      })
-    : placeholder.sports;
-
-  const about: AboutSummary = raw.about
-    ? {
-        headline: raw.about.headline ?? placeholder.about.headline,
-        portrait: toContentImage(raw.about.portrait) ?? placeholder.about.portrait,
-        services: raw.about.services?.length
-          ? toServices(raw.about.services)
-          : placeholder.about.services,
-      }
-    : placeholder.about;
+  const sports: SportSummary[] = SPORTS.map((sport) => {
+    const match = raw.sports?.find((entry) => entry.sport === sport);
+    return {
+      sport,
+      count: match?.count ?? 0,
+      cover: toContentImage(match?.cover),
+    };
+  });
 
   return {
-    featured: games.length ? games : placeholder.featured,
+    featured: (raw.featured ?? []).map(toSummary),
     sports,
-    latest: raw.latest ? toGame(raw.latest) : placeholder.latest,
-    about,
+    latest: raw.latest ? toGame(raw.latest) : null,
+    about: {
+      headline: raw.about?.headline ?? "",
+      portrait: toContentImage(raw.about?.portrait),
+      services: toServices(raw.about?.services),
+    },
   };
 }
 
@@ -234,7 +234,7 @@ export async function getAboutPage(): Promise<AboutPage> {
     photos: (RawImage | null)[] | null;
   } | null>(ABOUT_QUERY, {}, [TAGS.about]);
 
-  if (!raw) return placeholder.aboutPage;
+  if (!raw) return EMPTY_ABOUT;
 
   return {
     name: raw.name ?? "",
@@ -253,8 +253,6 @@ export async function getWorkGames(): Promise<WorkGame[]> {
     (RawSummary & { date: string; statLine: string | null; hasVideo: boolean })[]
   >(WORK_QUERY, {}, [TAGS.game]);
 
-  if (!raw) return placeholder.workGames;
-
   return raw.map((game) => ({
     ...toSummary(game),
     date: game.date,
@@ -266,8 +264,7 @@ export async function getWorkGames(): Promise<WorkGame[]> {
 export async function getGameSlugs(): Promise<string[]> {
   if (!isSanityConfigured) return placeholder.games.map((game) => game.slug);
 
-  const slugs = await fetchFrom<string[]>(SLUGS_QUERY, {}, [TAGS.game], true);
-  return slugs ?? [];
+  return fetchFrom<string[]>(SLUGS_QUERY, {}, [TAGS.game], true);
 }
 
 export async function getGame(slug: string): Promise<GamePage | null> {

@@ -53,7 +53,13 @@ const SPORT_COUNTS = SPORTS.map(
 ).join(",\n  ");
 
 export const SETTINGS_QUERY = defineQuery(`
-  *[_type == "settings"][0]{email, instagramHandle, instagramUrl, location, contactIntro}
+  *[_type == "settings"][0]{
+    email,
+    instagramHandle,
+    instagramUrl,
+    location,
+    "contactIntro": coalesce(contactIntro, null)
+  }
 `);
 
 export const HOME_QUERY = defineQuery(`{
@@ -62,7 +68,7 @@ export const HOME_QUERY = defineQuery(`{
   ${SPORT_COUNTS}
   ],
   "latest": coalesce(
-    *[_type == "settings"][0].latestGame->[hidden != true]{${FULL_GAME}},
+    *[${VISIBLE} && _id == *[_type == "settings"][0].latestGame._ref][0]{${FULL_GAME}},
     *[${VISIBLE}] | ${ORDER}[0]{${FULL_GAME}}
   ),
   "about": *[_type == "about"][0]{

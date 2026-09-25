@@ -51,15 +51,17 @@ export default async function ContactPage() {
       </header>
 
       <ul className={styles.strip}>
-        {frames.map((frame, index) => (
-          <li
-            key={frame.label}
-            className={styles.cell}
-            style={{ "--i": index } as CSSProperties}
-          >
-            <Frame {...frame} />
-          </li>
-        ))}
+        {frames
+          .filter((frame) => frame.value)
+          .map((frame, index) => (
+            <li
+              key={frame.label}
+              className={styles.cell}
+              style={{ "--i": index } as CSSProperties}
+            >
+              <Frame {...frame} />
+            </li>
+          ))}
       </ul>
     </div>
   );
