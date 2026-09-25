@@ -39,11 +39,11 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${hanken.variable} ${courier.variable}`}>
-      <Analytics />
       <body>
         <Header settings={settings} />
         <main>{children}</main>
         <Footer settings={settings} />
+        <Analytics />
       </body>
     </html>
   );
