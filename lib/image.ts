@@ -26,8 +26,8 @@ export function toContentImage(raw: RawImage | null | undefined): ContentImage |
   return {
     url,
     alt: raw?.alt ?? "",
-    width: raw?.asset?.width ?? 0,
-    height: raw?.asset?.height ?? 0,
+    width: raw?.asset?.width ?? null,
+    height: raw?.asset?.height ?? null,
     lqip: raw?.asset?.lqip ?? null,
     hotspot: raw?.hotspot ?? null,
   };

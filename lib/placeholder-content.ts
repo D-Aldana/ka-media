@@ -38,6 +38,7 @@ export const settings: Settings = {
   instagramUrl: "https://www.instagram.com/kamedia._/",
   instagramHandle: "@kamedia._",
   location: "Prince George, BC",
+  contactIntro: null,
 };
 
 function storiesFor(gameIndex: number): StoryItem[] {

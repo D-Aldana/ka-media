@@ -10,8 +10,9 @@ export const SPORTS: Sport[] = ["basketball", "soccer", "football"];
 export type ContentImage = {
   url: string;
   alt: string;
-  width: number;
-  height: number;
+  /** Null when the asset has no dimension metadata. */
+  width: number | null;
+  height: number | null;
   lqip: string | null;
   hotspot: { x: number; y: number } | null;
 };
@@ -101,6 +102,8 @@ export type Settings = {
   instagramUrl: string;
   instagramHandle: string;
   location: string;
+  /** The paragraph under the Contact heading; null keeps the built-in copy. */
+  contactIntro: string | null;
 };
 
 export type HomeData = {

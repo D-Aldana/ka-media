@@ -28,6 +28,8 @@ export async function POST(req: NextRequest) {
     body.tags.forEach((tag) => revalidateTag(tag));
     return NextResponse.json({ revalidated: body.tags });
   } catch (error) {
-    return new Response((error as Error).message, { status: 500 });
+    // Nothing internal goes back to an unauthenticated caller.
+    console.error("Revalidation failed", error);
+    return new Response("Revalidation failed", { status: 500 });
   }
 }

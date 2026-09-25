@@ -15,18 +15,14 @@ export const storyVideo = defineType({
       type: "image",
       options: { hotspot: true },
       description: "Optional still shown before the reel plays.",
-    }),
-    defineField({
-      name: "posterAlt",
-      title: "Poster alt text",
-      type: "string",
-      hidden: ({ parent }) => !parent?.poster,
-      validation: (rule) =>
-        rule.max(160).custom((value, context) => {
-          const parent = context.parent as { poster?: unknown } | undefined;
-          if (parent?.poster && !value) return "Add alt text for the poster.";
-          return true;
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          validation: (rule) => rule.required().max(160),
         }),
+      ],
     }),
     defineField({ name: "caption", type: "string", validation: (rule) => rule.max(80) }),
   ],

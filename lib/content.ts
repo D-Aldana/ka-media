@@ -31,9 +31,10 @@ import { SPORTS } from "./types";
  * The only seam between the UI and the CMS. Each function reads Sanity and
  * maps the projection onto the types the components already take.
  *
- * With no `NEXT_PUBLIC_SANITY_PROJECT_ID` set these fall back to
- * `placeholder-content.ts`, so the site still renders against an empty or
- * unreachable dataset.
+ * Content falls back to `placeholder-content.ts` section by section: when no
+ * project is configured, when a read fails, and when a document simply is not
+ * there yet. A half-populated dataset therefore never renders a half-empty
+ * page.
  *
  * Two things are computed here rather than in GROQ: the `code` (01A, 02A …)
  * from each game's `rank` in date order, and images mapped to `ContentImage`.
@@ -42,15 +43,29 @@ import { SPORTS } from "./types";
 /** Cache tags let the publish webhook revalidate without a redeploy. */
 const TAGS = { game: "game", about: "about", settings: "settings" };
 
-function fetchFrom<T>(
+/**
+ * An hour is the backstop; the webhook is what makes a publish appear. The
+ * revalidate is what puts these reads in the data cache at all — without it
+ * `/work`, which is dynamic, would hit Sanity on every request and ignore the
+ * tags entirely.
+ */
+const REVALIDATE = 3600;
+
+async function fetchFrom<T>(
   query: string,
   params: Record<string, unknown>,
   tags: string[],
   fresh = false,
-): Promise<T> {
-  return (fresh ? freshClient : client).fetch<T>(query, params, {
-    next: { tags },
-  });
+): Promise<T | null> {
+  try {
+    return await (fresh ? freshClient : client).fetch<T>(query, params, {
+      next: fresh ? { revalidate: 0 } : { revalidate: REVALIDATE, tags },
+    });
+  } catch (error) {
+    // A portfolio is better served stale than 500ing on a blip from Sanity.
+    console.error("Sanity read failed", { query: query.slice(0, 60), error });
+    return null;
+  }
 }
 
 /** Position in date-desc order becomes the 01A code the design prints. */
@@ -151,14 +166,14 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export async function getHomeData(): Promise<HomeData> {
-  if (!isSanityConfigured) {
-    return {
-      featured: placeholder.featured,
-      sports: placeholder.sports,
-      latest: placeholder.latest,
-      about: placeholder.about,
-    };
-  }
+  const fallback = {
+    featured: placeholder.featured,
+    sports: placeholder.sports,
+    latest: placeholder.latest,
+    about: placeholder.about,
+  };
+
+  if (!isSanityConfigured) return fallback;
 
   const raw = await fetchFrom<{
     featured: RawSummary[] | null;
@@ -171,25 +186,38 @@ export async function getHomeData(): Promise<HomeData> {
     } | null;
   }>(HOME_QUERY, {}, [TAGS.game, TAGS.about, TAGS.settings]);
 
-  const sports: SportSummary[] = SPORTS.map((sport) => {
-    const match = raw.sports?.find((entry) => entry.sport === sport);
-    return {
-      sport,
-      count: match?.count ?? 0,
-      cover: toContentImage(match?.cover),
-    };
-  });
+  if (!raw) return fallback;
 
-  const about: AboutSummary = {
-    headline: raw.about?.headline ?? "",
-    portrait: toContentImage(raw.about?.portrait),
-    services: toServices(raw.about?.services),
-  };
+  const games = (raw.featured ?? []).map(toSummary);
+  const hasGames = (raw.sports ?? []).some((entry) => entry.count > 0);
+
+  // With no games published, placeholder covers stand in for the whole strip
+  // rather than leaving the hero and the tiles empty next to live copy.
+  const sports: SportSummary[] = hasGames
+    ? SPORTS.map((sport) => {
+        const match = raw.sports?.find((entry) => entry.sport === sport);
+        return {
+          sport,
+          count: match?.count ?? 0,
+          cover: toContentImage(match?.cover),
+        };
+      })
+    : placeholder.sports;
+
+  const about: AboutSummary = raw.about
+    ? {
+        headline: raw.about.headline ?? placeholder.about.headline,
+        portrait: toContentImage(raw.about.portrait) ?? placeholder.about.portrait,
+        services: raw.about.services?.length
+          ? toServices(raw.about.services)
+          : placeholder.about.services,
+      }
+    : placeholder.about;
 
   return {
-    featured: (raw.featured ?? []).map(toSummary),
+    featured: games.length ? games : placeholder.featured,
     sports,
-    latest: raw.latest ? toGame(raw.latest) : null,
+    latest: raw.latest ? toGame(raw.latest) : placeholder.latest,
     about,
   };
 }
@@ -225,6 +253,8 @@ export async function getWorkGames(): Promise<WorkGame[]> {
     (RawSummary & { date: string; statLine: string | null; hasVideo: boolean })[]
   >(WORK_QUERY, {}, [TAGS.game]);
 
+  if (!raw) return placeholder.workGames;
+
   return raw.map((game) => ({
     ...toSummary(game),
     date: game.date,
@@ -236,7 +266,8 @@ export async function getWorkGames(): Promise<WorkGame[]> {
 export async function getGameSlugs(): Promise<string[]> {
   if (!isSanityConfigured) return placeholder.games.map((game) => game.slug);
 
-  return fetchFrom<string[]>(SLUGS_QUERY, {}, [TAGS.game], true);
+  const slugs = await fetchFrom<string[]>(SLUGS_QUERY, {}, [TAGS.game], true);
+  return slugs ?? [];
 }
 
 export async function getGame(slug: string): Promise<GamePage | null> {
