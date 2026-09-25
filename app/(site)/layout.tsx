@@ -5,6 +5,7 @@ import { Courier_Prime, Hanken_Grotesk } from "next/font/google";
 
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { RouteMemory } from "@/components/site/RouteMemory";
 import { getSettings } from "@/lib/content";
 
 import "../globals.css";
@@ -40,6 +41,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${hanken.variable} ${courier.variable}`}>
       <body>
+        <RouteMemory />
         <Header settings={settings} />
         <main>{children}</main>
         <Footer settings={settings} />

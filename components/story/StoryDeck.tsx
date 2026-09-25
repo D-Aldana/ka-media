@@ -1,13 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { CoverImage } from "@/components/ui/CoverImage";
 import type { ContentImage, StoryItem } from "@/lib/types";
 
 import deck from "./deck.module.css";
+import { useCloseStory } from "./useCloseStory";
 import styles from "./StoryDeck.module.css";
 
 /** Mux only loads for games that actually have a reel in them. */
@@ -28,8 +28,6 @@ type Props = {
   children?: React.ReactNode;
   /** Offered once the last item has played out. */
   endPrompt?: React.ReactNode;
-  /** Where Escape leaves the story. */
-  closeHref: string;
   className?: string;
   sizes: string;
 };
@@ -47,11 +45,10 @@ export function StoryDeck({
   actions,
   children,
   endPrompt,
-  closeHref,
   className,
   sizes,
 }: Props) {
-  const router = useRouter();
+  const { close } = useCloseStory();
   const count = stories.length;
 
   const [index, setIndex] = useState(0);
@@ -159,7 +156,7 @@ export function StoryDeck({
           setWantPlay((playing) => !playing);
           break;
         case "Escape":
-          router.push(closeHref);
+          close();
           break;
         default:
           return;
@@ -169,7 +166,7 @@ export function StoryDeck({
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [next, previous, router, closeHref]);
+  }, [next, previous, close]);
 
   const onProgress = useCallback((fraction: number) => {
     if (bar.current) bar.current.style.width = `${fraction * 100}%`;
