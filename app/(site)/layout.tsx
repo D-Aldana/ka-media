@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next";
+
 import type { Metadata } from "next";
 import { Courier_Prime, Hanken_Grotesk } from "next/font/google";
 
@@ -37,6 +39,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${hanken.variable} ${courier.variable}`}>
+      <Analytics />
       <body>
         <Header settings={settings} />
         <main>{children}</main>
