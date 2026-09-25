@@ -48,3 +48,7 @@ docs/
 
 # keep the example, ignore real env files
 !.env.example
+
+# generated and re-created by `next dev`
+AGENTS.md
+CLAUDE.md
