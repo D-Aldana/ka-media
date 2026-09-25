@@ -55,6 +55,13 @@ const TAGS = { game: "game", about: "about", settings: "settings" };
 const REVALIDATE = 3600;
 
 /**
+ * In development nothing invalidates the tags — the publish webhook points at
+ * the deployed site — so reads go straight to Sanity and an edit shows up on
+ * the next refresh.
+ */
+const isDev = process.env.NODE_ENV === "development";
+
+/**
  * Matches a blank settings document exactly: `SETTINGS_QUERY` coalesces every
  * field, because GROQ omits unset keys rather than projecting null — without
  * that, `Settings` would promise `string` and hand back `undefined`.
@@ -82,8 +89,9 @@ function fetchFrom<T>(
   tags: string[],
   fresh = false,
 ): Promise<T> {
-  return (fresh ? freshClient : client).fetch<T>(query, params, {
-    next: fresh ? { revalidate: 0 } : { revalidate: REVALIDATE, tags },
+  const live = fresh || isDev;
+  return (live ? freshClient : client).fetch<T>(query, params, {
+    next: live ? { revalidate: 0 } : { revalidate: REVALIDATE, tags },
   });
 }
 
