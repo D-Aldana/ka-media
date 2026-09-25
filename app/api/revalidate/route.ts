@@ -25,7 +25,9 @@ export async function POST(req: NextRequest) {
       return new Response("Missing tags", { status: 400 });
     }
 
-    body.tags.forEach((tag) => revalidateTag(tag));
+    // Next 16 requires a cacheLife profile; `expire: 0` is "stop serving the
+    // old entry now", which is the point of a publish webhook.
+    body.tags.forEach((tag) => revalidateTag(tag, { expire: 0 }));
     return NextResponse.json({ revalidated: body.tags });
   } catch (error) {
     // Nothing internal goes back to an unauthenticated caller.
