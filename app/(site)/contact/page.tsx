@@ -5,9 +5,14 @@ import { getSettings } from "@/lib/content";
 
 import styles from "./page.module.css";
 
-/** Used until Krystien writes his own intro in the Studio. */
+/** Used until Krystien writes his own copy in the Studio. */
 const DEFAULT_INTRO =
   "A game coming up, a question about a photo, or just want to talk shop. Teams, schools, clubs, athletes and parents all welcome.";
+const DEFAULT_NOTES = {
+  email: "The fastest way to reach me — I usually reply within a day.",
+  instagram: "DMs are open, and new work lands here first.",
+  location: "Travelling for a tournament is no problem — just ask.",
+};
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -22,19 +27,19 @@ export default async function ContactPage() {
     {
       label: "email",
       value: settings.email,
-      note: "The fastest way to reach me — I usually reply within a day.",
+      note: settings.emailNote ?? DEFAULT_NOTES.email,
       href: `mailto:${settings.email}`,
     },
     {
       label: "instagram",
       value: settings.instagramHandle,
-      note: "DMs are open, and new work lands here first.",
+      note: settings.instagramNote ?? DEFAULT_NOTES.instagram,
       href: settings.instagramUrl,
     },
     {
       label: "based in",
       value: settings.location,
-      note: "Travelling for a tournament is no problem — just ask.",
+      note: settings.locationNote ?? DEFAULT_NOTES.location,
       href: null,
     },
   ];

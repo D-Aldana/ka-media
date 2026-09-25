@@ -72,6 +72,9 @@ const EMPTY_SETTINGS: Settings = {
   instagramHandle: "",
   location: "",
   contactIntro: null,
+  emailNote: null,
+  instagramNote: null,
+  locationNote: null,
 };
 
 const EMPTY_ABOUT: AboutPage = {

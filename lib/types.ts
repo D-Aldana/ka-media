@@ -104,6 +104,10 @@ export type Settings = {
   location: string;
   /** The paragraph under the Contact heading; null keeps the built-in copy. */
   contactIntro: string | null;
+  /** The lines under each contact detail; null keeps the built-in copy. */
+  emailNote: string | null;
+  instagramNote: string | null;
+  locationNote: string | null;
 };
 
 export type HomeData = {
