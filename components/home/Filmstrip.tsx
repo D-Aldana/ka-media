@@ -6,15 +6,23 @@ import type { GameSummary } from "@/lib/types";
 import styles from "./Filmstrip.module.css";
 
 /**
+ * Below this the strip cannot fill a wide screen, so the duplicate copy would
+ * read as the same game twice rather than as a loop. 300px frames + 20px gap.
+ */
+const MIN_TO_LOOP = 6;
+
+/**
  * CSS-only marquee: the covers are rendered twice and the row slides half its
  * width, so the loop is seamless. The second copy is hidden from assistive
- * tech and the tab order.
+ * tech and the tab order. Too few games and it becomes a plain scroller.
  */
 export function Filmstrip({ games }: { games: GameSummary[] }) {
+  const looping = games.length >= MIN_TO_LOOP;
+
   return (
-    <div className={styles.track}>
+    <div className={styles.track} data-looping={looping || undefined}>
       <div className={styles.strip}>
-        {[0, 1].map((copy) =>
+        {(looping ? [0, 1] : [0]).map((copy) =>
           games.map((game, index) => (
             <Link
               key={`${copy}-${game._id}`}

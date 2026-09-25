@@ -3,17 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { splitStatLine } from "@/components/story/statLine";
+import { StoryCloseButton, StoryCloseLink } from "@/components/story/StoryClose";
 import { StoryDeck } from "@/components/story/StoryDeck";
 import { CoverImage } from "@/components/ui/CoverImage";
-import { UnderlineLink } from "@/components/ui/UnderlineLink";
 import { getGame, getGameSlugs, getSettings } from "@/lib/content";
 import { formatDate } from "@/lib/format";
 import type { GameSummary } from "@/lib/types";
 
 import styles from "./page.module.css";
-
-/** Close goes back to the Work grid, as in the design. */
-const CLOSE_HREF = "/work";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -53,9 +50,7 @@ export default async function GameStoryPage({ params }: Props) {
 
   return (
     <section className={styles.page} data-route="story">
-      <UnderlineLink href={CLOSE_HREF} className={styles.close}>
-        <span aria-hidden="true">×</span> close
-      </UnderlineLink>
+      <StoryCloseLink className={styles.close} />
 
       <div className={styles.left}>
         <span className={styles.label}>{meta}</span>
@@ -70,25 +65,9 @@ export default async function GameStoryPage({ params }: Props) {
         stories={game.stories}
         title={game.title}
         handle={settings.instagramHandle}
-        closeHref={CLOSE_HREF}
         className={styles.stage}
         sizes="(max-width: 860px) 100vw, 420px"
-        actions={
-          <Link href={CLOSE_HREF} className={styles.mobileClose}>
-            <span className="sr-only">Close story</span>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <path d="M4 4l12 12M16 4L4 16" />
-            </svg>
-          </Link>
-        }
+        actions={<StoryCloseButton className={styles.mobileClose} />}
         endPrompt={next && <NextGameLink game={next} className={styles.endNext} />}
       >
         {game.statLine && (
