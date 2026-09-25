@@ -2,7 +2,7 @@ import { Courier_Prime, Hanken_Grotesk } from "next/font/google";
 import Link from "next/link";
 
 import "./globals.css";
-import styles from "./(site)/not-found.module.css";
+import styles from "./not-found.module.css";
 
 const hanken = Hanken_Grotesk({
   subsets: ["latin"],

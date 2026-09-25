@@ -54,10 +54,10 @@ const SPORT_COUNTS = SPORTS.map(
 
 export const SETTINGS_QUERY = defineQuery(`
   *[_type == "settings"][0]{
-    email,
-    instagramHandle,
-    instagramUrl,
-    location,
+    "email": coalesce(email, ""),
+    "instagramHandle": coalesce(instagramHandle, ""),
+    "instagramUrl": coalesce(instagramUrl, ""),
+    "location": coalesce(location, ""),
     "contactIntro": coalesce(contactIntro, null)
   }
 `);

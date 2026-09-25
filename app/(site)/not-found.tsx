@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import styles from "./not-found.module.css";
+import styles from "../not-found.module.css";
 
 /** Catches notFound() thrown inside the site group, with the chrome intact. */
 export default function NotFound() {

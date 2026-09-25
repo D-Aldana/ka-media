@@ -54,7 +54,11 @@ const TAGS = { game: "game", about: "about", settings: "settings" };
  */
 const REVALIDATE = 3600;
 
-/** Shown before Krystien has filled in Settings; never a fabricated link. */
+/**
+ * Matches a blank settings document exactly: `SETTINGS_QUERY` coalesces every
+ * field, because GROQ omits unset keys rather than projecting null — without
+ * that, `Settings` would promise `string` and hand back `undefined`.
+ */
 const EMPTY_SETTINGS: Settings = {
   email: "",
   instagramUrl: "",

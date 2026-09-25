@@ -127,7 +127,7 @@ export function MobileMenu({ settings }: { settings: Settings }) {
           {settings.instagramUrl && (
             <a href={settings.instagramUrl}>{settings.instagramHandle}</a>
           )}
-          <span>{settings.location.toLowerCase()}</span>
+          {settings.location && <span>{settings.location.toLowerCase()}</span>}
         </div>
       </div>
     </>

@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/(site)/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fonts are Hanken Grotesk and Courier Prime, loaded through [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts).
 
 ## Learn More
 
@@ -51,6 +51,11 @@ is the only module that talks to it — components take plain types from
 
 Set all three in Vercel. A configured project with an empty dataset renders
 empty sections — it never falls back to placeholder content.
+
+**Fill in Settings first.** It drives the email, Instagram and location shown
+in the footer, the mobile menu, the home CTA and `/contact`. Until it exists,
+those elements are omitted rather than rendered blank, which leaves `/contact`
+with a heading and no way to make contact.
 
 ### Publish webhook
 
