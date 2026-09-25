@@ -1,13 +1,21 @@
+/* Only the looping strip is clipped; a short one stays scrollable. */
 .track {
+  overflow-x: auto;
+}
+
+.track[data-looping] {
   overflow: hidden;
 }
 
-/* The list is rendered twice; -50% lands exactly on the second copy. */
 .strip {
   display: flex;
   gap: 20px;
   width: max-content;
   padding-left: var(--pad);
+}
+
+/* The list is rendered twice; -50% lands exactly on the second copy. */
+.track[data-looping] .strip {
   animation: slide 60s linear infinite;
 }
 
@@ -19,6 +27,12 @@
 
 .track:hover .strip {
   animation-play-state: paused;
+}
+
+/* Scroll padding for the short strip; it would skew the loop's -50%. */
+.track:not([data-looping]) .strip::after {
+  content: "";
+  flex: 0 0 var(--pad);
 }
 
 .frame {
@@ -54,6 +68,9 @@
 @media (max-width: 860px) {
   .strip {
     gap: 12px;
+  }
+
+  .track[data-looping] .strip {
     animation-duration: 45s;
   }
 
@@ -77,7 +94,7 @@
     animation: none !important;
   }
 
-  .track {
+  .track[data-looping] {
     overflow-x: auto;
   }
 }
