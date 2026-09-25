@@ -16,12 +16,16 @@ export function ContactCta({ settings }: { settings: Settings }) {
       </Reveal>
       <Reveal className={styles.row}>
         <Pill href="/contact">Get in touch</Pill>
-        <UnderlineLink href={`mailto:${settings.email}`}>
-          {settings.email}
-        </UnderlineLink>
-        <UnderlineLink href={settings.instagramUrl}>
-          {settings.instagramHandle}
-        </UnderlineLink>
+        {settings.email && (
+          <UnderlineLink href={`mailto:${settings.email}`}>
+            {settings.email}
+          </UnderlineLink>
+        )}
+        {settings.instagramUrl && (
+          <UnderlineLink href={settings.instagramUrl}>
+            {settings.instagramHandle}
+          </UnderlineLink>
+        )}
       </Reveal>
     </section>
   );

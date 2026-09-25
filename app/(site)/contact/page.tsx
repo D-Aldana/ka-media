@@ -5,6 +5,10 @@ import { getSettings } from "@/lib/content";
 
 import styles from "./page.module.css";
 
+/** Used until Krystien writes his own intro in the Studio. */
+const DEFAULT_INTRO =
+  "A game coming up, a question about a photo, or just want to talk shop. Teams, schools, clubs, athletes and parents all welcome.";
+
 export const metadata: Metadata = {
   title: "Contact",
   description:
@@ -43,22 +47,21 @@ export default async function ContactPage() {
           Shoot me
           <br />a message.
         </h1>
-        <p className={styles.blurb}>
-          A game coming up, a question about a photo, or just want to talk shop.
-          Teams, schools, clubs, athletes and parents all welcome.
-        </p>
+        <p className={styles.blurb}>{settings.contactIntro ?? DEFAULT_INTRO}</p>
       </header>
 
       <ul className={styles.strip}>
-        {frames.map((frame, index) => (
-          <li
-            key={frame.label}
-            className={styles.cell}
-            style={{ "--i": index } as CSSProperties}
-          >
-            <Frame {...frame} />
-          </li>
-        ))}
+        {frames
+          .filter((frame) => frame.value)
+          .map((frame, index) => (
+            <li
+              key={frame.label}
+              className={styles.cell}
+              style={{ "--i": index } as CSSProperties}
+            >
+              <Frame {...frame} />
+            </li>
+          ))}
       </ul>
     </div>
   );

@@ -5,7 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { getSettings } from "@/lib/content";
 
-import "./globals.css";
+import "../globals.css";
 
 const hanken = Hanken_Grotesk({
   subsets: ["latin"],

@@ -7,10 +7,13 @@ export function Footer({ settings }: { settings: Settings }) {
   return (
     <footer className={styles.footer}>
       <span>
-        © {new Date().getFullYear()} ka-media · {settings.location}
+        © {new Date().getFullYear()} ka-media
+        {settings.location && ` · ${settings.location}`}
       </span>
       <div className={styles.links}>
-        <UnderlineLink href={settings.instagramUrl}>Instagram</UnderlineLink>
+        {settings.instagramUrl && (
+          <UnderlineLink href={settings.instagramUrl}>Instagram</UnderlineLink>
+        )}
         <UnderlineLink href="#top">Back to top ↑</UnderlineLink>
       </div>
     </footer>

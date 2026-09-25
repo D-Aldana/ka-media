@@ -28,7 +28,7 @@ export default async function AboutPage() {
 
         <div className={styles.intro}>
           <span className={`${styles.label} ${styles.rise} ${styles.d1}`}>
-            about · {settings.location.toLowerCase()}
+            about{settings.location && ` · ${settings.location.toLowerCase()}`}
           </span>
           <h1 className={`${styles.name} ${styles.rise} ${styles.d1}`}>
             {about.name}
