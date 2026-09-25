@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@mux/mux-player-react": "^3.13.2",
-    "@sanity/vision": "^5.31.2",
-    "next": "15.5.9",
-    "next-sanity": "^11.6.13",
+    "@sanity/vision": "^6.13.2",
+    "next": "^16.3.5",
+    "next-sanity": "^13.3.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "sanity": "^5.31.2",
+    "sanity": "^6.13.2",
     "sanity-plugin-mux-input": "^5.0.12",
     "styled-components": "^6.5.3"
   },
@@ -25,7 +25,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.9",
+    "eslint-config-next": "^16.3.5",
     "typescript": "^5"
   }
 }
