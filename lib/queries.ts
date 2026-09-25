@@ -58,7 +58,10 @@ export const SETTINGS_QUERY = defineQuery(`
     "instagramHandle": coalesce(instagramHandle, ""),
     "instagramUrl": coalesce(instagramUrl, ""),
     "location": coalesce(location, ""),
-    "contactIntro": coalesce(contactIntro, null)
+    "contactIntro": coalesce(contactIntro, null),
+    "emailNote": coalesce(emailNote, null),
+    "instagramNote": coalesce(instagramNote, null),
+    "locationNote": coalesce(locationNote, null)
   }
 `);
 

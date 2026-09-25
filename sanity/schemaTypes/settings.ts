@@ -11,6 +11,11 @@ export const settings = defineType({
       validation: (rule) => rule.required().email(),
     }),
     defineField({
+      name: "emailNote",
+      type: "string",
+      description: "The line under the email on the Contact page.",
+    }),
+    defineField({
       name: "instagramHandle",
       type: "string",
       description: "Shown as text, e.g. @kamedia._",
@@ -22,9 +27,19 @@ export const settings = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "instagramNote",
+      type: "string",
+      description: "The line under the Instagram handle on the Contact page.",
+    }),
+    defineField({
       name: "location",
       type: "string",
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "locationNote",
+      type: "string",
+      description: "The line under the location on the Contact page.",
     }),
     defineField({
       name: "contactIntro",
