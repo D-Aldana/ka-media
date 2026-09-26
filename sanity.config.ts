@@ -1,6 +1,5 @@
 "use client";
 
-import { muxInput } from "sanity-plugin-mux-input";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
@@ -14,7 +13,7 @@ export default defineConfig({
   projectId,
   dataset,
   schema: { types: schemaTypes },
-  plugins: [structureTool({ structure }), muxInput(), visionTool({ defaultApiVersion: apiVersion })],
+  plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
   document: {
     // The singletons are reached through the sidebar, never created ad hoc.
     newDocumentOptions: (prev) => prev.filter((item) => item.templateId === "game"),

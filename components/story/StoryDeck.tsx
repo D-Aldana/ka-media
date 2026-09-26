@@ -10,7 +10,7 @@ import deck from "./deck.module.css";
 import { useCloseStory } from "./useCloseStory";
 import styles from "./StoryDeck.module.css";
 
-/** Mux only loads for games that actually have a reel in them. */
+/** The player only loads for games that actually have a reel in them. */
 const StoryVideo = dynamic(() => import("./StoryVideo"), { ssr: false });
 
 const IMAGE_DURATION = 5000;
@@ -33,7 +33,7 @@ type Props = {
 };
 
 /**
- * The full deck: tap zones, arrow keys, swipe, and real Mux playback for reels.
+ * The full deck: tap zones, arrow keys, swipe, and real playback for reels.
  * Images run on a fixed timer; a video drives its own bar from `timeupdate`.
  * Under reduced motion nothing advances on its own — on image slides the tap
  * zones and arrow keys are the only way through; reels still get a play control.
@@ -273,7 +273,7 @@ export function StoryDeck({
               />
               {i === index && item._type === "storyVideo" && (
                 <StoryVideo
-                  playbackId={item.playbackId}
+                  src={item.url}
                   title={`${title} — story ${i + 1}`}
                   playing={running}
                   onProgress={onProgress}

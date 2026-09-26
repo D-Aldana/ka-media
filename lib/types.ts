@@ -27,10 +27,9 @@ export type StoryItem =
   | {
       _key: string;
       _type: "storyVideo";
-      playbackId: string;
+      /** The MP4 on Sanity's asset CDN. */
+      url: string;
       poster: ContentImage | null;
-      /** Seconds, from Mux. Capped at 60 when it drives a progress bar. */
-      duration: number | null;
       caption: string | null;
     };
 
