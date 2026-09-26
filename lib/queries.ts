@@ -61,7 +61,12 @@ export const SETTINGS_QUERY = defineQuery(`
     "contactIntro": coalesce(contactIntro, null),
     "emailNote": coalesce(emailNote, null),
     "instagramNote": coalesce(instagramNote, null),
-    "locationNote": coalesce(locationNote, null)
+    "locationNote": coalesce(locationNote, null),
+    "seo": {
+      "title": coalesce(seo.title, null),
+      "description": coalesce(seo.description, null),
+      "shareImage": seo.shareImage${IMAGE}
+    }
   }
 `);
 
@@ -75,6 +80,7 @@ export const HOME_QUERY = defineQuery(`{
     *[${VISIBLE}] | ${ORDER}[0]{${FULL_GAME}}
   ),
   "about": *[_type == "about"][0]{
+    name,
     headline,
     portrait${IMAGE},
     services[]{_key, title, description}

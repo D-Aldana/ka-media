@@ -75,6 +75,7 @@ const EMPTY_SETTINGS: Settings = {
   emailNote: null,
   instagramNote: null,
   locationNote: null,
+  seo: { title: null, description: null, shareImage: null },
 };
 
 const EMPTY_ABOUT: AboutPage = {
@@ -191,8 +192,21 @@ function toServices(raw: RawService[] | null | undefined): Service[] {
 export async function getSettings(): Promise<Settings> {
   if (!isSanityConfigured) return placeholder.settings;
 
-  const raw = await fetchFrom<Settings | null>(SETTINGS_QUERY, {}, [TAGS.settings]);
-  return raw ?? EMPTY_SETTINGS;
+  type RawSettings = Omit<Settings, "seo"> & {
+    seo: { title: string | null; description: string | null; shareImage: RawImage | null };
+  };
+
+  const raw = await fetchFrom<RawSettings | null>(SETTINGS_QUERY, {}, [TAGS.settings]);
+  if (!raw) return EMPTY_SETTINGS;
+
+  return {
+    ...raw,
+    seo: {
+      title: raw.seo?.title ?? null,
+      description: raw.seo?.description ?? null,
+      shareImage: toContentImage(raw.seo?.shareImage),
+    },
+  };
 }
 
 export async function getHomeData(): Promise<HomeData> {
@@ -210,6 +224,7 @@ export async function getHomeData(): Promise<HomeData> {
     sports: { sport: Sport; count: number; cover: RawImage | null }[] | null;
     latest: RawGame | null;
     about: {
+      name: string | null;
       headline: string | null;
       portrait: RawImage | null;
       services: RawService[] | null;
@@ -230,6 +245,7 @@ export async function getHomeData(): Promise<HomeData> {
     sports,
     latest: raw.latest ? toGame(raw.latest) : null,
     about: {
+      name: raw.about?.name ?? "",
       headline: raw.about?.headline ?? "",
       portrait: toContentImage(raw.about?.portrait),
       services: toServices(raw.about?.services),

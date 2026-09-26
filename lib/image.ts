@@ -32,3 +32,31 @@ export function toContentImage(raw: RawImage | null | undefined): ContentImage |
     hotspot: raw?.hotspot ?? null,
   };
 }
+
+/**
+ * Open Graph wants a 1200×630 crop; the hotspot decides what survives it.
+ * Explicitly JPEG rather than `auto=format`: link-preview scrapers are not
+ * browsers, and several of them will not render the WebP that would negotiate.
+ */
+export function ogImage(image: ContentImage | null): {
+  url: string;
+  width: number;
+  height: number;
+  alt: string;
+} | null {
+  if (!image) return null;
+
+  const url = new URL(image.url);
+  url.searchParams.set("w", "1200");
+  url.searchParams.set("h", "630");
+  url.searchParams.set("fit", "crop");
+  url.searchParams.set("fm", "jpg");
+  url.searchParams.set("q", "80");
+  if (image.hotspot) {
+    url.searchParams.set("crop", "focalpoint");
+    url.searchParams.set("fp-x", String(image.hotspot.x));
+    url.searchParams.set("fp-y", String(image.hotspot.y));
+  }
+
+  return { url: url.href, width: 1200, height: 630, alt: image.alt };
+}

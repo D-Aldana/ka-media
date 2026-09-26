@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Krystien Aldana shoots game-day photography, highlight and recruiting films, and social-ready edits for teams in Prince George, BC.",
+  alternates: { canonical: "/about" },
 };
 
 export default async function AboutPage() {

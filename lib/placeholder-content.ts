@@ -42,6 +42,7 @@ export const settings: Settings = {
   emailNote: null,
   instagramNote: null,
   locationNote: null,
+  seo: { title: null, description: null, shareImage: null },
 };
 
 function storiesFor(gameIndex: number): StoryItem[] {
@@ -153,6 +154,7 @@ const services: Service[] = [
 ];
 
 export const about: AboutSummary = {
+  name: "Krystien Aldana",
   headline:
     "ka-media is Krystien Aldana — a sports photographer and filmmaker in Prince George, BC, shooting the raw seconds after the whistle.",
   portrait: null,

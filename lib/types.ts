@@ -80,6 +80,8 @@ export type Service = {
 };
 
 export type AboutSummary = {
+  /** Krystien's name, which only the home page's JSON-LD reads. */
+  name: string;
   headline: string;
   portrait: ContentImage | null;
   services: Service[];
@@ -108,6 +110,12 @@ export type Settings = {
   emailNote: string | null;
   instagramNote: string | null;
   locationNote: string | null;
+  /** Overrides for the site-wide title, description and share image. */
+  seo: {
+    title: string | null;
+    description: string | null;
+    shareImage: ContentImage | null;
+  };
 };
 
 export type HomeData = {
