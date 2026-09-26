@@ -4,6 +4,7 @@
   z-index: 1;
   width: 100%;
   height: 100%;
+  object-fit: cover;
   /* Hold the slide's poster until there is a real frame to show. */
   opacity: 0;
   transition: opacity 0.5s var(--ease);

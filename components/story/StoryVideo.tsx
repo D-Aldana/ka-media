@@ -1,6 +1,5 @@
 "use client";
 
-import MuxPlayer from "@mux/mux-player-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import styles from "./StoryVideo.module.css";
@@ -9,8 +8,8 @@ import styles from "./StoryVideo.module.css";
 export const STORY_CAP = 60;
 
 type Props = {
-  playbackId: string;
-  /** Names the stream for assistive tech and for Mux's own metadata. */
+  src: string;
+  /** Names the reel for assistive tech. */
   title: string;
   playing: boolean;
   /** 0–1 of the capped length, on every timeupdate. */
@@ -19,19 +18,13 @@ type Props = {
 };
 
 /**
- * The only place a stream is allowed to start. Mounted by StoryDeck for the
+ * The only place a reel is allowed to start. Mounted by StoryDeck for the
  * active item alone and unmounted the moment the deck moves on, so nothing
  * buffers in the background. The slide underneath stays visible as the poster
  * until the first frame is actually playing.
  */
-export default function StoryVideo({
-  playbackId,
-  title,
-  playing,
-  onProgress,
-  onDone,
-}: Props) {
-  const ref = useRef<React.ComponentRef<typeof MuxPlayer>>(null);
+export default function StoryVideo({ src, title, playing, onProgress, onDone }: Props) {
+  const ref = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
   const done = useRef(false);
 
@@ -63,25 +56,18 @@ export default function StoryVideo({
   }, [finish, onProgress]);
 
   return (
-    <MuxPlayer
+    <video
       ref={ref}
       className={[styles.video, started && styles.on].filter(Boolean).join(" ")}
-      playbackId={playbackId}
-      streamType="on-demand"
-      title={title}
+      src={src}
+      aria-label={title}
       muted
       playsInline
-      nohotkeys
-      /* The slide below is the poster; Mux's generated one would flash over it. */
-      poster=""
+      preload="auto"
       onCanPlay={sync}
       onPlaying={() => setStarted(true)}
       onTimeUpdate={tick}
       onEnded={finish}
-      style={{
-        "--controls": "none",
-        "--media-object-fit": "cover",
-      }}
     />
   );
 }

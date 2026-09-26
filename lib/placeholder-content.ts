@@ -30,8 +30,9 @@ const sportOrder = [
   "soccer",
 ] as const;
 
-/** Mux's own public demo asset, so the deck has something real to play. */
-const DEMO_PLAYBACK_ID = "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe";
+/** A public sample clip, so the deck has something real to play. */
+const DEMO_VIDEO_URL =
+  "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
 
 export const settings: Settings = {
   email: "aldanakrystien@gmail.com",
@@ -71,9 +72,8 @@ function storiesFor(gameIndex: number): StoryItem[] {
     items.splice(1, 0, {
       _key: `g${gameIndex}-reel`,
       _type: "storyVideo",
-      playbackId: DEMO_PLAYBACK_ID,
+      url: DEMO_VIDEO_URL,
       poster: null,
-      duration: 15,
       caption: "[Highlight reel — the play that decided it.]",
     });
   }

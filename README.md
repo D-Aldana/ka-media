@@ -57,6 +57,48 @@ in the footer, the mobile menu, the home CTA and `/contact`. Until it exists,
 those elements are omitted rather than rendered blank, which leaves `/contact`
 with a heading and no way to make contact.
 
+### Video
+
+Reels are plain MP4 files uploaded to Sanity alongside the photos, played with a
+native `<video>`. There is no video host and no transcoding, so **the file you
+upload is the file every visitor downloads** — compress before uploading:
+
+```bash
+ffmpeg -i in.mov -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920" \
+  -c:v libx264 -crf 23 -preset slow -c:a aac -b:a 128k -movflags +faststart out.mp4
+```
+
+`+faststart` moves the index to the front of the file; without it playback waits
+for the whole download. Aim for under 10 MB per reel — a 20-second clip lands
+around 6 MB at these settings.
+
+Use the original video, not an Instagram download: re-encoding an export that
+was already re-encoded is what makes clips look mushy.
+
+Sanity's free plan allows 100 GB of bandwidth a month and **does not permit
+overages** — it blocks instead. Images come out of the same allowance, so a reel
+left uncompressed spends the whole site's budget, not just its own. Each reel
+only loads when a visitor reaches its slide, which is what keeps that number
+comfortable.
+
+Two things watch that for you. The Studio refuses a reel over 12 MB at publish
+time, so an uncompressed file never reaches the dataset. And:
+
+```bash
+npm run usage
+```
+
+prints what the dataset stores, its share of the 100 GB, and any reel over the
+10 MB budget. Worth running after loading a batch of games.
+
+Storage is the half that lives in the dataset. **Bandwidth is not** — read that
+in [Sanity Manage](https://www.sanity.io/manage) → the project → Usage, which is
+also the only place that shows how close the month is to blocking. Check it
+after anything that sends real traffic, like a story link from his Instagram.
+If it ever gets tight, the fix is to move the MP4s to a bucket with free egress
+(Cloudflare R2) and store the URL instead of the file — the player takes a plain
+`src`, so nothing else changes.
+
 ### Publish webhook
 
 `/api/revalidate` revalidates by cache tag, so publishing doesn't need a

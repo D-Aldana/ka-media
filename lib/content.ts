@@ -128,12 +128,11 @@ type RawStory = {
   _type: "storyImage" | "storyVideo";
   caption: string | null;
   image?: RawImage | null;
-  playbackId?: string | null;
-  duration?: number | null;
+  url?: string | null;
   poster?: RawImage | null;
 };
 
-/** A reel with no playback id is still encoding, so it is left out. */
+/** A reel whose file never finished uploading is left out. */
 function toStories(raw: RawStory[] | null | undefined): StoryItem[] {
   return (raw ?? []).flatMap((item): StoryItem[] => {
     if (item._type === "storyImage") {
@@ -147,14 +146,13 @@ function toStories(raw: RawStory[] | null | undefined): StoryItem[] {
       ];
     }
 
-    if (!item.playbackId) return [];
+    if (!item.url) return [];
     return [
       {
         _key: item._key,
         _type: "storyVideo",
-        playbackId: item.playbackId,
+        url: item.url,
         poster: toContentImage(item.poster),
-        duration: item.duration ?? null,
         caption: item.caption ?? null,
       },
     ];

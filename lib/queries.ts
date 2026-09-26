@@ -35,8 +35,7 @@ const STORIES = `stories[]{
   caption,
   _type == "storyImage" => {"image": image${IMAGE}},
   _type == "storyVideo" => {
-    "playbackId": video.asset->playbackId,
-    "duration": video.asset->data.duration,
+    "url": file.asset->url,
     "poster": poster${IMAGE}
   }
 }`;
