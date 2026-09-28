@@ -8,7 +8,7 @@ import { getAboutPage, getSettings } from "@/lib/content";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Krystien Aldana",
   description:
     "Krystien Aldana shoots game-day photography, highlight and recruiting films, and social-ready edits for teams in Prince George, BC.",
   alternates: { canonical: "/about" },

@@ -19,7 +19,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
   if (sport === "all") {
     return {
-      title: "Work",
+      title: "Work — Prince George sports photography",
       description:
         "Every game — basketball, soccer and football in Prince George, BC. Tap through any game as a story.",
       alternates: { canonical: "/work" },
@@ -27,7 +27,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   return {
-    title: `${sportLabel(sport)} · Work`,
+    title: `${sportLabel(sport)} photography in Prince George`,
     description: `Every ${sport} game shot in Prince George, BC. Tap through any game as a story.`,
     alternates: { canonical: "/work" },
   };
