@@ -47,7 +47,7 @@ is the only module that talks to it — components take plain types from
 | --- | --- |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | The project to read — the id in the project URL at [sanity.io/manage](https://www.sanity.io/manage), or from `npx sanity projects list`. Unset means the site renders `lib/placeholder-content.ts` instead, which is a local convenience only. |
 | `NEXT_PUBLIC_SANITY_DATASET` | Defaults to `production`. |
-| `NEXT_PUBLIC_SITE_URL` | The site's own origin, e.g. `https://kamedia.ca` — canonical tags, the sitemap and share image URLs are built from it. Unset, Vercel's production URL stands in, which is right for previews and before the domain is connected. Locally it falls back to `http://localhost:3000`. |
+| `NEXT_PUBLIC_SITE_URL` | The site's own origin, e.g. `https://www.ka-media.ca` — canonical tags, the sitemap and share image URLs are built from it. Unset, Vercel's production URL stands in, which is right for previews and before the domain is connected. Locally it falls back to `http://localhost:3000`. |
 | `SANITY_REVALIDATE_SECRET` | Shared with the publish webhook below. Unset means the webhook 401s, so publishes won't go live until the hourly revalidate catches up. |
 
 Set all three in Vercel. A configured project with an empty dataset renders
