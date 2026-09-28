@@ -18,7 +18,9 @@ export function AboutSummary({ about }: { about: AboutSummaryType }) {
 
         <Reveal className={styles.copy}>
           <div className={styles.intro}>
-            <span className={styles.label}>about</span>
+            <span className={styles.label}>
+              about{about.name && ` · ${about.name.toLowerCase()}`}
+            </span>
             <p className={styles.headline}>{about.headline}</p>
           </div>
 
