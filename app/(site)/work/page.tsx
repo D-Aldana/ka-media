@@ -10,7 +10,10 @@ import styles from "./page.module.css";
 
 type Props = { searchParams: Promise<{ sport?: string }> };
 
-/** Shared filter links describe what they open, not just "Work". */
+/**
+ * Shared filter links describe what they open, not just "Work". Each one
+ * canonicalises to `/work`, since the filter is the same games re-sorted.
+ */
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const sport = activeSport((await searchParams).sport);
 
@@ -19,12 +22,14 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       title: "Work",
       description:
         "Every game — basketball, soccer and football in Prince George, BC. Tap through any game as a story.",
+      alternates: { canonical: "/work" },
     };
   }
 
   return {
     title: `${sportLabel(sport)} · Work`,
     description: `Every ${sport} game shot in Prince George, BC. Tap through any game as a story.`,
+    alternates: { canonical: "/work" },
   };
 }
 

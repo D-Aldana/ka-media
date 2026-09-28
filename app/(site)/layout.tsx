@@ -7,6 +7,8 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { RouteMemory } from "@/components/site/RouteMemory";
 import { getSettings } from "@/lib/content";
+import { ogImage } from "@/lib/image";
+import { siteUrl } from "@/lib/site";
 
 import "../globals.css";
 
@@ -24,14 +26,43 @@ const courier = Courier_Prime({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "ka-media — game-day photo & film",
-    template: "%s · ka-media",
-  },
-  description:
-    "Krystien Aldana shoots basketball, soccer and football in Prince George, BC — game-day photography, highlight films and social-ready edits.",
-};
+const FALLBACK_TITLE = "ka-media — game-day photo & film";
+const FALLBACK_DESCRIPTION =
+  "Krystien Aldana shoots basketball, soccer and football in Prince George, BC — game-day photography, highlight films and social-ready edits.";
+
+/**
+ * Async so the Studio's `seo` fields can override the copy below. Everything
+ * here is inherited by the pages, which set only what differs — `metadataBase`
+ * is what lets them give relative URLs.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  const title = settings.seo.title || FALLBACK_TITLE;
+  const description = settings.seo.description || FALLBACK_DESCRIPTION;
+  const share = ogImage(settings.seo.shareImage);
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: title, template: "%s · ka-media" },
+    description,
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      siteName: "ka-media",
+      locale: "en_CA",
+      url: "/",
+      title,
+      description,
+      images: share ? [share] : [],
+    },
+    twitter: {
+      card: share ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: share ? [share.url] : [],
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

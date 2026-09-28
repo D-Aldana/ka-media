@@ -3,6 +3,7 @@ import { ContactCta } from "@/components/home/ContactCta";
 import { Hero } from "@/components/home/Hero";
 import { LatestGame } from "@/components/home/LatestGame";
 import { SportTiles } from "@/components/home/SportTiles";
+import { JsonLd } from "@/components/site/JsonLd";
 import { getHomeData, getSettings } from "@/lib/content";
 
 import styles from "./page.module.css";
@@ -12,6 +13,7 @@ export default async function HomePage() {
 
   return (
     <div className={styles.page} data-route="home">
+      <JsonLd settings={settings} name={home.about.name} />
       <Hero featured={home.featured} settings={settings} />
       <SportTiles sports={home.sports} />
       {home.latest && <LatestGame game={home.latest} settings={settings} />}

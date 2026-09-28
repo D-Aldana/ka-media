@@ -8,6 +8,7 @@ import { StoryDeck } from "@/components/story/StoryDeck";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { getGame, getGameSlugs, getSettings } from "@/lib/content";
 import { formatDate } from "@/lib/format";
+import { ogImage } from "@/lib/image";
 import type { GameSummary } from "@/lib/types";
 
 import styles from "./page.module.css";
@@ -25,13 +26,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!page) return {};
 
   const { game } = page;
+  const description = game.blurb ?? `${game.sport} · ${formatDate(game.date)}`;
+  const share = ogImage(game.cover);
+
   return {
     title: game.title,
-    description: game.blurb ?? `${game.sport} · ${formatDate(game.date)}`,
+    description,
+    alternates: { canonical: `/work/${game.slug}` },
     openGraph: {
+      type: "article",
+      url: `/work/${game.slug}`,
       title: game.title,
-      description: game.blurb ?? undefined,
-      images: game.cover ? [{ url: game.cover.url, alt: game.cover.alt }] : [],
+      description,
+      images: share ? [share] : [],
+    },
+    twitter: {
+      card: share ? "summary_large_image" : "summary",
+      title: game.title,
+      description,
+      images: share ? [share.url] : [],
     },
   };
 }

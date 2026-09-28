@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Get in touch with Krystien Aldana about game-day photography and film in Prince George, BC.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {
