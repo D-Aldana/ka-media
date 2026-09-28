@@ -47,10 +47,10 @@ is the only module that talks to it — components take plain types from
 | --- | --- |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | The project to read — the id in the project URL at [sanity.io/manage](https://www.sanity.io/manage), or from `npx sanity projects list`. Unset means the site renders `lib/placeholder-content.ts` instead, which is a local convenience only. |
 | `NEXT_PUBLIC_SANITY_DATASET` | Defaults to `production`. |
-| `NEXT_PUBLIC_SITE_URL` | The site's own origin, e.g. `https://www.ka-media.ca` — canonical tags, the sitemap and share image URLs are built from it. Unset, Vercel's production URL stands in, which is right for previews and before the domain is connected. Locally it falls back to `http://localhost:3000`. |
+| `NEXT_PUBLIC_SITE_URL` | The site's own origin — canonical tags, the sitemap and share image URLs are built from it. Set to `https://www.ka-media.ca` in production. Leave it unset everywhere else: previews then point at their own deployment URL rather than putting production URLs in a preview sitemap, and locally it falls back to `http://localhost:3000`. |
 | `SANITY_REVALIDATE_SECRET` | Shared with the publish webhook below. Unset means the webhook 401s, so publishes won't go live until the hourly revalidate catches up. |
 
-Set all three in Vercel. A configured project with an empty dataset renders
+Set all four in Vercel. A configured project with an empty dataset renders
 empty sections — it never falls back to placeholder content.
 
 **Fill in Settings first.** It drives the email, Instagram and location shown
@@ -113,15 +113,17 @@ copy in `app/(site)/layout.tsx`. **Settings → Search and sharing** overrides t
 site-wide three. Each game uses its own cover, cropped to 1200×630 through the
 hotspot, so set the hotspot on covers whose subject is off-centre.
 
-After the domain is connected, set `NEXT_PUBLIC_SITE_URL` and submit
-`https://<site>/sitemap.xml` in Google Search Console.
+The site is served from `https://www.ka-media.ca`; the apex redirects to it, so
+`www` is the canonical host. Submit `https://www.ka-media.ca/sitemap.xml` in
+Google Search Console — resubmitting isn't needed after a publish, the sitemap
+regenerates on its own.
 
 ### Publish webhook
 
 `/api/revalidate` revalidates by cache tag, so publishing doesn't need a
 redeploy. Create the webhook in Sanity Manage (API → Webhooks) with:
 
-- **URL** — `https://<site>/api/revalidate`
+- **URL** — `https://www.ka-media.ca/api/revalidate`
 - **Trigger on** — create, update, delete
 - **Filter** — `_type in ["game", "about", "settings"]`
 - **Projection** — `{"tags": [_type]}`
