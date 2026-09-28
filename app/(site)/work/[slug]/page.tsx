@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { GameBreadcrumbs } from "@/components/site/JsonLd";
 import { splitStatLine } from "@/components/story/statLine";
 import { StoryCloseButton, StoryCloseLink } from "@/components/story/StoryClose";
 import { StoryDeck } from "@/components/story/StoryDeck";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { getGame, getGameSlugs, getSettings } from "@/lib/content";
-import { formatDate } from "@/lib/format";
+import { formatDate, sportLabel } from "@/lib/format";
 import { ogImage } from "@/lib/image";
 import type { GameSummary } from "@/lib/types";
 
@@ -30,7 +31,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const share = ogImage(game.cover);
 
   return {
-    title: game.title,
+    // The search title carries the sport and city for the long-tail queries;
+    // shares keep the bare game title, which reads better in a link preview.
+    title: `${game.title} — ${sportLabel(game.sport)} in Prince George`,
     description,
     alternates: { canonical: `/work/${game.slug}` },
     openGraph: {
@@ -63,6 +66,7 @@ export default async function GameStoryPage({ params }: Props) {
 
   return (
     <section className={styles.page} data-route="story">
+      <GameBreadcrumbs title={game.title} slug={game.slug} />
       <StoryCloseLink className={styles.close} />
 
       <div className={styles.left}>

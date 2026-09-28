@@ -26,7 +26,8 @@ const courier = Courier_Prime({
   display: "swap",
 });
 
-const FALLBACK_TITLE = "ka-media — game-day photo & film";
+const FALLBACK_TITLE =
+  "ka-media — game-day sports photography in Prince George, BC";
 const FALLBACK_DESCRIPTION =
   "Krystien Aldana shoots basketball, soccer and football in Prince George, BC — game-day photography, highlight films and social-ready edits.";
 

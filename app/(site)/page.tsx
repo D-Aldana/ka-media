@@ -13,7 +13,7 @@ export default async function HomePage() {
 
   return (
     <div className={styles.page} data-route="home">
-      <JsonLd settings={settings} name={home.about.name} />
+      <JsonLd settings={settings} about={home.about} />
       <Hero featured={home.featured} settings={settings} />
       <SportTiles sports={home.sports} />
       {home.latest && <LatestGame game={home.latest} settings={settings} />}

@@ -15,7 +15,7 @@ const DEFAULT_NOTES = {
 };
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact — book a shoot in Prince George",
   description:
     "Get in touch with Krystien Aldana about game-day photography and film in Prince George, BC.",
   alternates: { canonical: "/contact" },
