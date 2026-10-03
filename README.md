@@ -1,39 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ka-media
 
-## Getting Started
+Portfolio site for Krystien Aldana, a sports photographer and filmmaker in
+Prince George, BC. His basketball, soccer and football work is organised by
+game and plays like Instagram stories.
 
-First, run the development server:
+**Live at [www.ka-media.ca](https://www.ka-media.ca)** — the apex redirects to
+`www`, which is the canonical host.
+
+Next.js (App Router) and React with CSS Modules and styled-components, content
+in Sanity, deployed on Vercel.
+
+## Getting started
 
 ```bash
+npm install
+cp .env.example .env.local   # fill in the Sanity project id
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) serves the site and
+`/studio` the embedded Sanity Studio. Without `NEXT_PUBLIC_SANITY_PROJECT_ID`
+the site renders `lib/placeholder-content.ts`, so it runs before Sanity is set
+up — see [Environment](#environment).
 
-You can start editing the page by modifying `app/(site)/page.tsx`. The page auto-updates as you edit the file.
+| Script | |
+| --- | --- |
+| `npm run dev` | Dev server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run usage` | Dataset storage and oversized reels — see [Video](#video) |
 
-Fonts are Hanken Grotesk and Courier Prime, loaded through [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts).
+Fonts are Hanken Grotesk and Courier Prime, loaded through
+[`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts).
 
-## Learn More
+## Layout
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Path | |
+| --- | --- |
+| `app/(site)` | The four pages — home, `work`, `work/[slug]`, `about`, `contact` |
+| `app/(studio)/studio` | Embedded Sanity Studio |
+| `app/api/revalidate` | Publish webhook — see [Publish webhook](#publish-webhook) |
+| `components/` | `home`, `work`, `story` (the deck and its player), `site` (header, footer, menu), `ui` |
+| `lib/` | `content.ts` and `queries.ts` for reads, `types.ts` for the shapes components take |
+| `sanity/schemaTypes` | `game`, `about`, `settings`, `storyImage`, `storyVideo` |
+| `docs/` | The PRD and the design references |
 
 ## Sanity
 
@@ -113,10 +123,8 @@ copy in `app/(site)/layout.tsx`. **Settings → Search and sharing** overrides t
 site-wide three. Each game uses its own cover, cropped to 1200×630 through the
 hotspot, so set the hotspot on covers whose subject is off-centre.
 
-The site is served from `https://www.ka-media.ca`; the apex redirects to it, so
-`www` is the canonical host. Submit `https://www.ka-media.ca/sitemap.xml` in
-Google Search Console — resubmitting isn't needed after a publish, the sitemap
-regenerates on its own.
+Submit `https://www.ka-media.ca/sitemap.xml` in Google Search Console —
+resubmitting isn't needed after a publish, the sitemap regenerates on its own.
 
 ### Publish webhook
 
