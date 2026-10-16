@@ -1,6 +1,6 @@
 import type { StructureResolver } from "sanity/structure";
 
-/** About and Settings are one document each, pinned above the game list. */
+/** About, Contact and Settings are one document each, pinned above the games. */
 export const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
@@ -13,6 +13,10 @@ export const structure: StructureResolver = (S) =>
         .title("About")
         .id("about")
         .child(S.document().schemaType("about").documentId("about")),
+      S.listItem()
+        .title("Contact")
+        .id("contact")
+        .child(S.document().schemaType("contact").documentId("contact")),
       S.divider(),
       S.documentTypeListItem("game").title("Games"),
     ]);

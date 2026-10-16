@@ -98,17 +98,34 @@ export type AboutPage = {
   photos: (ContentImage | null)[];
 };
 
+/**
+ * The Contact page's copy. Null anywhere keeps the built-in line, so the page
+ * still reads properly before anything is written in the Studio. The email,
+ * handle and location themselves come from `Settings`.
+ */
+export type ContactPage = {
+  eyebrow: string | null;
+  /** Line breaks are kept when this renders. */
+  headline: string | null;
+  intro: string | null;
+  emailLabel: string | null;
+  emailNote: string | null;
+  instagramLabel: string | null;
+  instagramNote: string | null;
+  locationLabel: string | null;
+  locationNote: string | null;
+  /** Overrides for this page's title and description. */
+  seo: {
+    title: string | null;
+    description: string | null;
+  };
+};
+
 export type Settings = {
   email: string;
   instagramUrl: string;
   instagramHandle: string;
   location: string;
-  /** The paragraph under the Contact heading; null keeps the built-in copy. */
-  contactIntro: string | null;
-  /** The lines under each contact detail; null keeps the built-in copy. */
-  emailNote: string | null;
-  instagramNote: string | null;
-  locationNote: string | null;
   /** Overrides for the site-wide title, description and share image. */
   seo: {
     title: string | null;

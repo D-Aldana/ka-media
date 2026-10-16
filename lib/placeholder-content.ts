@@ -9,6 +9,7 @@
 import type {
   AboutPage,
   AboutSummary,
+  ContactPage,
   GameSummary,
   LatestGame,
   Service,
@@ -39,11 +40,21 @@ export const settings: Settings = {
   instagramUrl: "https://www.instagram.com/kamedia._/",
   instagramHandle: "@kamedia._",
   location: "Prince George, BC",
-  contactIntro: null,
-  emailNote: null,
-  instagramNote: null,
-  locationNote: null,
   seo: { title: null, description: null, shareImage: null },
+};
+
+/** All null, so the Contact page shows its own built-in copy. */
+export const contactPage: ContactPage = {
+  eyebrow: null,
+  headline: null,
+  intro: null,
+  emailLabel: null,
+  emailNote: null,
+  instagramLabel: null,
+  instagramNote: null,
+  locationLabel: null,
+  locationNote: null,
+  seo: { title: null, description: null },
 };
 
 function storiesFor(gameIndex: number): StoryItem[] {

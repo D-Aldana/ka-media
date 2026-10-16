@@ -5,6 +5,7 @@ import { toContentImage, type RawImage } from "./image";
 import * as placeholder from "./placeholder-content";
 import {
   ABOUT_QUERY,
+  CONTACT_QUERY,
   GAME_QUERY,
   HOME_QUERY,
   SETTINGS_QUERY,
@@ -13,6 +14,7 @@ import {
 } from "./queries";
 import type {
   AboutPage,
+  ContactPage,
   GamePage,
   GameSummary,
   HomeData,
@@ -44,7 +46,7 @@ import { SPORTS } from "./types";
  */
 
 /** Cache tags let the publish webhook revalidate without a redeploy. */
-const TAGS = { game: "game", about: "about", settings: "settings" };
+const TAGS = { game: "game", about: "about", contact: "contact", settings: "settings" };
 
 /**
  * An hour is the backstop; the webhook is what makes a publish appear. The
@@ -71,11 +73,21 @@ const EMPTY_SETTINGS: Settings = {
   instagramUrl: "",
   instagramHandle: "",
   location: "",
-  contactIntro: null,
-  emailNote: null,
-  instagramNote: null,
-  locationNote: null,
   seo: { title: null, description: null, shareImage: null },
+};
+
+/** Every field null, which is what the page's built-in copy stands in for. */
+const EMPTY_CONTACT: ContactPage = {
+  eyebrow: null,
+  headline: null,
+  intro: null,
+  emailLabel: null,
+  emailNote: null,
+  instagramLabel: null,
+  instagramNote: null,
+  locationLabel: null,
+  locationNote: null,
+  seo: { title: null, description: null },
 };
 
 const EMPTY_ABOUT: AboutPage = {
@@ -273,6 +285,13 @@ export async function getAboutPage(): Promise<AboutPage> {
     services: toServices(raw.services),
     photos: (raw.photos ?? []).map(toContentImage),
   };
+}
+
+export async function getContactPage(): Promise<ContactPage> {
+  if (!isSanityConfigured) return placeholder.contactPage;
+
+  const raw = await fetchFrom<ContactPage | null>(CONTACT_QUERY, {}, [TAGS.contact]);
+  return raw ?? EMPTY_CONTACT;
 }
 
 export async function getWorkGames(): Promise<WorkGame[]> {
