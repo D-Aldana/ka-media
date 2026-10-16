@@ -42,7 +42,7 @@ Fonts are Hanken Grotesk and Courier Prime, loaded through
 | `app/api/revalidate` | Publish webhook — see [Publish webhook](#publish-webhook) |
 | `components/` | `home`, `work`, `story` (the deck and its player), `site` (header, footer, menu), `ui` |
 | `lib/` | `content.ts` and `queries.ts` for reads, `types.ts` for the shapes components take |
-| `sanity/schemaTypes` | `game`, `about`, `settings`, `storyImage`, `storyVideo` |
+| `sanity/schemaTypes` | `game`, `about`, `contact`, `settings`, `storyImage`, `storyVideo` |
 | `docs/` | The PRD and the design references |
 
 ## Sanity
@@ -67,6 +67,10 @@ empty sections — it never falls back to placeholder content.
 in the footer, the mobile menu, the home CTA and `/contact`. Until it exists,
 those elements are omitted rather than rendered blank, which leaves `/contact`
 with a heading and no way to make contact.
+
+**Contact** holds that page's own words — heading, intro, and the label and note
+on each of the three frames. Every field falls back to the copy in
+`app/(site)/contact/page.tsx`, so an empty document still reads properly.
 
 ### Video
 
@@ -133,7 +137,7 @@ redeploy. Create the webhook in Sanity Manage (API → Webhooks) with:
 
 - **URL** — `https://www.ka-media.ca/api/revalidate`
 - **Trigger on** — create, update, delete
-- **Filter** — `_type in ["game", "about", "settings"]`
+- **Filter** — `_type in ["game", "about", "contact", "settings"]`
 - **Projection** — `{"tags": [_type]}`
 - **Secret** — the same value as `SANITY_REVALIDATE_SECRET`
 

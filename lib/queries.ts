@@ -58,10 +58,6 @@ export const SETTINGS_QUERY = defineQuery(`
     "instagramHandle": coalesce(instagramHandle, ""),
     "instagramUrl": coalesce(instagramUrl, ""),
     "location": coalesce(location, ""),
-    "contactIntro": coalesce(contactIntro, null),
-    "emailNote": coalesce(emailNote, null),
-    "instagramNote": coalesce(instagramNote, null),
-    "locationNote": coalesce(locationNote, null),
     "seo": {
       "title": coalesce(seo.title, null),
       "description": coalesce(seo.description, null),
@@ -104,6 +100,25 @@ export const ABOUT_QUERY = defineQuery(`
     portrait${IMAGE},
     services[]{_key, title, description},
     photos[0...3]${IMAGE}
+  }
+`);
+
+/** Every field coalesced, so an unwritten one arrives as null, not missing. */
+export const CONTACT_QUERY = defineQuery(`
+  *[_type == "contact"][0]{
+    "eyebrow": coalesce(eyebrow, null),
+    "headline": coalesce(headline, null),
+    "intro": coalesce(intro, null),
+    "emailLabel": coalesce(emailLabel, null),
+    "emailNote": coalesce(emailNote, null),
+    "instagramLabel": coalesce(instagramLabel, null),
+    "instagramNote": coalesce(instagramNote, null),
+    "locationLabel": coalesce(locationLabel, null),
+    "locationNote": coalesce(locationNote, null),
+    "seo": {
+      "title": coalesce(seo.title, null),
+      "description": coalesce(seo.description, null)
+    }
   }
 `);
 

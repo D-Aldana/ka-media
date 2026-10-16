@@ -1,46 +1,57 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
+import { Fragment, type CSSProperties } from "react";
 
-import { getSettings } from "@/lib/content";
+import { getContactPage, getSettings } from "@/lib/content";
 
 import styles from "./page.module.css";
 
 /** Used until Krystien writes his own copy in the Studio. */
-const DEFAULT_INTRO =
-  "A game coming up, a question about a photo, or just want to talk shop. Teams, schools, clubs, athletes and parents all welcome.";
-const DEFAULT_NOTES = {
-  email: "The fastest way to reach me — I usually reply within a day.",
-  instagram: "DMs are open, and new work lands here first.",
-  location: "Travelling for a tournament is no problem — just ask.",
+const DEFAULTS = {
+  eyebrow: "contact",
+  headline: "Shoot me\na message.",
+  intro:
+    "A game coming up, a question about a photo, or just want to talk shop. Teams, schools, clubs, athletes and parents all welcome.",
+  emailLabel: "email",
+  emailNote: "The fastest way to reach me — I usually reply within a day.",
+  instagramLabel: "instagram",
+  instagramNote: "DMs are open, and new work lands here first.",
+  locationLabel: "based in",
+  locationNote: "Travelling for a tournament is no problem — just ask.",
+  seoTitle: "Contact — book a shoot in Prince George",
+  seoDescription:
+    "Get in touch with Krystien Aldana about game-day photography and film in Prince George, BC.",
 };
 
-export const metadata: Metadata = {
-  title: "Contact — book a shoot in Prince George",
-  description:
-    "Get in touch with Krystien Aldana about game-day photography and film in Prince George, BC.",
-  alternates: { canonical: "/contact" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const contact = await getContactPage();
+
+  return {
+    title: contact.seo.title || DEFAULTS.seoTitle,
+    description: contact.seo.description || DEFAULTS.seoDescription,
+    alternates: { canonical: "/contact" },
+  };
+}
 
 export default async function ContactPage() {
-  const settings = await getSettings();
+  const [contact, settings] = await Promise.all([getContactPage(), getSettings()]);
 
   const frames = [
     {
-      label: "email",
+      label: contact.emailLabel ?? DEFAULTS.emailLabel,
       value: settings.email,
-      note: settings.emailNote ?? DEFAULT_NOTES.email,
+      note: contact.emailNote ?? DEFAULTS.emailNote,
       href: `mailto:${settings.email}`,
     },
     {
-      label: "instagram",
+      label: contact.instagramLabel ?? DEFAULTS.instagramLabel,
       value: settings.instagramHandle,
-      note: settings.instagramNote ?? DEFAULT_NOTES.instagram,
+      note: contact.instagramNote ?? DEFAULTS.instagramNote,
       href: settings.instagramUrl,
     },
     {
-      label: "based in",
+      label: contact.locationLabel ?? DEFAULTS.locationLabel,
       value: settings.location,
-      note: settings.locationNote ?? DEFAULT_NOTES.location,
+      note: contact.locationNote ?? DEFAULTS.locationNote,
       href: null,
     },
   ];
@@ -48,12 +59,13 @@ export default async function ContactPage() {
   return (
     <div className={styles.page} data-route="contact">
       <header className={styles.intro}>
-        <span className={styles.eyebrow}>contact</span>
+        <span className={styles.eyebrow}>
+          {contact.eyebrow ?? DEFAULTS.eyebrow}
+        </span>
         <h1 className={styles.headline}>
-          Shoot me
-          <br />a message.
+          <Headline text={contact.headline ?? DEFAULTS.headline} />
         </h1>
-        <p className={styles.blurb}>{settings.contactIntro ?? DEFAULT_INTRO}</p>
+        <p className={styles.blurb}>{contact.intro ?? DEFAULTS.intro}</p>
       </header>
 
       <ul className={styles.strip}>
@@ -71,6 +83,19 @@ export default async function ContactPage() {
       </ul>
     </div>
   );
+}
+
+/** The editor's line breaks are the design's: "Shoot me / a message." */
+function Headline({ text }: { text: string }) {
+  return text
+    .trim()
+    .split(/\r?\n/)
+    .map((line, index) => (
+      <Fragment key={index}>
+        {index > 0 && <br />}
+        {line}
+      </Fragment>
+    ));
 }
 
 type FrameProps = {
