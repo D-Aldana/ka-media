@@ -16,6 +16,7 @@ const ORDER = `order(date desc, _id asc)`;
 const IMAGE = `{
   "alt": coalesce(alt, ""),
   "hotspot": hotspot{x, y},
+  "crop": crop{top, bottom, left, right},
   "asset": asset->{
     url,
     "lqip": metadata.lqip,

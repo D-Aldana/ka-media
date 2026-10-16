@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+import { FRAMES } from "./frames";
+
 export const settings = defineType({
   name: "settings",
   title: "Settings",
@@ -72,7 +74,7 @@ export const settings = defineType({
           type: "image",
           description:
             "The preview when the site is linked anywhere. Cropped to 1200×630 — set the hotspot so the crop keeps the subject.",
-          options: { hotspot: true },
+          options: { hotspot: { previews: FRAMES.share } },
           fields: [
             defineField({
               name: "alt",
