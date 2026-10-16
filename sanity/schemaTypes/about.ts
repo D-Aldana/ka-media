@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { FRAMES } from "./frames";
+
 export const about = defineType({
   name: "about",
   title: "About",
@@ -27,7 +29,7 @@ export const about = defineType({
     defineField({
       name: "portrait",
       type: "image",
-      options: { hotspot: true },
+      options: { hotspot: { previews: FRAMES.portrait } },
       fields: [
         defineField({
           name: "alt",
@@ -60,7 +62,7 @@ export const about = defineType({
       of: [
         defineArrayMember({
           type: "image",
-          options: { hotspot: true },
+          options: { hotspot: { previews: FRAMES.portrait } },
           fields: [
             defineField({
               name: "alt",

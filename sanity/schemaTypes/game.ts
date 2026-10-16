@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { FRAMES } from "./frames";
+
 const SPORTS = [
   { title: "Basketball", value: "basketball" },
   { title: "Soccer", value: "soccer" },
@@ -57,7 +59,7 @@ export const game = defineType({
     defineField({
       name: "cover",
       type: "image",
-      options: { hotspot: true },
+      options: { hotspot: { previews: FRAMES.cover } },
       description: "The 4:5 frame used on cards, tiles and the filmstrip.",
       validation: (rule) => rule.required(),
       fields: [

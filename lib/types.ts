@@ -4,8 +4,8 @@ export const SPORTS: Sport[] = ["basketball", "soccer", "football"];
 
 /**
  * An image ready to render: the Sanity asset projection after it has been run
- * through `lib/image.ts` (URL built with @sanity/image-url, LQIP from
- * `asset->metadata.lqip`, hotspot kept for object-position).
+ * through `lib/image.ts`. The editor's crop is already baked into the URL as a
+ * `rect`, so width, height and hotspot all describe the cropped frame.
  */
 export type ContentImage = {
   url: string;

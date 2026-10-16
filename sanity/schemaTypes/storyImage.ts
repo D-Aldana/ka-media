@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+import { FRAMES } from "./frames";
+
 export const storyImage = defineType({
   name: "storyImage",
   title: "Photo",
@@ -8,7 +10,7 @@ export const storyImage = defineType({
     defineField({
       name: "image",
       type: "image",
-      options: { hotspot: true },
+      options: { hotspot: { previews: FRAMES.story } },
       validation: (rule) => rule.required(),
       fields: [
         defineField({

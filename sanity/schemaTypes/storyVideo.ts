@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+import { FRAMES } from "./frames";
+
 const MAX_BYTES = 12 * 1024 * 1024;
 
 export const storyVideo = defineType({
@@ -33,7 +35,7 @@ export const storyVideo = defineType({
     defineField({
       name: "poster",
       type: "image",
-      options: { hotspot: true },
+      options: { hotspot: { previews: FRAMES.story } },
       description: "The still shown before the reel plays, and in the mini story.",
       validation: (rule) => rule.required(),
       fields: [
