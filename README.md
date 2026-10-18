@@ -37,12 +37,12 @@ Fonts are Hanken Grotesk and Courier Prime, loaded through
 
 | Path | |
 | --- | --- |
-| `app/(site)` | The four pages — home, `work`, `work/[slug]`, `about`, `contact` |
+| `app/(site)` | The pages — home, `work`, `work/[slug]` (a game), `work/photo/[slug]` (a single), `about`, `contact` |
 | `app/(studio)/studio` | Embedded Sanity Studio |
 | `app/api/revalidate` | Publish webhook — see [Publish webhook](#publish-webhook) |
 | `components/` | `home`, `work`, `story` (the deck and its player), `site` (header, footer, menu), `ui` |
 | `lib/` | `content.ts` and `queries.ts` for reads, `types.ts` for the shapes components take |
-| `sanity/schemaTypes` | `game`, `about`, `contact`, `settings`, `storyImage`, `storyVideo` |
+| `sanity/schemaTypes` | `game`, `photo` (singles), `label`, `about`, `contact`, `settings`, `storyImage`, `storyVideo`; the sport list is `sports.ts` |
 | `docs/` | The PRD and the design references |
 
 ## Sanity
@@ -67,6 +67,17 @@ empty sections — it never falls back to placeholder content.
 in the footer, the mobile menu, the home CTA and `/contact`. Until it exists,
 those elements are omitted rather than rendered blank, which leaves `/contact`
 with a heading and no way to make contact.
+
+**Singles** are photos that stand alone, outside any game. Each has a title,
+the photo, a sport and a date, and sits among the games on the Work grid by
+that date. It opens as a one-frame story at `/work/photo/<slug>`. Sport
+**Other** is for anything that isn't game action — headshots, team photos.
+
+**Labels** are the second row of filter chips on Work: teams ("Senior Boys")
+or anything else ("Headshots"). Make them under Labels, then add them to games
+and singles; a chip only appears once something visible carries it. The sport
+list itself stays in code (`sanity/schemaTypes/sports.ts` and `SPORTS` in
+`lib/types.ts`), since a new sport also needs its own copy and tile.
 
 **Contact** holds that page's own words — heading, intro, and the label and note
 on each of the three frames. Every field falls back to the copy in
@@ -117,8 +128,8 @@ If it ever gets tight, the fix is to move the MP4s to a bucket with free egress
 ### Search and sharing
 
 `/sitemap.xml` and `/robots.txt` are generated at `app/sitemap.ts` and
-`app/robots.ts` — the sitemap lists the four pages plus every visible game, so
-hiding a game removes it from both the site and the sitemap. The home page also
+`app/robots.ts` — the sitemap lists the four pages plus every visible game and single, so
+hiding one removes it from both the site and the sitemap. The home page also
 carries JSON-LD (`Person` + `WebSite`) built from Settings and About;
 unfilled fields are dropped rather than published empty.
 
@@ -137,7 +148,7 @@ redeploy. Create the webhook in Sanity Manage (API → Webhooks) with:
 
 - **URL** — `https://www.ka-media.ca/api/revalidate`
 - **Trigger on** — create, update, delete
-- **Filter** — `_type in ["game", "about", "contact", "settings"]`
+- **Filter** — `_type in ["game", "photo", "label", "about", "contact", "settings"]`
 - **Projection** — `{"tags": [_type]}`
 - **Secret** — the same value as `SANITY_REVALIDATE_SECRET`
 

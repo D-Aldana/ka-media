@@ -1,12 +1,8 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 import { FRAMES } from "./frames";
-
-const SPORTS = [
-  { title: "Basketball", value: "basketball" },
-  { title: "Soccer", value: "soccer" },
-  { title: "Football", value: "football" },
-];
+import { labelsField } from "./labels";
+import { SPORT_OPTIONS } from "./sports";
 
 export const game = defineType({
   name: "game",
@@ -34,9 +30,10 @@ export const game = defineType({
     defineField({
       name: "sport",
       type: "string",
-      options: { list: SPORTS, layout: "radio" },
+      options: { list: SPORT_OPTIONS, layout: "radio" },
       validation: (rule) => rule.required(),
     }),
+    labelsField,
     defineField({
       name: "date",
       type: "date",

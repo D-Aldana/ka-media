@@ -9,6 +9,9 @@ import { SPORTS } from "./types";
  */
 const VISIBLE = `_type == "game" && hidden != true`;
 
+/** Singles, under the same `hidden != true` rule. */
+const VISIBLE_SINGLE = `_type == "photo" && hidden != true`;
+
 /** Ties break on `_id` so display order always agrees with the codes below. */
 const ORDER = `order(date desc, _id asc)`;
 
@@ -41,7 +44,18 @@ const STORIES = `stories[]{
   }
 }`;
 
-const FULL_GAME = `${SUMMARY}, date, statLine, blurb, ${STORIES}`;
+/** A label in full, for the pages that print and link it. */
+const LABEL = `{"slug": slug.current, title, kind}`;
+
+/** Unpublished or deleted labels drop out rather than arriving as nulls. */
+const LABELS = `"labels": coalesce(labels[defined(@->slug.current)]->${LABEL}, [])`;
+
+/** Just the slugs, which is all a Work card needs to be filtered. */
+const LABEL_SLUGS = `"labels": coalesce(labels[]->slug.current, [])`;
+
+const FULL_GAME = `${SUMMARY}, date, statLine, blurb, ${LABELS}, ${STORIES}`;
+
+const SINGLE = `_id, title, "slug": slug.current, sport, date, caption, "image": image${IMAGE}`;
 
 /** Built from SPORTS so a new sport can never silently report a zero count. */
 const SPORT_COUNTS = SPORTS.map(
@@ -84,14 +98,28 @@ export const HOME_QUERY = defineQuery(`{
   }
 }`);
 
-export const WORK_QUERY = defineQuery(`
-  *[${VISIBLE}] | ${ORDER}{
+/**
+ * Games and singles come back separately and are merged by date in
+ * `getWork`, so a single never shifts the games' 01A codes. Labels are only
+ * the ones something visible carries, so no chip ever filters to nothing.
+ */
+export const WORK_QUERY = defineQuery(`{
+  "games": *[${VISIBLE}] | ${ORDER}{
     ${SUMMARY},
     date,
     statLine,
-    "hasVideo": count(stories[_type == "storyVideo"]) > 0
-  }
-`);
+    "hasVideo": count(stories[_type == "storyVideo"]) > 0,
+    ${LABEL_SLUGS}
+  },
+  "singles": *[${VISIBLE_SINGLE}] | ${ORDER}{
+    ${SINGLE},
+    ${LABEL_SLUGS}
+  },
+  "labels": *[
+    _type == "label" && defined(slug.current) &&
+    count(*[((${VISIBLE}) || (${VISIBLE_SINGLE})) && references(^._id)]) > 0
+  ] | order(kind desc, lower(title) asc)${LABEL}
+}`);
 
 export const ABOUT_QUERY = defineQuery(`
   *[_type == "about"][0]{
@@ -137,5 +165,16 @@ export const GAME_QUERY = defineQuery(`
         | ${ORDER}[0]{${SUMMARY}},
       *[${VISIBLE} && _id != ^._id] | ${ORDER}[0]{${SUMMARY}}
     )
+  }
+`);
+
+export const SINGLE_SLUGS_QUERY = defineQuery(`
+  *[${VISIBLE_SINGLE}].slug.current
+`);
+
+export const SINGLE_QUERY = defineQuery(`
+  *[${VISIBLE_SINGLE} && slug.current == $slug][0]{
+    ${SINGLE},
+    ${LABELS}
   }
 `);
