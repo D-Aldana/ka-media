@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fragment, type CSSProperties } from "react";
 
+import { instagramDm } from "@/lib/contact";
 import { getContactPage, getSettings } from "@/lib/content";
 
 import styles from "./page.module.css";
@@ -10,16 +11,16 @@ const DEFAULTS = {
   eyebrow: "contact",
   headline: "Shoot me\na message.",
   intro:
-    "A game coming up, a question about a photo, or just want to talk shop. Teams, schools, clubs, athletes and parents all welcome.",
+    "A question about a photo, or just want to talk shop — always happy to hear from people.",
   emailLabel: "email",
   emailNote: "The fastest way to reach me — I usually reply within a day.",
   instagramLabel: "instagram",
   instagramNote: "DMs are open, and new work lands here first.",
   locationLabel: "based in",
-  locationNote: "Travelling for a tournament is no problem — just ask.",
-  seoTitle: "Contact — book a shoot in Prince George",
+  locationNote: "Where most of the games happen.",
+  seoTitle: "Contact Krystien Aldana",
   seoDescription:
-    "Get in touch with Krystien Aldana about game-day photography and film in Prince George, BC.",
+    "Get in touch with Krystien Aldana, a sports photographer and filmmaker in Prince George, BC.",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -46,7 +47,7 @@ export default async function ContactPage() {
       label: contact.instagramLabel ?? DEFAULTS.instagramLabel,
       value: settings.instagramHandle,
       note: contact.instagramNote ?? DEFAULTS.instagramNote,
-      href: settings.instagramUrl,
+      href: instagramDm(settings.instagramHandle, settings.instagramUrl),
     },
     {
       label: contact.locationLabel ?? DEFAULTS.locationLabel,

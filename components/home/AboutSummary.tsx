@@ -22,6 +22,12 @@ export function AboutSummary({ about }: { about: AboutSummaryType }) {
               about{about.name && ` · ${about.name.toLowerCase()}`}
             </span>
             <p className={styles.headline}>{about.headline}</p>
+            {about.clients.length > 0 && (
+              <p className={styles.clients}>
+                <span className={styles.label}>shot for</span>
+                <span>{about.clients.join(" · ")}</span>
+              </p>
+            )}
           </div>
 
           <div>

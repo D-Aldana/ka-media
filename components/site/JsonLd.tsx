@@ -22,7 +22,7 @@ function LdScript({ graph }: { graph: object }) {
 }
 
 /**
- * Person + ProfessionalService + WebSite for the home page, which is the one
+ * Person + WebSite for the home page, which is the one
  * page search engines read as "who is this site". Every field comes from
  * Settings and About, so an unfilled Studio omits it rather than publishing
  * blanks.
@@ -60,44 +60,11 @@ export function JsonLd({
     email,
     sameAs,
     address,
-    worksFor: { "@id": `${siteUrl}/#business` },
     knowsAbout: [
       "Sports photography",
       ...SPORTS.map((sport) => `${sportLabel(sport)} photography`),
       "Highlight films",
     ],
-  };
-
-  const services = about.services.length
-    ? {
-        "@type": "OfferCatalog",
-        name: "Services",
-        itemListElement: about.services.map((service) => ({
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: service.title,
-            description: service.description || undefined,
-          },
-        })),
-      }
-    : undefined;
-
-  // ProfessionalService rather than plain LocalBusiness: same fields, but it
-  // tells Google this is a service without a storefront to walk into.
-  const business = {
-    "@type": "ProfessionalService",
-    "@id": `${siteUrl}/#business`,
-    name: "ka-media",
-    url: siteUrl,
-    image: settings.seo.shareImage?.url,
-    description: settings.seo.description || undefined,
-    email,
-    sameAs,
-    founder: { "@id": person["@id"] },
-    address,
-    areaServed: locality ? { "@type": "City", name: locality } : undefined,
-    hasOfferCatalog: services,
   };
 
   const website = {
@@ -106,12 +73,13 @@ export function JsonLd({
     url: siteUrl,
     name: "ka-media",
     inLanguage: "en-CA",
-    publisher: { "@id": business["@id"] },
+    description: settings.seo.description || undefined,
+    publisher: { "@id": person["@id"] },
   };
 
   return (
     <LdScript
-      graph={{ "@context": "https://schema.org", "@graph": [person, business, website] }}
+      graph={{ "@context": "https://schema.org", "@graph": [person, website] }}
     />
   );
 }

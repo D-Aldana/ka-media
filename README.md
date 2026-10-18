@@ -119,7 +119,7 @@ If it ever gets tight, the fix is to move the MP4s to a bucket with free egress
 `/sitemap.xml` and `/robots.txt` are generated at `app/sitemap.ts` and
 `app/robots.ts` — the sitemap lists the four pages plus every visible game, so
 hiding a game removes it from both the site and the sitemap. The home page also
-carries JSON-LD (`Person` + `LocalBusiness`) built from Settings and About;
+carries JSON-LD (`Person` + `WebSite`) built from Settings and About;
 unfilled fields are dropped rather than published empty.
 
 Titles, descriptions and share images come from the page, falling back to the

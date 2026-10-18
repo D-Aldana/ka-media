@@ -170,6 +170,7 @@ export const about: AboutSummary = {
     "ka-media is Krystien Aldana — a sports photographer and filmmaker in Prince George, BC, shooting the raw seconds after the whistle.",
   portrait: null,
   services,
+  clients: [],
 };
 
 export const aboutPage: AboutPage = {
@@ -181,5 +182,6 @@ export const aboutPage: AboutPage = {
   ],
   portrait: null,
   services,
+  clients: [],
   photos: [null, null, null],
 };
