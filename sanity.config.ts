@@ -16,6 +16,7 @@ export default defineConfig({
   plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
   document: {
     // The singletons are reached through the sidebar, never created ad hoc.
-    newDocumentOptions: (prev) => prev.filter((item) => item.templateId === "game"),
+    newDocumentOptions: (prev) =>
+      prev.filter((item) => ["game", "photo", "label"].includes(item.templateId)),
   },
 });
