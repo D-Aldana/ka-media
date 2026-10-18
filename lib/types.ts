@@ -84,6 +84,8 @@ export type AboutSummary = {
   headline: string;
   portrait: ContentImage | null;
   services: Service[];
+  /** Teams and schools, as written. Empty hides the line. */
+  clients: string[];
 };
 
 export type AboutPage = {
@@ -94,6 +96,7 @@ export type AboutPage = {
   bio: string[];
   portrait: ContentImage | null;
   services: Service[];
+  clients: string[];
   /** Three 4:5 frames under "What I shoot". */
   photos: (ContentImage | null)[];
 };

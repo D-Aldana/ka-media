@@ -96,6 +96,7 @@ const EMPTY_ABOUT: AboutPage = {
   bio: [],
   portrait: null,
   services: [],
+  clients: [],
   photos: [],
 };
 
@@ -238,6 +239,7 @@ export async function getHomeData(): Promise<HomeData> {
       headline: string | null;
       portrait: RawImage | null;
       services: RawService[] | null;
+      clients: string[] | null;
     } | null;
   }>(HOME_QUERY, {}, [TAGS.game, TAGS.about, TAGS.settings]);
 
@@ -259,6 +261,7 @@ export async function getHomeData(): Promise<HomeData> {
       headline: raw.about?.headline ?? "",
       portrait: toContentImage(raw.about?.portrait),
       services: toServices(raw.about?.services),
+      clients: raw.about?.clients ?? [],
     },
   };
 }
@@ -272,6 +275,7 @@ export async function getAboutPage(): Promise<AboutPage> {
     bio: string[] | null;
     portrait: RawImage | null;
     services: RawService[] | null;
+    clients: string[] | null;
     photos: (RawImage | null)[] | null;
   } | null>(ABOUT_QUERY, {}, [TAGS.about]);
 
@@ -283,6 +287,7 @@ export async function getAboutPage(): Promise<AboutPage> {
     bio: raw.bio ?? [],
     portrait: toContentImage(raw.portrait),
     services: toServices(raw.services),
+    clients: raw.clients ?? [],
     photos: (raw.photos ?? []).map(toContentImage),
   };
 }

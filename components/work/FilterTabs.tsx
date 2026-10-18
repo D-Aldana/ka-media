@@ -16,14 +16,21 @@ type Props = {
  * links land pre-filtered, and the chips still work without JS.
  */
 export function FilterTabs({ active, counts, total }: Props) {
-  const tabs: { key: Sport | "all"; label: string; href: string; count: number }[] = [
+  const tabs: {
+    key: Sport | "all";
+    label: string;
+    href: string;
+    count: number;
+  }[] = [
     { key: "all", label: "All", href: "/work", count: total },
-    ...SPORTS.map((sport) => ({
-      key: sport,
-      label: sportLabel(sport),
-      href: `/work?sport=${sport}`,
-      count: counts[sport],
-    })),
+    ...SPORTS.filter((sport) => counts[sport] > 0 || sport === active).map(
+      (sport) => ({
+        key: sport,
+        label: sportLabel(sport),
+        href: `/work?sport=${sport}`,
+        count: counts[sport],
+      }),
+    ),
   ];
 
   return (

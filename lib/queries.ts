@@ -79,7 +79,8 @@ export const HOME_QUERY = defineQuery(`{
     name,
     headline,
     portrait${IMAGE},
-    services[]{_key, title, description}
+    services[]{_key, title, description},
+    "clients": coalesce(clients, [])
   }
 }`);
 
@@ -99,6 +100,7 @@ export const ABOUT_QUERY = defineQuery(`
     "bio": bio[]{"text": pt::text(@)}.text,
     portrait${IMAGE},
     services[]{_key, title, description},
+    "clients": coalesce(clients, []),
     photos[0...3]${IMAGE}
   }
 `);

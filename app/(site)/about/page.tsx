@@ -42,6 +42,12 @@ export default async function AboutPage() {
               <p key={index}>{paragraph}</p>
             ))}
           </div>
+          {about.clients.length > 0 && (
+            <p className={`${styles.clients} ${styles.rise} ${styles.d3}`}>
+              <span className={styles.label}>shot for</span>
+              <span>{about.clients.join(" · ")}</span>
+            </p>
+          )}
         </div>
       </section>
 
@@ -75,10 +81,10 @@ export default async function AboutPage() {
 
       <section className={styles.cta}>
         <Reveal>
-          <h2 className={styles.ctaHeading}>Got a game coming up?</h2>
+          <h2 className={styles.ctaHeading}>Say hello.</h2>
         </Reveal>
         <Reveal className={styles.ctaAction}>
-          <Pill href="/contact">Get in touch →</Pill>
+          <Pill href="/contact">Get in touch</Pill>
         </Reveal>
       </section>
     </div>

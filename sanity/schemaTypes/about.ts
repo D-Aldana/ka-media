@@ -56,6 +56,16 @@ export const about = defineType({
       validation: (rule) => rule.max(3),
     }),
     defineField({
+      name: "clients",
+      title: "Shot for",
+      type: "array",
+      description:
+        "Teams, schools and leagues you've shot for, named the way they'd name themselves. Shown on the home page and About; leave empty to hide the line.",
+      of: [defineArrayMember({ type: "string" })],
+      options: { layout: "tags" },
+      validation: (rule) => rule.max(12).unique(),
+    }),
+    defineField({
       name: "photos",
       type: "array",
       description: "Three frames under the services.",

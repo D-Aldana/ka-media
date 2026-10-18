@@ -12,7 +12,7 @@ export function ContactCta({ settings }: { settings: Settings }) {
         <span className={styles.label}>contact</span>
       </Reveal>
       <Reveal>
-        <h2 className={styles.heading}>Let&rsquo;s work together.</h2>
+        <h2 className={styles.heading}>Say hello.</h2>
       </Reveal>
       <Reveal className={styles.row}>
         <Pill href="/contact">Get in touch</Pill>
