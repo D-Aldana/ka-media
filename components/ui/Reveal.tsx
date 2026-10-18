@@ -1,51 +1,22 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-
 import styles from "./Reveal.module.css";
 
 type Props = {
   children: React.ReactNode;
   className?: string;
+  /** Bring the direct children in one after another, rather than the block
+      as a single piece. For rows and grids. */
+  stagger?: boolean;
 };
 
 /**
- * Fade + 40px rise the first time the element crosses into view.
- * `className` carries the layout so the wrapper can sit directly in a grid.
+ * Rises its contents into place as they scroll in, scrubbed by the scroll
+ * itself. Pure CSS, so this stays on the server and ships no JS; a browser
+ * without view timelines just shows the content.
  */
-export function Reveal({ children, className }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setShown(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setShown(true);
-        observer.disconnect();
-      },
-      { threshold: 0.12 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const classes = [styles.reveal, shown && styles.in, className]
+export function Reveal({ children, className, stagger = false }: Props) {
+  const classes = [stagger ? styles.stagger : styles.reveal, className]
     .filter(Boolean)
     .join(" ");
 
-  return (
-    <div ref={ref} className={classes}>
-      {children}
-    </div>
-  );
+  return <div className={classes}>{children}</div>;
 }

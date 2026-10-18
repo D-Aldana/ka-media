@@ -23,7 +23,7 @@ export function SportTiles({ sports }: { sports: SportSummary[] }) {
         </span>
       </Reveal>
 
-      <Reveal className={styles.tiles}>
+      <Reveal className={styles.tiles} stagger>
         {shot.map((tile) => (
           <Link
             key={tile.sport}

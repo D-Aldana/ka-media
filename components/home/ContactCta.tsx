@@ -15,7 +15,7 @@ export function ContactCta({ settings }: { settings: Settings }) {
       <Reveal>
         <h2 className={styles.heading}>Say hello.</h2>
       </Reveal>
-      <Reveal className={styles.row}>
+      <Reveal className={styles.row} stagger>
         <Pill href="/contact" transitionTypes={NAV.page}>
           Get in touch
         </Pill>

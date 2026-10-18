@@ -58,7 +58,7 @@ export default async function AboutPage() {
           <Reveal>
             <h2 className={styles.heading}>What I shoot</h2>
           </Reveal>
-          <Reveal className={styles.serviceList}>
+          <Reveal className={styles.serviceList} stagger>
             {about.services.map((service, index) => (
               <div key={service._key} className={styles.service}>
                 <span className={styles.label}>
@@ -71,7 +71,7 @@ export default async function AboutPage() {
           </Reveal>
         </section>
 
-        <Reveal className={styles.photos}>
+        <Reveal className={styles.photos} stagger>
           {about.photos.slice(0, 3).map((photo, index) => (
             <CoverImage
               key={photo?.url ?? index}
