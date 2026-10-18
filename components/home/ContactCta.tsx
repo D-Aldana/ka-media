@@ -1,4 +1,5 @@
 import { Pill } from "@/components/ui/Pill";
+import { NAV } from "@/lib/transitions";
 import { Reveal } from "@/components/ui/Reveal";
 import { UnderlineLink } from "@/components/ui/UnderlineLink";
 import type { Settings } from "@/lib/types";
@@ -15,7 +16,9 @@ export function ContactCta({ settings }: { settings: Settings }) {
         <h2 className={styles.heading}>Say hello.</h2>
       </Reveal>
       <Reveal className={styles.row}>
-        <Pill href="/contact">Get in touch</Pill>
+        <Pill href="/contact" transitionTypes={NAV.page}>
+          Get in touch
+        </Pill>
         {settings.email && (
           <UnderlineLink href={`mailto:${settings.email}`}>
             {settings.email}

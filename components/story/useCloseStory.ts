@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { addTransitionType, startTransition, useCallback } from "react";
 import type { MouseEvent } from "react";
 
 import { previousPath } from "@/components/site/RouteMemory";
+import { NAV } from "@/lib/transitions";
 
 /** Where a story closes to when there is no in-app page to return to. */
 const FALLBACK = "/work";
@@ -22,11 +23,20 @@ function returnable(path: string | null): path is string {
 export function useCloseStory() {
   const router = useRouter();
 
+  /* `router.back()` takes no transition types of its own, so the type is
+     added to the transition it runs inside. */
+  const back = useCallback(() => {
+    startTransition(() => {
+      addTransitionType(NAV.back[0]);
+      router.back();
+    });
+  }, [router]);
+
   const close = useCallback(() => {
     const from = previousPath();
-    if (returnable(from)) router.back();
-    else router.push(FALLBACK);
-  }, [router]);
+    if (returnable(from)) back();
+    else router.push(FALLBACK, { transitionTypes: NAV.back });
+  }, [router, back]);
 
   const onClick = useCallback(
     (event: MouseEvent<HTMLAnchorElement>) => {
@@ -35,9 +45,9 @@ export function useCloseStory() {
       if (!returnable(previousPath())) return;
 
       event.preventDefault();
-      router.back();
+      back();
     },
-    [router],
+    [back],
   );
 
   return { href: FALLBACK, onClick, close };

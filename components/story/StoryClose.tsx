@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { UnderlineLink } from "@/components/ui/UnderlineLink";
+import { NAV } from "@/lib/transitions";
 
 import { useCloseStory } from "./useCloseStory";
 
@@ -10,7 +11,12 @@ export function StoryCloseLink({ className }: { className?: string }) {
   const { href, onClick } = useCloseStory();
 
   return (
-    <UnderlineLink href={href} className={className} onClick={onClick}>
+    <UnderlineLink
+      href={href}
+      className={className}
+      onClick={onClick}
+      transitionTypes={NAV.back}
+    >
       <span aria-hidden="true">×</span> close
     </UnderlineLink>
   );
@@ -20,7 +26,12 @@ export function StoryCloseButton({ className }: { className?: string }) {
   const { href, onClick } = useCloseStory();
 
   return (
-    <Link href={href} className={className} onClick={onClick}>
+    <Link
+      href={href}
+      className={className}
+      onClick={onClick}
+      transitionTypes={NAV.back}
+    >
       <span className="sr-only">Close story</span>
       <svg
         width="20"

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PageTransition } from "@/components/site/PageTransition";
 import { FilterTabs, type FilterTab } from "@/components/work/FilterTabs";
 import { GameCard } from "@/components/work/GameCard";
 import { SingleCard } from "@/components/work/SingleCard";
@@ -148,39 +149,41 @@ export default async function WorkPage({ searchParams }: Props) {
   const filtered = sport !== "all" || label !== null;
 
   return (
-    <section className={styles.page} data-route="work">
-      <div className={[styles.head, labelTabs.length > 0 && styles.headTight].filter(Boolean).join(" ")}>
-        <div className={styles.headText}>
-          <span className={styles.label} aria-live="polite">
-            {summary}
-          </span>
-          <h1 className={styles.title}>Work</h1>
+    <PageTransition>
+      <section className={styles.page} data-route="work">
+        <div className={[styles.head, labelTabs.length > 0 && styles.headTight].filter(Boolean).join(" ")}>
+          <div className={styles.headText}>
+            <span className={styles.label} aria-live="polite">
+              {summary}
+            </span>
+            <h1 className={styles.title}>Work</h1>
+          </div>
+          <FilterTabs tabs={sportTabs} label="Filter by sport" />
         </div>
-        <FilterTabs tabs={sportTabs} label="Filter by sport" />
-      </div>
 
-      {labelTabs.length > 0 && (
-        <FilterTabs tabs={labelTabs} label="Filter by label" small className={styles.labels} />
-      )}
+        {labelTabs.length > 0 && (
+          <FilterTabs tabs={labelTabs} label="Filter by label" small className={styles.labels} />
+        )}
 
-      {shown.length === 0 && (
-        <p className={styles.empty}>
-          {filtered ? "Nothing here yet." : "No work yet."}
-        </p>
-      )}
+        {shown.length === 0 && (
+          <p className={styles.empty}>
+            {filtered ? "Nothing here yet." : "No work yet."}
+          </p>
+        )}
 
-      <div className={styles.grid}>
-        {items.map((item) => {
-          const dimmed = !matches(item, sport, labelSlug);
-          const priority = eager.has(item._id);
+        <div className={styles.grid}>
+          {items.map((item) => {
+            const dimmed = !matches(item, sport, labelSlug);
+            const priority = eager.has(item._id);
 
-          return item.kind === "game" ? (
-            <GameCard key={item._id} game={item} dimmed={dimmed} priority={priority} />
-          ) : (
-            <SingleCard key={item._id} single={item} dimmed={dimmed} priority={priority} />
-          );
-        })}
-      </div>
-    </section>
+            return item.kind === "game" ? (
+              <GameCard key={item._id} game={item} dimmed={dimmed} priority={priority} />
+            ) : (
+              <SingleCard key={item._id} single={item} dimmed={dimmed} priority={priority} />
+            );
+          })}
+        </div>
+      </section>
+    </PageTransition>
   );
 }

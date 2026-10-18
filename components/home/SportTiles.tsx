@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { sportLabel } from "@/lib/format";
+import { NAV } from "@/lib/transitions";
 import type { SportSummary } from "@/lib/types";
 
 import styles from "./SportTiles.module.css";
@@ -28,6 +29,7 @@ export function SportTiles({ sports }: { sports: SportSummary[] }) {
             key={tile.sport}
             href={`/work?sport=${tile.sport}`}
             className={styles.tile}
+            transitionTypes={NAV.forward}
           >
             <CoverImage
               image={tile.cover}

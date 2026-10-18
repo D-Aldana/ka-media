@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MENU_LINKS } from "@/lib/nav";
+import { NAV } from "@/lib/transitions";
 import type { Settings } from "@/lib/types";
 
 import styles from "./MobileMenu.module.css";
@@ -117,7 +118,12 @@ export function MobileMenu({ settings }: { settings: Settings }) {
 
         <nav className={styles.links} aria-label="Menu">
           {MENU_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} onClick={close}>
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={close}
+              transitionTypes={NAV.page}
+            >
               {link.label}
             </Link>
           ))}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Fragment, type CSSProperties } from "react";
 
+import { PageTransition } from "@/components/site/PageTransition";
+
 import { instagramDm } from "@/lib/contact";
 import { getContactPage, getSettings } from "@/lib/content";
 
@@ -58,31 +60,33 @@ export default async function ContactPage() {
   ];
 
   return (
-    <div className={styles.page} data-route="contact">
-      <header className={styles.intro}>
-        <span className={styles.eyebrow}>
-          {contact.eyebrow ?? DEFAULTS.eyebrow}
-        </span>
-        <h1 className={styles.headline}>
-          <Headline text={contact.headline ?? DEFAULTS.headline} />
-        </h1>
-        <p className={styles.blurb}>{contact.intro ?? DEFAULTS.intro}</p>
-      </header>
+    <PageTransition>
+      <div className={styles.page} data-route="contact">
+        <header className={styles.intro}>
+          <span className={styles.eyebrow}>
+            {contact.eyebrow ?? DEFAULTS.eyebrow}
+          </span>
+          <h1 className={styles.headline}>
+            <Headline text={contact.headline ?? DEFAULTS.headline} />
+          </h1>
+          <p className={styles.blurb}>{contact.intro ?? DEFAULTS.intro}</p>
+        </header>
 
-      <ul className={styles.strip}>
-        {frames
-          .filter((frame) => frame.value)
-          .map((frame, index) => (
-            <li
-              key={frame.label}
-              className={styles.cell}
-              style={{ "--i": index } as CSSProperties}
-            >
-              <Frame {...frame} />
-            </li>
-          ))}
-      </ul>
-    </div>
+        <ul className={styles.strip}>
+          {frames
+            .filter((frame) => frame.value)
+            .map((frame, index) => (
+              <li
+                key={frame.label}
+                className={styles.cell}
+                style={{ "--i": index } as CSSProperties}
+              >
+                <Frame {...frame} />
+              </li>
+            ))}
+        </ul>
+      </div>
+    </PageTransition>
   );
 }
 

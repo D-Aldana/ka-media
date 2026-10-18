@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { CoverImage } from "@/components/ui/CoverImage";
+import { NAV } from "@/lib/transitions";
 import type { ContentImage, StoryItem } from "@/lib/types";
 
 import deck from "./deck.module.css";
@@ -79,6 +80,7 @@ export function MiniStory({
   return (
     <Link
       href={href}
+      transitionTypes={NAV.forward}
       aria-label={label}
       className={[styles.mini, className].filter(Boolean).join(" ")}
       onMouseEnter={() => setPaused(true)}

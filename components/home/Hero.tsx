@@ -1,4 +1,5 @@
 import { Pill } from "@/components/ui/Pill";
+import { NAV } from "@/lib/transitions";
 import type { GameSummary, Settings } from "@/lib/types";
 
 import { Filmstrip } from "./Filmstrip";
@@ -22,7 +23,12 @@ export function Hero({ featured, settings }: Props) {
           <span>Basketball, soccer, football</span>
           <span>{settings.location}</span>
         </p>
-        <Pill href="/contact" variant="solid" className={styles.cta}>
+        <Pill
+          href="/contact"
+          variant="solid"
+          className={styles.cta}
+          transitionTypes={NAV.page}
+        >
           Get in touch
         </Pill>
       </div>

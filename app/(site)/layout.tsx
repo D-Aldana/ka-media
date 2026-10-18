@@ -71,7 +71,14 @@ export default async function RootLayout({
   const settings = await getSettings();
 
   return (
-    <html lang="en" className={`${hanken.variable} ${courier.variable}`}>
+    /* Next no longer overrides `scroll-behavior` on a route change by
+       default. Without this the global `smooth` would animate the scroll to
+       top underneath a page transition; in-page anchors still glide. */
+    <html
+      lang="en"
+      className={`${hanken.variable} ${courier.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body>
         <RouteMemory />
         <Header settings={settings} />

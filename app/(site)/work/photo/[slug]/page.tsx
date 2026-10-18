@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/site/JsonLd";
+import { PageTransition } from "@/components/site/PageTransition";
 import { StoryCloseButton, StoryCloseLink } from "@/components/story/StoryClose";
 import { StoryDeck } from "@/components/story/StoryDeck";
 import { LabelLinks } from "@/components/work/LabelLinks";
 import { getSettings, getSingle, getSingleSlugs } from "@/lib/content";
 import { formatDate, sportLabel } from "@/lib/format";
 import { ogImage } from "@/lib/image";
+import { coverName } from "@/lib/transitions";
 import type { StoryItem } from "@/lib/types";
 
 // The game page's layout, so a single reads as a one-frame story.
@@ -61,37 +63,40 @@ export default async function SinglePage({ params }: Props) {
   const meta = `single · ${single.sport} · ${formatDate(single.date)}`;
 
   return (
-    <section className={styles.page} data-route="story">
-      <Breadcrumbs title={single.title} path={`/work/photo/${single.slug}`} />
-      <StoryCloseLink className={styles.close} />
+    <PageTransition>
+      <section className={styles.page} data-route="story">
+        <Breadcrumbs title={single.title} path={`/work/photo/${single.slug}`} />
+        <StoryCloseLink className={styles.close} />
 
-      <div className={styles.left}>
-        <span className={styles.label}>{meta}</span>
-        <h1 className={styles.title}>{single.title}</h1>
-        <LabelLinks labels={single.labels} />
-      </div>
-
-      <StoryDeck
-        stories={stories}
-        title={single.title}
-        handle={settings.instagramHandle}
-        className={styles.stage}
-        sizes="(max-width: 860px) 100vw, 420px"
-        actions={<StoryCloseButton className={styles.mobileClose} />}
-      >
-        {single.caption && (
-          <span className={styles.statLine}>
-            <span>{single.caption}</span>
-          </span>
-        )}
-
-        <div className={styles.mobileInfo}>
+        <div className={styles.left}>
           <span className={styles.label}>{meta}</span>
-          {single.caption && <span className={styles.mobileStat}>{single.caption}</span>}
-          <p className={styles.mobileBlurb}>{single.title}</p>
+          <h1 className={styles.title}>{single.title}</h1>
           <LabelLinks labels={single.labels} />
         </div>
-      </StoryDeck>
-    </section>
+
+        <StoryDeck
+          stories={stories}
+          title={single.title}
+          handle={settings.instagramHandle}
+          className={styles.stage}
+          sizes="(max-width: 860px) 100vw, 420px"
+          actions={<StoryCloseButton className={styles.mobileClose} />}
+          viewTransitionName={coverName("single", single.slug)}
+        >
+          {single.caption && (
+            <span className={styles.statLine}>
+              <span>{single.caption}</span>
+            </span>
+          )}
+
+          <div className={styles.mobileInfo}>
+            <span className={styles.label}>{meta}</span>
+            {single.caption && <span className={styles.mobileStat}>{single.caption}</span>}
+            <p className={styles.mobileBlurb}>{single.title}</p>
+            <LabelLinks labels={single.labels} />
+          </div>
+        </StoryDeck>
+      </section>
+    </PageTransition>
   );
 }

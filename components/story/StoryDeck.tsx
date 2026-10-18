@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ViewTransition, useCallback, useEffect, useRef, useState } from "react";
 
 import { CoverImage } from "@/components/ui/CoverImage";
 import type { ContentImage, StoryItem } from "@/lib/types";
@@ -28,6 +28,8 @@ type Props = {
   children?: React.ReactNode;
   /** Offered once the last item has played out. */
   endPrompt?: React.ReactNode;
+  /** Pairs the frame with the Work cover that opened it; see `lib/transitions`. */
+  viewTransitionName: string;
   className?: string;
   sizes: string;
 };
@@ -45,6 +47,7 @@ export function StoryDeck({
   actions,
   children,
   endPrompt,
+  viewTransitionName,
   className,
   sizes,
 }: Props) {
@@ -231,130 +234,134 @@ export function StoryDeck({
         )}
       </div>
 
-      <section
-        className={[deck.deck, styles.frame, !running && deck.paused]
-          .filter(Boolean)
-          .join(" ")}
-        style={{ "--dur": `${IMAGE_DURATION}ms` } as React.CSSProperties}
-        aria-roledescription="story deck"
-        aria-label={`${title} — ${count} ${count === 1 ? "story" : "stories"}`}
-        onPointerEnter={(event) => {
-          if (event.pointerType === "mouse") setHovered(true);
-        }}
-        onPointerLeave={(event) => {
-          if (event.pointerType !== "mouse") return;
-          setHovered(false);
-          release();
-        }}
-        onFocusCapture={(event) => {
-          // Clicking a tap zone focuses it too, and that must not stop the
-          // deck — only keyboard focus should.
-          if (event.target.matches(":focus-visible")) setFocused(true);
-        }}
-        onBlurCapture={() => setFocused(false)}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerCancel={release}
-      >
-        {stories.map((item, i) =>
-          // Only the slide either side of the current one is mounted, so a
-          // twenty-frame game never downloads twenty frames.
-          Math.abs(i - index) > 1 ? null : (
-            <div
-              key={item._key}
-              className={`${deck.slide} ${i === index ? deck.on : ""}`}
-            >
-              <CoverImage
-                image={posterOf(item)}
-                className={deck.media}
-                sizes={sizes}
-                priority={i === 0}
-                decorative
-              />
-              {i === index && item._type === "storyVideo" && (
-                <StoryVideo
-                  src={item.url}
-                  title={`${title} — story ${i + 1}`}
-                  playing={running}
-                  onProgress={onProgress}
-                  onDone={next}
-                />
-              )}
-            </div>
-          ),
-        )}
-
-        <button
-          type="button"
-          className={`${styles.tap} ${styles.previous}`}
-          onClick={tap(previous)}
-          disabled={index === 0 && !finished}
+      {/* The cover that opened this deck morphs into the frame, so the
+          square card and the tall story read as one object. */}
+      <ViewTransition name={viewTransitionName} share="morph" default="none">
+        <section
+          className={[deck.deck, styles.frame, !running && deck.paused]
+            .filter(Boolean)
+            .join(" ")}
+          style={{ "--dur": `${IMAGE_DURATION}ms` } as React.CSSProperties}
+          aria-roledescription="story deck"
+          aria-label={`${title} — ${count} ${count === 1 ? "story" : "stories"}`}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "mouse") setHovered(true);
+          }}
+          onPointerLeave={(event) => {
+            if (event.pointerType !== "mouse") return;
+            setHovered(false);
+            release();
+          }}
+          onFocusCapture={(event) => {
+            // Clicking a tap zone focuses it too, and that must not stop the
+            // deck — only keyboard focus should.
+            if (event.target.matches(":focus-visible")) setFocused(true);
+          }}
+          onBlurCapture={() => setFocused(false)}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerCancel={release}
         >
-          <span className="sr-only">Previous story</span>
-        </button>
-        <button
-          type="button"
-          className={`${styles.tap} ${styles.next}`}
-          onClick={tap(next)}
-          disabled={finished}
-        >
-          <span className="sr-only">Next story</span>
-        </button>
-
-        <div className={deck.bars} aria-hidden="true">
-          {stories.map((item, i) => (
-            <span key={`bar-${item._key}`} className={barClass(i)}>
-              <i ref={i === index ? bar : undefined} />
-            </span>
-          ))}
-        </div>
-
-        <div className={styles.top}>
-          <span className={deck.who}>
-            <span className={deck.avatar} aria-hidden="true">
-              ka
-            </span>
-            {handle.replace(/^@/, "")}
-          </span>
-
-          <span className={styles.actions}>
-            {(autoAdvance || isVideo) && !finished && (
-              <button
-                type="button"
-                className={styles.control}
-                onClick={() => setWantPlay((playing) => !playing)}
+          {stories.map((item, i) =>
+            // Only the slide either side of the current one is mounted, so a
+            // twenty-frame game never downloads twenty frames.
+            Math.abs(i - index) > 1 ? null : (
+              <div
+                key={item._key}
+                className={`${deck.slide} ${i === index ? deck.on : ""}`}
               >
-                <span className="sr-only">
-                  {wantPlay ? "Pause story" : "Play story"}
-                </span>
-                {wantPlay ? <PauseIcon /> : <PlayIcon />}
-              </button>
-            )}
-            {actions}
-          </span>
-        </div>
+                <CoverImage
+                  image={posterOf(item)}
+                  className={deck.media}
+                  sizes={sizes}
+                  priority={i === 0}
+                  decorative
+                />
+                {i === index && item._type === "storyVideo" && (
+                  <StoryVideo
+                    src={item.url}
+                    title={`${title} — story ${i + 1}`}
+                    playing={running}
+                    onProgress={onProgress}
+                    onDone={next}
+                  />
+                )}
+              </div>
+            ),
+          )}
 
-        <div className={`${deck.shade} ${styles.bottom}`}>
-          {active?.caption && <p className={styles.caption}>{active.caption}</p>}
-          {children}
-        </div>
+          <button
+            type="button"
+            className={`${styles.tap} ${styles.previous}`}
+            onClick={tap(previous)}
+            disabled={index === 0 && !finished}
+          >
+            <span className="sr-only">Previous story</span>
+          </button>
+          <button
+            type="button"
+            className={`${styles.tap} ${styles.next}`}
+            onClick={tap(next)}
+            disabled={finished}
+          >
+            <span className="sr-only">Next story</span>
+          </button>
 
-        {finished && (
-          <div className={styles.end}>
-            <p className={styles.endLabel}>End of story</p>
-            <button type="button" className={styles.replay} onClick={restart}>
-              ↻ Replay
-            </button>
-            {endPrompt}
+          <div className={deck.bars} aria-hidden="true">
+            {stories.map((item, i) => (
+              <span key={`bar-${item._key}`} className={barClass(i)}>
+                <i ref={i === index ? bar : undefined} />
+              </span>
+            ))}
           </div>
-        )}
 
-        <p className="sr-only" aria-live="polite">
-          {finished
-            ? `End of ${title}`
-            : `Story ${index + 1} of ${count}${active?.caption ? ` — ${active.caption}` : ""}`}
-        </p>
-      </section>
+          <div className={styles.top}>
+            <span className={deck.who}>
+              <span className={deck.avatar} aria-hidden="true">
+                ka
+              </span>
+              {handle.replace(/^@/, "")}
+            </span>
+
+            <span className={styles.actions}>
+              {(autoAdvance || isVideo) && !finished && (
+                <button
+                  type="button"
+                  className={styles.control}
+                  onClick={() => setWantPlay((playing) => !playing)}
+                >
+                  <span className="sr-only">
+                    {wantPlay ? "Pause story" : "Play story"}
+                  </span>
+                  {wantPlay ? <PauseIcon /> : <PlayIcon />}
+                </button>
+              )}
+              {actions}
+            </span>
+          </div>
+
+          <div className={`${deck.shade} ${styles.bottom}`}>
+            {active?.caption && <p className={styles.caption}>{active.caption}</p>}
+            {children}
+          </div>
+
+          {finished && (
+            <div className={styles.end}>
+              <p className={styles.endLabel}>End of story</p>
+              <button type="button" className={styles.replay} onClick={restart}>
+                ↻ Replay
+              </button>
+              {endPrompt}
+            </div>
+          )}
+
+          <p className="sr-only" aria-live="polite">
+            {finished
+              ? `End of ${title}`
+              : `Story ${index + 1} of ${count}${active?.caption ? ` — ${active.caption}` : ""}`}
+          </p>
+        </section>
+      </ViewTransition>
     </div>
   );
 }
