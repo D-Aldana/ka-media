@@ -1,6 +1,20 @@
-export type Sport = "basketball" | "soccer" | "football";
+export type Sport = "basketball" | "soccer" | "football" | "other";
 
-export const SPORTS: Sport[] = ["basketball", "soccer", "football"];
+/** Must match `SPORT_OPTIONS` in `sanity/schemaTypes/sports.ts`. */
+export const SPORTS: Sport[] = ["basketball", "soccer", "football", "other"];
+
+/**
+ * The sports proper, without `other`: what the home tiles and the site's
+ * structured data advertise.
+ */
+export const GAME_SPORTS: Sport[] = SPORTS.filter((sport) => sport !== "other");
+
+/** A filter label from the Studio — a team, or anything else. */
+export type Label = {
+  slug: string;
+  title: string;
+  kind: "team" | "other";
+};
 
 /**
  * An image ready to render: the Sanity asset projection after it has been run
@@ -45,10 +59,41 @@ export type GameSummary = {
 
 /** A card in the Work grid: the summary plus what the card labels. */
 export type WorkGame = GameSummary & {
+  kind: "game";
   /** ISO date, `YYYY-MM-DD`. */
   date: string;
   statLine: string | null;
   hasVideo: boolean;
+  /** Slugs of its labels, for the label filter. */
+  labels: string[];
+};
+
+/** A single photo, outside any game. Opens at `/work/photo/<slug>`. */
+export type Single = {
+  _id: string;
+  title: string;
+  slug: string;
+  sport: Sport;
+  /** ISO date, `YYYY-MM-DD`. */
+  date: string;
+  caption: string | null;
+  image: ContentImage | null;
+  labels: Label[];
+};
+
+/** A single as a Work card; labels are slugs, like a game's. */
+export type WorkSingle = Omit<Single, "labels"> & {
+  kind: "single";
+  labels: string[];
+};
+
+export type WorkItem = WorkGame | WorkSingle;
+
+export type WorkData = {
+  /** Games and singles together, newest first. */
+  items: WorkItem[];
+  /** Only labels something visible carries: teams first, then by name. */
+  labels: Label[];
 };
 
 export type LatestGame = GameSummary & {
@@ -56,6 +101,7 @@ export type LatestGame = GameSummary & {
   date: string;
   statLine: string | null;
   blurb: string | null;
+  labels: Label[];
   stories: StoryItem[];
 };
 

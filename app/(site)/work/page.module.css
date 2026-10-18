@@ -22,6 +22,15 @@
   margin-bottom: 56px;
 }
 
+/* The label chips sit between the head and the grid and take its gap. */
+.headTight {
+  margin-bottom: 24px;
+}
+
+.labels {
+  margin-bottom: 56px;
+}
+
 .headText {
   display: flex;
   flex-direction: column;
@@ -75,6 +84,14 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .headTight {
+    margin-bottom: 12px;
+  }
+
+  .labels {
     margin-bottom: 32px;
   }
 

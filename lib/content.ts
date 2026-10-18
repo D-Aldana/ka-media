@@ -9,6 +9,8 @@ import {
   GAME_QUERY,
   HOME_QUERY,
   SETTINGS_QUERY,
+  SINGLE_QUERY,
+  SINGLE_SLUGS_QUERY,
   SLUGS_QUERY,
   WORK_QUERY,
 } from "./queries";
@@ -18,15 +20,20 @@ import type {
   GamePage,
   GameSummary,
   HomeData,
+  Label,
   LatestGame,
   Service,
   Settings,
+  Single,
   Sport,
   SportSummary,
   StoryItem,
+  WorkData,
   WorkGame,
+  WorkItem,
+  WorkSingle,
 } from "./types";
-import { SPORTS } from "./types";
+import { GAME_SPORTS } from "./types";
 
 /**
  * The only seam between the UI and the CMS. Each function reads Sanity and
@@ -41,12 +48,20 @@ import { SPORTS } from "./types";
  * failure while revalidating leaves the last good page in place, both of which
  * beat quietly publishing an empty site.
  *
- * Two things are computed here rather than in GROQ: the `code` (01A, 02A …)
- * from each game's `rank` in date order, and images mapped to `ContentImage`.
+ * Three things are computed here rather than in GROQ: the `code` (01A, 02A …)
+ * from each game's `rank` in date order, images mapped to `ContentImage`, and
+ * the Work grid's merge of games and singles into one date order.
  */
 
 /** Cache tags let the publish webhook revalidate without a redeploy. */
-const TAGS = { game: "game", about: "about", contact: "contact", settings: "settings" };
+const TAGS = {
+  game: "game",
+  photo: "photo",
+  label: "label",
+  about: "about",
+  contact: "contact",
+  settings: "settings",
+};
 
 /**
  * An hour is the backstop; the webhook is what makes a publish appear. The
@@ -177,6 +192,7 @@ type RawGame = RawSummary & {
   date: string;
   statLine: string | null;
   blurb: string | null;
+  labels: Label[] | null;
   stories: RawStory[] | null;
 };
 
@@ -186,8 +202,43 @@ function toGame(raw: RawGame): LatestGame {
     date: raw.date,
     statLine: raw.statLine ?? null,
     blurb: raw.blurb ?? null,
+    labels: raw.labels ?? [],
     stories: toStories(raw.stories),
   };
+}
+
+type RawSingle = {
+  _id: string;
+  title: string;
+  slug: string;
+  sport: Sport;
+  date: string;
+  caption: string | null;
+  image: RawImage | null;
+};
+
+/** Dangling references come back as null slugs; they filter nothing. */
+function slugs(raw: (string | null)[] | null | undefined): string[] {
+  return (raw ?? []).filter((slug): slug is string => Boolean(slug));
+}
+
+function toSingleFields(raw: RawSingle) {
+  return {
+    _id: raw._id,
+    title: raw.title,
+    slug: raw.slug,
+    sport: raw.sport,
+    date: raw.date,
+    caption: raw.caption ?? null,
+    image: toContentImage(raw.image),
+  };
+}
+
+/** Newest first; on the same day a game comes before a single. */
+function byDate(a: WorkItem, b: WorkItem): number {
+  if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+  if (a.kind !== b.kind) return a.kind === "game" ? -1 : 1;
+  return 0;
 }
 
 type RawService = { _key: string; title: string; description: string | null };
@@ -241,9 +292,9 @@ export async function getHomeData(): Promise<HomeData> {
       services: RawService[] | null;
       clients: string[] | null;
     } | null;
-  }>(HOME_QUERY, {}, [TAGS.game, TAGS.about, TAGS.settings]);
+  }>(HOME_QUERY, {}, [TAGS.game, TAGS.label, TAGS.about, TAGS.settings]);
 
-  const sports: SportSummary[] = SPORTS.map((sport) => {
+  const sports: SportSummary[] = GAME_SPORTS.map((sport) => {
     const match = raw.sports?.find((entry) => entry.sport === sport);
     return {
       sport,
@@ -299,19 +350,65 @@ export async function getContactPage(): Promise<ContactPage> {
   return raw ?? EMPTY_CONTACT;
 }
 
-export async function getWorkGames(): Promise<WorkGame[]> {
-  if (!isSanityConfigured) return placeholder.workGames;
+export async function getWork(): Promise<WorkData> {
+  if (!isSanityConfigured) return placeholder.work;
 
-  const raw = await fetchFrom<
-    (RawSummary & { date: string; statLine: string | null; hasVideo: boolean })[]
-  >(WORK_QUERY, {}, [TAGS.game]);
+  const raw = await fetchFrom<{
+    games: (RawSummary & {
+      date: string;
+      statLine: string | null;
+      hasVideo: boolean;
+      labels: (string | null)[] | null;
+    })[] | null;
+    singles: (RawSingle & { labels: (string | null)[] | null })[] | null;
+    labels: Label[] | null;
+  }>(WORK_QUERY, {}, [TAGS.game, TAGS.photo, TAGS.label]);
 
-  return raw.map((game) => ({
-    ...toSummary(game),
-    date: game.date,
-    statLine: game.statLine ?? null,
-    hasVideo: game.hasVideo,
-  }));
+  const games = (raw.games ?? []).map(
+    (game): WorkGame => ({
+      ...toSummary(game),
+      kind: "game",
+      date: game.date,
+      statLine: game.statLine ?? null,
+      hasVideo: game.hasVideo,
+      labels: slugs(game.labels),
+    }),
+  );
+
+  const singles = (raw.singles ?? []).map(
+    (single): WorkSingle => ({
+      ...toSingleFields(single),
+      kind: "single",
+      labels: slugs(single.labels),
+    }),
+  );
+
+  return {
+    // Both arrive sorted; sort is stable, so ties keep query order.
+    items: [...games, ...singles].sort(byDate),
+    labels: raw.labels ?? [],
+  };
+}
+
+export async function getSingleSlugs(): Promise<string[]> {
+  if (!isSanityConfigured) return placeholder.singles.map((single) => single.slug);
+
+  return fetchFrom<string[]>(SINGLE_SLUGS_QUERY, {}, [TAGS.photo], true);
+}
+
+export async function getSingle(slug: string): Promise<Single | null> {
+  if (!isSanityConfigured) {
+    return placeholder.singles.find((single) => single.slug === slug) ?? null;
+  }
+
+  const raw = await fetchFrom<(RawSingle & { labels: Label[] | null }) | null>(
+    SINGLE_QUERY,
+    { slug },
+    [TAGS.photo, TAGS.label],
+  );
+
+  if (!raw) return null;
+  return { ...toSingleFields(raw), labels: raw.labels ?? [] };
 }
 
 export async function getGameSlugs(): Promise<string[]> {
@@ -336,7 +433,7 @@ export async function getGame(slug: string): Promise<GamePage | null> {
   const raw = await fetchFrom<(RawGame & { next: RawSummary | null }) | null>(
     GAME_QUERY,
     { slug },
-    [TAGS.game],
+    [TAGS.game, TAGS.label],
   );
 
   if (!raw) return null;

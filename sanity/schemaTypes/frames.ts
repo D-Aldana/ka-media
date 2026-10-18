@@ -17,6 +17,12 @@ export const FRAMES: Record<string, HotspotPreview[]> = {
     { title: "Stage 9:16", aspectRatio: 9 / 16 },
     { title: "Home mini", aspectRatio: 9 / 14 },
   ],
+  /** Singles: the Work card, the story stage, and link previews. */
+  single: [
+    { title: "Card 4:5", aspectRatio: 4 / 5 },
+    { title: "Stage 9:16", aspectRatio: 9 / 16 },
+    { title: "Link preview", aspectRatio: 1200 / 630 },
+  ],
   portrait: [{ title: "Portrait 4:5", aspectRatio: 4 / 5 }],
   share: [{ title: "Link preview 1200×630", aspectRatio: 1200 / 630 }],
 };

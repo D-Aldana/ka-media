@@ -1,6 +1,6 @@
 import { sportLabel } from "@/lib/format";
 import { siteUrl } from "@/lib/site";
-import { SPORTS, type AboutSummary, type Settings } from "@/lib/types";
+import { GAME_SPORTS, type AboutSummary, type Settings } from "@/lib/types";
 
 /**
  * `Prince George, BC` → the two address parts schema.org wants separately.
@@ -62,7 +62,7 @@ export function JsonLd({
     address,
     knowsAbout: [
       "Sports photography",
-      ...SPORTS.map((sport) => `${sportLabel(sport)} photography`),
+      ...GAME_SPORTS.map((sport) => `${sportLabel(sport)} photography`),
       "Highlight films",
     ],
   };
@@ -85,20 +85,14 @@ export function JsonLd({
 }
 
 /**
- * Breadcrumbs for a game page, so results show `ka-media › Work › <game>`
- * instead of a bare URL.
+ * Breadcrumbs for a game or single page, so results show
+ * `ka-media › Work › <title>` instead of a bare URL.
  */
-export function GameBreadcrumbs({
-  title,
-  slug,
-}: {
-  title: string;
-  slug: string;
-}) {
+export function Breadcrumbs({ title, path }: { title: string; path: string }) {
   const trail = [
     { name: "Home", item: siteUrl },
     { name: "Work", item: `${siteUrl}/work` },
-    { name: title, item: `${siteUrl}/work/${slug}` },
+    { name: title, item: `${siteUrl}${path}` },
   ];
 
   return (

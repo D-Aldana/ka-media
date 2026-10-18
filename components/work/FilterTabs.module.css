@@ -22,6 +22,18 @@
   border-color: var(--fg);
 }
 
+/* Labels: a quieter row that wraps on desktop rather than running off. */
+.small {
+  flex-wrap: wrap;
+}
+
+.small .chip {
+  height: 36px;
+  padding: 0 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
 .on {
   background: var(--fg);
   color: var(--bg);
@@ -31,6 +43,7 @@
 @media (max-width: 860px) {
   /* Swipe row that bleeds past the page padding. */
   .tabs {
+    flex-wrap: nowrap;
     overflow-x: auto;
     margin: 0 calc(var(--pad) * -1);
     padding: 0 var(--pad);

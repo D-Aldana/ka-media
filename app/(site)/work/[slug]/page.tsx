@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { GameBreadcrumbs } from "@/components/site/JsonLd";
+import { Breadcrumbs } from "@/components/site/JsonLd";
 import { splitStatLine } from "@/components/story/statLine";
 import { StoryCloseButton, StoryCloseLink } from "@/components/story/StoryClose";
 import { StoryDeck } from "@/components/story/StoryDeck";
 import { CoverImage } from "@/components/ui/CoverImage";
+import { LabelLinks } from "@/components/work/LabelLinks";
 import { getGame, getGameSlugs, getSettings } from "@/lib/content";
 import { formatDate, sportLabel } from "@/lib/format";
 import { ogImage } from "@/lib/image";
@@ -66,13 +67,14 @@ export default async function GameStoryPage({ params }: Props) {
 
   return (
     <section className={styles.page} data-route="story">
-      <GameBreadcrumbs title={game.title} slug={game.slug} />
+      <Breadcrumbs title={game.title} path={`/work/${game.slug}`} />
       <StoryCloseLink className={styles.close} />
 
       <div className={styles.left}>
         <span className={styles.label}>{meta}</span>
         <h1 className={styles.title}>{game.title}</h1>
         {game.blurb && <p className={styles.blurb}>{game.blurb}</p>}
+        <LabelLinks labels={game.labels} />
         <span className={styles.label}>
           {count} {count === 1 ? "story" : "stories"} · {kinds} · tap to skip
         </span>

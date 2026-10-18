@@ -11,14 +11,19 @@ import type {
   AboutSummary,
   ContactPage,
   GameSummary,
+  Label,
   LatestGame,
   Service,
   Settings,
   SportSummary,
+  Single,
   StoryItem,
+  WorkData,
   WorkGame,
+  WorkItem,
+  WorkSingle,
 } from "./types";
-import { SPORTS } from "./types";
+import { GAME_SPORTS } from "./types";
 
 const sportOrder = [
   "basketball",
@@ -30,6 +35,19 @@ const sportOrder = [
   "football",
   "soccer",
 ] as const;
+
+export const labels: Label[] = [
+  { slug: "senior-boys", title: "[Senior Boys]", kind: "team" },
+  { slug: "junior-girls", title: "[Junior Girls]", kind: "team" },
+  { slug: "headshots", title: "[Headshots]", kind: "other" },
+];
+
+const [seniorBoys, juniorGirls, headshots] = labels;
+
+/** Which team each placeholder game is for, alternating so both chips filter. */
+function labelsFor(gameIndex: number): Label[] {
+  return [gameIndex % 2 === 0 ? seniorBoys : juniorGirls];
+}
 
 /** A public sample clip, so the deck has something real to play. */
 const DEMO_VIDEO_URL =
@@ -110,6 +128,7 @@ export const games: LatestGame[] = sportOrder.map((sport, i) => {
     blurb: first
       ? "[One line about the game — the moment, the rivalry, what was on the line.]"
       : "[One line about the game.]",
+    labels: labelsFor(i),
     cover: null,
     stories: storiesFor(i),
   };
@@ -126,18 +145,67 @@ export function toSummary({
   return { _id, title, slug, sport, code, cover };
 }
 
-export const workGames: WorkGame[] = games.map((game) => ({
+/** Singles, newest first, dated between the games so the grid interleaves. */
+export const singles: Single[] = [
+  {
+    _id: "photo-1",
+    title: "[Senior night]",
+    slug: "senior-night",
+    sport: "basketball",
+    date: "2026-01-09",
+    caption: "[senior night · #23]",
+    image: null,
+    labels: [seniorBoys],
+  },
+  {
+    _id: "photo-2",
+    title: "[Media day headshots]",
+    slug: "media-day-headshots",
+    sport: "other",
+    date: "2025-12-20",
+    caption: null,
+    image: null,
+    labels: [headshots, juniorGirls],
+  },
+  {
+    _id: "photo-3",
+    title: "[Corner kick]",
+    slug: "corner-kick",
+    sport: "soccer",
+    date: "2025-11-30",
+    caption: "[the equaliser]",
+    image: null,
+    labels: [juniorGirls],
+  },
+];
+
+const workGames: WorkGame[] = games.map((game) => ({
   ...toSummary(game),
+  kind: "game",
   date: game.date,
   statLine: game.statLine,
   hasVideo: game.stories.some((item) => item._type === "storyVideo"),
+  labels: game.labels.map((label) => label.slug),
 }));
+
+const workSingles: WorkSingle[] = singles.map((single) => ({
+  ...single,
+  kind: "single",
+  labels: single.labels.map((label) => label.slug),
+}));
+
+export const work: WorkData = {
+  items: ([...workGames, ...workSingles] as WorkItem[]).sort((a, b) =>
+    a.date < b.date ? 1 : a.date > b.date ? -1 : 0,
+  ),
+  labels,
+};
 
 export const featured: GameSummary[] = games.map(toSummary);
 
 export const latest: LatestGame = games[0];
 
-export const sports: SportSummary[] = SPORTS.map((sport) => ({
+export const sports: SportSummary[] = GAME_SPORTS.map((sport) => ({
   sport,
   count: games.filter((game) => game.sport === sport).length,
   cover: null,

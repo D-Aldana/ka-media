@@ -1,50 +1,43 @@
 import Link from "next/link";
 
-import { sportLabel } from "@/lib/format";
-import { SPORTS, type Sport } from "@/lib/types";
-
 import styles from "./FilterTabs.module.css";
 
+export type FilterTab = {
+  key: string;
+  label: string;
+  href: string;
+  count: number;
+  on: boolean;
+};
+
 type Props = {
-  active: Sport | "all";
-  counts: Record<Sport, number>;
-  total: number;
+  tabs: FilterTab[];
+  /** Names the group for screen readers, e.g. "Filter by sport". */
+  label: string;
+  /** The smaller, wrapping row the labels use under the sport chips. */
+  small?: boolean;
+  className?: string;
 };
 
 /**
  * Links, not buttons: the filter lives in the URL so sport tiles and shared
  * links land pre-filtered, and the chips still work without JS.
  */
-export function FilterTabs({ active, counts, total }: Props) {
-  const tabs: {
-    key: Sport | "all";
-    label: string;
-    href: string;
-    count: number;
-  }[] = [
-    { key: "all", label: "All", href: "/work", count: total },
-    ...SPORTS.filter((sport) => counts[sport] > 0 || sport === active).map(
-      (sport) => ({
-        key: sport,
-        label: sportLabel(sport),
-        href: `/work?sport=${sport}`,
-        count: counts[sport],
-      }),
-    ),
-  ];
-
+export function FilterTabs({ tabs, label, small = false, className }: Props) {
   return (
-    <div className={styles.tabs} role="group" aria-label="Filter by sport">
+    <div
+      className={[styles.tabs, small && styles.small, className].filter(Boolean).join(" ")}
+      role="group"
+      aria-label={label}
+    >
       {tabs.map((tab) => (
         <Link
           key={tab.key}
           href={tab.href}
           replace
           scroll={false}
-          className={[styles.chip, tab.key === active && styles.on]
-            .filter(Boolean)
-            .join(" ")}
-          aria-current={tab.key === active ? "page" : undefined}
+          className={[styles.chip, tab.on && styles.on].filter(Boolean).join(" ")}
+          aria-current={tab.on ? "page" : undefined}
         >
           {tab.label} {tab.count}
         </Link>
