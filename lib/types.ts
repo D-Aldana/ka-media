@@ -57,6 +57,14 @@ export type GameSummary = {
   cover: ContentImage | null;
 };
 
+/**
+ * A filmstrip frame: the summary plus the reel its cover plays on hover. Null
+ * when the game has no reel — that frame stays a still.
+ */
+export type FeaturedGame = GameSummary & {
+  reel: string | null;
+};
+
 /** A card in the Work grid: the summary plus what the card labels. */
 export type WorkGame = GameSummary & {
   kind: "game";
@@ -184,7 +192,7 @@ export type Settings = {
 };
 
 export type HomeData = {
-  featured: GameSummary[];
+  featured: FeaturedGame[];
   sports: SportSummary[];
   latest: LatestGame | null;
   about: AboutSummary;

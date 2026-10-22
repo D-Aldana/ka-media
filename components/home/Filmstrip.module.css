@@ -51,8 +51,16 @@
   color: var(--mute);
 }
 
-.media {
+/* Holds the cover and, on hover, the reel over it. */
+.shot {
+  display: block;
+  position: relative;
   height: 375px;
+  overflow: hidden;
+}
+
+.media {
+  height: 100%;
 }
 
 .track:hover .media img {
@@ -83,7 +91,7 @@
     font-size: 12px;
   }
 
-  .media {
+  .shot {
     height: 275px;
   }
 }

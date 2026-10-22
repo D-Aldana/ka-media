@@ -16,6 +16,17 @@ const StoryVideo = dynamic(() => import("./StoryVideo"), { ssr: false });
 const IMAGE_DURATION = 5000;
 /** Minimum horizontal travel, in px, before a drag counts as a swipe. */
 const SWIPE = 40;
+/** Per-tab, so sound never carries over into a fresh visit. */
+const SOUND_KEY = "ka:story-sound";
+
+/** Muted whenever storage is unavailable — private mode, or turned off. */
+function stored(): boolean {
+  try {
+    return sessionStorage.getItem(SOUND_KEY) === "on";
+  } catch {
+    return false;
+  }
+}
 
 type Props = {
   stories: StoryItem[];
@@ -37,8 +48,12 @@ type Props = {
 /**
  * The full deck: tap zones, arrow keys, swipe, and real playback for reels.
  * Images run on a fixed timer; a video drives its own bar from `timeupdate`.
- * Under reduced motion nothing advances on its own — on image slides the tap
- * zones and arrow keys are the only way through; reels still get a play control.
+ * A resting cursor doesn't stop the deck — only a press, keyboard focus or the
+ * play control does. Reels start muted, since no browser will autoplay sound
+ * unprompted; the speaker control turns it on and the choice sticks for the
+ * rest of the tab. Under reduced motion nothing advances on its own — on
+ * image slides the tap zones and arrow keys are the only way through; reels
+ * still get a play control.
  */
 export function StoryDeck({
   stories,
@@ -60,31 +75,57 @@ export function StoryDeck({
   // False through SSR, so the active bar stays blank rather than flashing full.
   const [motionKnown, setMotionKnown] = useState(false);
   const [wantPlay, setWantPlay] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  // Muted through SSR and the first paint; a stored choice is restored below.
+  const [sound, setSound] = useState(false);
   const [focused, setFocused] = useState(false);
   const [pressed, setPressed] = useState(false);
 
   const active = stories[index];
   const isVideo = active?._type === "storyVideo";
-  const running =
-    wantPlay && !hovered && !focused && !pressed && !finished;
+  const running = wantPlay && !focused && !pressed && !finished;
 
   const bar = useRef<HTMLElement>(null);
   const remaining = useRef(IMAGE_DURATION);
   const startedAt = useRef(0);
   const swipedAt = useRef(0);
+  /** The slide the reset effect below last ran for. */
+  const resetAt = useRef(0);
   const press = useRef<{ x: number; y: number } | null>(null);
 
+  // One pass over everything the deck can only know in the browser: the motion
+  // preference, and whether sound was turned on earlier in this tab.
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const apply = () => {
       setAutoAdvance(!query.matches);
       setWantPlay(!query.matches);
       setMotionKnown(true);
+      setSound(stored());
     };
     apply();
     query.addEventListener("change", apply);
     return () => query.removeEventListener("change", apply);
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    setSound((on) => {
+      try {
+        sessionStorage.setItem(SOUND_KEY, on ? "off" : "on");
+      } catch {}
+      return !on;
+    });
+  }, []);
+
+  /**
+   * Unmuted playback needs a gesture behind it, and a restored choice has none
+   * on a fresh load. Drop back to muted so the reel plays rather than stalling
+   * silently, and forget the choice so the next load doesn't fail the same way.
+   */
+  const onBlocked = useCallback(() => {
+    setSound(false);
+    try {
+      sessionStorage.removeItem(SOUND_KEY);
+    } catch {}
   }, []);
 
   const next = useCallback(() => {
@@ -113,7 +154,11 @@ export function StoryDeck({
     remaining.current = IMAGE_DURATION;
     startedAt.current = Date.now();
     // A reel the visitor chose to play doesn't license the next one to start.
-    if (!autoAdvance) setWantPlay(false);
+    // Only a real slide change counts: on mount this effect still sees the
+    // first render's `autoAdvance`, and clearing then would undo the play the
+    // media-query effect just asked for in the same commit.
+    if (resetAt.current !== index && !autoAdvance) setWantPlay(false);
+    resetAt.current = index;
   }, [index, autoAdvance]);
 
   // Only a reel drives its bar inline; drop that width on the way out so the
@@ -158,6 +203,10 @@ export function StoryDeck({
           if (target?.closest("button, a, summary")) return;
           setWantPlay((playing) => !playing);
           break;
+        case "m":
+        case "M":
+          toggleSound();
+          break;
         case "Escape":
           close();
           break;
@@ -169,7 +218,7 @@ export function StoryDeck({
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [next, previous, close]);
+  }, [next, previous, close, toggleSound]);
 
   const onProgress = useCallback((fraction: number) => {
     if (bar.current) bar.current.style.width = `${fraction * 100}%`;
@@ -209,7 +258,7 @@ export function StoryDeck({
   const barClass = (i: number) => {
     if (finished || i < index) return `${deck.bar} ${deck.done}`;
     if (i > index) return deck.bar;
-    if (isVideo) return `${deck.bar} ${styles.streamed}`;
+    if (isVideo) return `${deck.bar} ${deck.streamed}`;
     if (!motionKnown) return deck.bar;
     return `${deck.bar} ${autoAdvance ? deck.now : deck.full}`;
   };
@@ -244,18 +293,17 @@ export function StoryDeck({
           style={{ "--dur": `${IMAGE_DURATION}ms` } as React.CSSProperties}
           aria-roledescription="story deck"
           aria-label={`${title} — ${count} ${count === 1 ? "story" : "stories"}`}
-          onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") setHovered(true);
-          }}
           onPointerLeave={(event) => {
-            if (event.pointerType !== "mouse") return;
-            setHovered(false);
-            release();
+            if (event.pointerType === "mouse") release();
           }}
           onFocusCapture={(event) => {
             // Clicking a tap zone focuses it too, and that must not stop the
             // deck — only keyboard focus should.
-            if (event.target.matches(":focus-visible")) setFocused(true);
+            if (!event.target.matches(":focus-visible")) return;
+            // Reaching for a control must not stop what the control adjusts —
+            // tabbing to "Unmute" would otherwise pause the reel being unmuted.
+            if (event.target.closest("[data-control]")) return;
+            setFocused(true);
           }}
           onBlurCapture={() => setFocused(false)}
           onPointerDown={onPointerDown}
@@ -282,6 +330,8 @@ export function StoryDeck({
                     src={item.url}
                     title={`${title} — story ${i + 1}`}
                     playing={running}
+                    muted={!sound}
+                    onBlocked={onBlocked}
                     onProgress={onProgress}
                     onDone={next}
                   />
@@ -323,7 +373,7 @@ export function StoryDeck({
               {handle.replace(/^@/, "")}
             </span>
 
-            <span className={styles.actions}>
+            <span className={styles.actions} data-control>
               {(autoAdvance || isVideo) && !finished && (
                 <button
                   type="button"
@@ -334,6 +384,18 @@ export function StoryDeck({
                     {wantPlay ? "Pause story" : "Play story"}
                   </span>
                   {wantPlay ? <PauseIcon /> : <PlayIcon />}
+                </button>
+              )}
+              {isVideo && !finished && (
+                <button
+                  type="button"
+                  className={styles.control}
+                  onClick={toggleSound}
+                >
+                  <span className="sr-only">
+                    {sound ? "Mute story" : "Unmute story"}
+                  </span>
+                  {sound ? <SoundOnIcon /> : <SoundOffIcon />}
                 </button>
               )}
               {actions}
@@ -371,6 +433,34 @@ function PauseIcon() {
     <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true">
       <rect x="1" y="1" width="3.5" height="12" rx="1" />
       <rect x="7.5" y="1" width="3.5" height="12" rx="1" />
+    </svg>
+  );
+}
+
+function SoundOnIcon() {
+  return (
+    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden="true">
+      <path d="M7 1.5L3.5 4.5H1.5v5h2L7 12.5z" fill="currentColor" />
+      <path
+        d="M10 4.5a3.5 3.5 0 010 5M12.3 2.2a7 7 0 010 9.6"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function SoundOffIcon() {
+  return (
+    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden="true">
+      <path d="M7 1.5L3.5 4.5H1.5v5h2L7 12.5z" fill="currentColor" />
+      <path
+        d="M10.2 5.2l4 3.6M14.2 5.2l-4 3.6"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

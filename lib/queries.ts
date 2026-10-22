@@ -44,6 +44,12 @@ const STORIES = `stories[]{
   }
 }`;
 
+/**
+ * The game's first reel, for the filmstrip's hover preview. Just the URL: the
+ * cover is already the still, so no poster is needed.
+ */
+const REEL = `"reel": stories[_type == "storyVideo"][0].file.asset->url`;
+
 /** A label in full, for the pages that print and link it. */
 const LABEL = `{"slug": slug.current, title, kind}`;
 
@@ -81,7 +87,10 @@ export const SETTINGS_QUERY = defineQuery(`
 `);
 
 export const HOME_QUERY = defineQuery(`{
-  "featured": *[${VISIBLE} && featured == true] | ${ORDER}[0...10]{${SUMMARY}},
+  "featured": *[${VISIBLE} && featured == true] | ${ORDER}[0...10]{
+    ${SUMMARY},
+    ${REEL}
+  },
   "sports": [
   ${SPORT_COUNTS}
   ],

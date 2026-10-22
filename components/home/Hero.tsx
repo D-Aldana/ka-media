@@ -1,12 +1,12 @@
 import { Pill } from "@/components/ui/Pill";
 import { NAV } from "@/lib/transitions";
-import type { GameSummary, Settings } from "@/lib/types";
+import type { FeaturedGame, Settings } from "@/lib/types";
 
 import { Filmstrip } from "./Filmstrip";
 import styles from "./Hero.module.css";
 
 type Props = {
-  featured: GameSummary[];
+  featured: FeaturedGame[];
   settings: Settings;
 };
 

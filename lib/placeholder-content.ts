@@ -10,6 +10,7 @@ import type {
   AboutPage,
   AboutSummary,
   ContactPage,
+  FeaturedGame,
   GameSummary,
   Label,
   LatestGame,
@@ -201,7 +202,10 @@ export const work: WorkData = {
   labels,
 };
 
-export const featured: GameSummary[] = games.map(toSummary);
+export const featured: FeaturedGame[] = games.map((game) => ({
+  ...toSummary(game),
+  reel: null,
+}));
 
 export const latest: LatestGame = games[0];
 

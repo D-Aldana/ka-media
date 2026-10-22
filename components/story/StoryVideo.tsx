@@ -12,18 +12,33 @@ type Props = {
   /** Names the reel for assistive tech. */
   title: string;
   playing: boolean;
+  /** The deck owns the choice, so it carries from one reel to the next. */
+  muted?: boolean;
+  /**
+   * The browser refused to play — almost always unmuted playback with no
+   * gesture behind it. The deck drops back to muted and we retry.
+   */
+  onBlocked?: () => void;
   /** 0–1 of the capped length, on every timeupdate. */
   onProgress: (fraction: number) => void;
   onDone: () => void;
 };
 
 /**
- * The only place a reel is allowed to start. Mounted by StoryDeck for the
- * active item alone and unmounted the moment the deck moves on, so nothing
- * buffers in the background. The slide underneath stays visible as the poster
- * until the first frame is actually playing.
+ * Muted inline playback for one reel. Both decks mount it for the active item
+ * alone and unmount it the moment they move on, so nothing buffers in the
+ * background. The slide underneath stays visible as the poster until the first
+ * frame is actually playing.
  */
-export default function StoryVideo({ src, title, playing, onProgress, onDone }: Props) {
+export default function StoryVideo({
+  src,
+  title,
+  playing,
+  muted = true,
+  onBlocked,
+  onProgress,
+  onDone,
+}: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
   const done = useRef(false);
@@ -31,9 +46,15 @@ export default function StoryVideo({ src, title, playing, onProgress, onDone }: 
   const sync = useCallback(() => {
     const player = ref.current;
     if (!player) return;
-    if (playing) player.play().catch(() => {});
-    else player.pause();
-  }, [playing]);
+    // Set on the element rather than left to the attribute alone: Safari is
+    // unreliable about honouring a re-rendered `muted` on a live player.
+    player.muted = muted;
+    if (!playing) {
+      player.pause();
+      return;
+    }
+    player.play().catch(() => onBlocked?.());
+  }, [playing, muted, onBlocked]);
 
   useEffect(() => {
     sync();
@@ -61,7 +82,7 @@ export default function StoryVideo({ src, title, playing, onProgress, onDone }: 
       className={[styles.video, started && styles.on].filter(Boolean).join(" ")}
       src={src}
       aria-label={title}
-      muted
+      muted={muted}
       playsInline
       preload="auto"
       onCanPlay={sync}

@@ -79,10 +79,6 @@
   width: 60%;
 }
 
-.streamed i {
-  transition: width 0.25s linear;
-}
-
 /* The header band sits over the tap zones, so only its controls take clicks. */
 .top {
   pointer-events: none;
