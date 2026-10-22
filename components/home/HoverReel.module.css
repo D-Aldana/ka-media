@@ -1,0 +1,17 @@
+.reel {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The cover shows through until there is a real frame to put over it. */
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  /* The frame's own link owns every click and the hover it is tracking. */
+  pointer-events: none;
+}
+
+.on {
+  opacity: 1;
+}

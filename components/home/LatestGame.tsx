@@ -2,6 +2,7 @@ import { MiniStory } from "@/components/story/MiniStory";
 import { Reveal } from "@/components/ui/Reveal";
 import { UnderlineLink } from "@/components/ui/UnderlineLink";
 import { formatDate } from "@/lib/format";
+import { NAV } from "@/lib/transitions";
 import type { LatestGame as LatestGameType, Settings } from "@/lib/types";
 
 import styles from "./LatestGame.module.css";
@@ -23,7 +24,11 @@ export function LatestGame({ game, settings }: Props) {
           </span>
           <h2 className={styles.title}>{game.title}</h2>
           {game.blurb && <p className={styles.blurb}>{game.blurb}</p>}
-          <UnderlineLink href={href} className={styles.watch}>
+          <UnderlineLink
+            href={href}
+            className={styles.watch}
+            transitionTypes={NAV.forward}
+          >
             Watch the story →
           </UnderlineLink>
         </Reveal>

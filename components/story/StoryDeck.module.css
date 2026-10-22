@@ -51,6 +51,13 @@
   animation: pop 0.9s var(--ease) both;
 }
 
+/* Arriving by a navigation, the cover morph is the entrance; the pop would
+   play a competing one inside the live snapshot. Zeroing the duration holds
+   the end frame instead of restarting the pop once the transition is over. */
+:active-view-transition .frame {
+  animation-duration: 0s;
+}
+
 .tap {
   position: absolute;
   top: 0;
@@ -70,10 +77,6 @@
 .next {
   right: 0;
   width: 60%;
-}
-
-.streamed i {
-  transition: width 0.25s linear;
 }
 
 /* The header band sits over the tap zones, so only its controls take clicks. */

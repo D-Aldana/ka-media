@@ -77,6 +77,12 @@
   animation: fill var(--dur, 5s) linear forwards;
 }
 
+/* A reel sets its own bar width from `timeupdate`, so there is no keyframe to
+   run — just smooth the steps between updates. */
+.streamed i {
+  transition: width 0.25s linear;
+}
+
 .paused .now i {
   animation-play-state: paused;
 }

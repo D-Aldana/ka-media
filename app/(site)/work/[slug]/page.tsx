@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/site/JsonLd";
+import { PageTransition } from "@/components/site/PageTransition";
 import { splitStatLine } from "@/components/story/statLine";
 import { StoryCloseButton, StoryCloseLink } from "@/components/story/StoryClose";
 import { StoryDeck } from "@/components/story/StoryDeck";
@@ -11,6 +12,7 @@ import { LabelLinks } from "@/components/work/LabelLinks";
 import { getGame, getGameSlugs, getSettings } from "@/lib/content";
 import { formatDate, sportLabel } from "@/lib/format";
 import { ogImage } from "@/lib/image";
+import { NAV, coverName } from "@/lib/transitions";
 import type { GameSummary } from "@/lib/types";
 
 import styles from "./page.module.css";
@@ -66,61 +68,64 @@ export default async function GameStoryPage({ params }: Props) {
   const meta = `${game.code} · ${game.sport} · ${formatDate(game.date)}`;
 
   return (
-    <section className={styles.page} data-route="story">
-      <Breadcrumbs title={game.title} path={`/work/${game.slug}`} />
-      <StoryCloseLink className={styles.close} />
+    <PageTransition>
+      <section className={styles.page} data-route="story">
+        <Breadcrumbs title={game.title} path={`/work/${game.slug}`} />
+        <StoryCloseLink className={styles.close} />
 
-      <div className={styles.left}>
-        <span className={styles.label}>{meta}</span>
-        <h1 className={styles.title}>{game.title}</h1>
-        {game.blurb && <p className={styles.blurb}>{game.blurb}</p>}
-        <LabelLinks labels={game.labels} />
-        <span className={styles.label}>
-          {count} {count === 1 ? "story" : "stories"} · {kinds} · tap to skip
-        </span>
-      </div>
-
-      <StoryDeck
-        stories={game.stories}
-        title={game.title}
-        handle={settings.instagramHandle}
-        className={styles.stage}
-        sizes="(max-width: 860px) 100vw, 420px"
-        actions={<StoryCloseButton className={styles.mobileClose} />}
-        endPrompt={next && <NextGameLink game={next} className={styles.endNext} />}
-      >
-        {game.statLine && (
-          <span className={styles.statLine}>
-            {splitStatLine(game.statLine).map((line) => (
-              <span key={line}>{line}</span>
-            ))}
-          </span>
-        )}
-
-        <div className={styles.mobileInfo}>
+        <div className={styles.left}>
+          <span className={styles.label}>{meta}</span>
+          <h1 className={styles.title}>{game.title}</h1>
+          {game.blurb && <p className={styles.blurb}>{game.blurb}</p>}
+          <LabelLinks labels={game.labels} />
           <span className={styles.label}>
-            {game.code} · {game.sport} · {count}{" "}
-            {count === 1 ? "story" : "stories"}
+            {count} {count === 1 ? "story" : "stories"} · {kinds} · tap to skip
           </span>
+        </div>
+
+        <StoryDeck
+          stories={game.stories}
+          title={game.title}
+          handle={settings.instagramHandle}
+          className={styles.stage}
+          sizes="(max-width: 860px) 100vw, 420px"
+          actions={<StoryCloseButton className={styles.mobileClose} />}
+          endPrompt={next && <NextGameLink game={next} className={styles.endNext} />}
+          viewTransitionName={coverName("game", game.slug)}
+        >
           {game.statLine && (
-            <span className={styles.mobileStat}>
+            <span className={styles.statLine}>
               {splitStatLine(game.statLine).map((line) => (
                 <span key={line}>{line}</span>
               ))}
             </span>
           )}
-          {game.blurb && <p className={styles.mobileBlurb}>{game.blurb}</p>}
-          {next && <MobileNextCard game={next} />}
-        </div>
-      </StoryDeck>
 
-      {next && (
-        <div className={styles.right}>
-          <span className={styles.label}>next game</span>
-          <NextGameLink game={next} className={styles.nextCard} />
-        </div>
-      )}
-    </section>
+          <div className={styles.mobileInfo}>
+            <span className={styles.label}>
+              {game.code} · {game.sport} · {count}{" "}
+              {count === 1 ? "story" : "stories"}
+            </span>
+            {game.statLine && (
+              <span className={styles.mobileStat}>
+                {splitStatLine(game.statLine).map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </span>
+            )}
+            {game.blurb && <p className={styles.mobileBlurb}>{game.blurb}</p>}
+            {next && <MobileNextCard game={next} />}
+          </div>
+        </StoryDeck>
+
+        {next && (
+          <div className={styles.right}>
+            <span className={styles.label}>next game</span>
+            <NextGameLink game={next} className={styles.nextCard} />
+          </div>
+        )}
+      </section>
+    </PageTransition>
   );
 }
 
@@ -132,7 +137,11 @@ function NextGameLink({
   className: string;
 }) {
   return (
-    <Link href={`/work/${game.slug}`} className={className}>
+    <Link
+      href={`/work/${game.slug}`}
+      className={className}
+      transitionTypes={NAV.advance}
+    >
       <span className={styles.nextText}>
         <span className={styles.nextTitle}>{game.title}</span>
         <span className={styles.nextMeta}>
@@ -151,7 +160,11 @@ function NextGameLink({
 
 function MobileNextCard({ game }: { game: GameSummary }) {
   return (
-    <Link href={`/work/${game.slug}`} className={styles.mobileNext}>
+    <Link
+      href={`/work/${game.slug}`}
+      className={styles.mobileNext}
+      transitionTypes={NAV.advance}
+    >
       <CoverImage
         image={game.cover}
         className={styles.mobileNextCover}

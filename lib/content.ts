@@ -18,6 +18,7 @@ import type {
   AboutPage,
   ContactPage,
   GamePage,
+  FeaturedGame,
   GameSummary,
   HomeData,
   Label,
@@ -140,6 +141,12 @@ type RawSummary = {
   rank: number | null;
   cover: RawImage | null;
 };
+
+type RawFeatured = RawSummary & { reel: string | null };
+
+function toFeatured(raw: RawFeatured): FeaturedGame {
+  return { ...toSummary(raw), reel: raw.reel ?? null };
+}
 
 function toSummary(raw: RawSummary): GameSummary {
   return {
@@ -282,7 +289,7 @@ export async function getHomeData(): Promise<HomeData> {
   }
 
   const raw = await fetchFrom<{
-    featured: RawSummary[] | null;
+    featured: RawFeatured[] | null;
     sports: { sport: Sport; count: number; cover: RawImage | null }[] | null;
     latest: RawGame | null;
     about: {
@@ -304,7 +311,7 @@ export async function getHomeData(): Promise<HomeData> {
   });
 
   return {
-    featured: (raw.featured ?? []).map(toSummary),
+    featured: (raw.featured ?? []).map(toFeatured),
     sports,
     latest: raw.latest ? toGame(raw.latest) : null,
     about: {

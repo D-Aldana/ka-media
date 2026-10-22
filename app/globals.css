@@ -109,9 +109,244 @@ body:has([data-route="story"]) footer {
   border: 0;
 }
 
+/* ---------------------------------------------------------------------------
+   Page transitions
+
+   React's <ViewTransition> names the elements that persist across a
+   navigation; these rules say how they move. Classes come from the `enter`,
+   `exit` and `share` props — `nav-forward` from PageTransition, `morph` from
+   a cover pairing with its story deck.
+
+   The metaphor is depth rather than the usual left/right slide: going deeper
+   sinks the page you left and lifts the one you opened through the blur,
+   coming back pulls the old page toward you, and a sideways move between
+   top-level pages racks focus instead of travelling at all.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --vt-move: 520ms;
+  --vt-advance: 460ms;
+}
+
+/* The transition overlay sits above the live page and would otherwise swallow
+   any click landing mid-animation. */
+::view-transition {
+  pointer-events: none;
+}
+
+/* The nav is the one fixed reference point: the content moves under it, so the
+   visitor can tell the page changed rather than the whole viewport. Without
+   `display: none` the old and new copies both show for a frame. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* Deeper in: the grid sinks away and softens while the story rises into it. */
+::view-transition-old(.nav-forward) {
+  animation: var(--vt-move) var(--ease) both vt-sink;
+}
+
+::view-transition-new(.nav-forward) {
+  animation: var(--vt-move) var(--ease) both vt-rise;
+}
+
+/* Back out: the story recedes toward the viewer as the grid settles back. */
+::view-transition-old(.nav-back) {
+  animation: var(--vt-move) var(--ease) both vt-lift;
+}
+
+::view-transition-new(.nav-back) {
+  animation: var(--vt-move) var(--ease) both vt-settle;
+}
+
+/* Sideways: a rack focus. Nothing travels, the lens just pulls focus from one
+   page to the next, which is the only honest move between pages that sit at
+   the same depth. */
+::view-transition-old(.nav-page) {
+  animation: var(--vt-move) var(--ease) both vt-defocus;
+}
+
+::view-transition-new(.nav-page) {
+  animation: var(--vt-move) var(--ease) both vt-refocus;
+}
+
+/* One story to the next: film advancing a frame. */
+::view-transition-old(.nav-advance) {
+  animation: var(--vt-advance) var(--ease) both vt-advance-out;
+}
+
+::view-transition-new(.nav-advance) {
+  animation: var(--vt-advance) var(--ease) both vt-advance-in;
+}
+
+/* A cover and the story deck it opens are one object: the browser animates
+   between the square card and the tall frame, and the blur mid-flight hides
+   the stretch of re-interpolating one crop into the other. */
+::view-transition-group(.morph) {
+  animation-duration: var(--vt-move);
+  animation-timing-function: var(--ease);
+  z-index: 10;
+}
+
+::view-transition-old(.morph),
+::view-transition-new(.morph) {
+  animation-duration: var(--vt-move);
+  animation-timing-function: var(--ease);
+}
+
+::view-transition-image-pair(.morph) {
+  animation: var(--vt-move) var(--ease) both vt-morph;
+}
+
+@keyframes vt-sink {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  /* Gone well before the group finishes, so a dead snapshot never lingers
+     over the page arriving behind it. */
+  65%,
+  to {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(0.955);
+  }
+}
+
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(26px) scale(1.02);
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+@keyframes vt-lift {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  65%,
+  to {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(1.045);
+  }
+}
+
+@keyframes vt-settle {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(-14px) scale(0.985);
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+@keyframes vt-defocus {
+  from {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+  }
+  60%,
+  to {
+    opacity: 0;
+    filter: blur(16px) brightness(1.2);
+  }
+}
+
+@keyframes vt-refocus {
+  from {
+    opacity: 0;
+    filter: blur(18px) brightness(1.25);
+    transform: scale(1.012);
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: none;
+  }
+}
+
+@keyframes vt-advance-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
+  70%,
+  to {
+    opacity: 0;
+    filter: blur(7px);
+    transform: translateX(-9%);
+  }
+}
+
+@keyframes vt-advance-in {
+  from {
+    opacity: 0;
+    filter: blur(9px);
+    transform: translateX(11%);
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+@keyframes vt-morph {
+  35% {
+    filter: blur(4px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  /* The `*` rules below never reach the ::view-transition pseudo tree, so the
+     page transitions have to be stood down by name. Content then swaps
+     instantly, which is what the browser does without them. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-image-pair(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
   }
   *,
   *::before,

@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 
 import { CoverImage } from "@/components/ui/CoverImage";
 import { formatDate } from "@/lib/format";
+import { NAV, coverName } from "@/lib/transitions";
 import type { WorkSingle } from "@/lib/types";
 
 import styles from "./GameCard.module.css";
@@ -22,21 +24,28 @@ export function SingleCard({ single, dimmed = false, priority = false }: Props) 
       className={[styles.card, dimmed && styles.off].filter(Boolean).join(" ")}
       tabIndex={dimmed ? -1 : undefined}
       aria-hidden={dimmed || undefined}
+      transitionTypes={NAV.forward}
     >
-      <span className={styles.frame}>
-        <CoverImage
-          image={single.image}
-          className={styles.cover}
-          sizes="(max-width: 860px) 45vw, 22vw"
-          priority={priority}
-          decorative
-        />
-        {single.caption && (
-          <span className={styles.stat}>
-            <span>{single.caption}</span>
-          </span>
-        )}
-      </span>
+      <ViewTransition
+        name={coverName("single", single.slug)}
+        share="morph"
+        default="none"
+      >
+        <span className={styles.frame}>
+          <CoverImage
+            image={single.image}
+            className={styles.cover}
+            sizes="(max-width: 860px) 45vw, 22vw"
+            priority={priority}
+            decorative
+          />
+          {single.caption && (
+            <span className={styles.stat}>
+              <span>{single.caption}</span>
+            </span>
+          )}
+        </span>
+      </ViewTransition>
 
       <span className={styles.text}>
         <span className={styles.meta}>

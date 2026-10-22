@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { NAV } from "@/lib/transitions";
 import type { Label } from "@/lib/types";
 
 import styles from "./LabelLinks.module.css";
@@ -12,7 +13,11 @@ export function LabelLinks({ labels, className }: { labels: Label[]; className?:
     <ul className={[styles.list, className].filter(Boolean).join(" ")} aria-label="Labels">
       {labels.map((label) => (
         <li key={label.slug}>
-          <Link href={`/work?label=${label.slug}`} className={styles.link}>
+          <Link
+            href={`/work?label=${label.slug}`}
+            className={styles.link}
+            transitionTypes={NAV.back}
+          >
             {label.title.toLowerCase()}
           </Link>
         </li>
