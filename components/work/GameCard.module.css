@@ -9,7 +9,9 @@
   aspect-ratio: 4 / 5;
 }
 
-.cover {
+/* Nested so the override still outranks `CoverImage`'s own `position:
+   relative` whichever order the two modules' stylesheets land in. */
+.frame .cover {
   position: absolute;
   inset: 0;
 }
