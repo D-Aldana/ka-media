@@ -11,19 +11,15 @@ import styles from "./GameCard.module.css";
 
 type Props = {
   game: WorkGame;
-  /** Filtered out: the card stays in place and fades back rather than moving. */
-  dimmed?: boolean;
   /** Set on the first row, which holds the LCP image. */
   priority?: boolean;
 };
 
-export function GameCard({ game, dimmed = false, priority = false }: Props) {
+export function GameCard({ game, priority = false }: Props) {
   return (
     <Link
       href={`/work/${game.slug}`}
-      className={[styles.card, dimmed && styles.off].filter(Boolean).join(" ")}
-      tabIndex={dimmed ? -1 : undefined}
-      aria-hidden={dimmed || undefined}
+      className={styles.card}
       transitionTypes={NAV.forward}
     >
       {/* Paired with the story deck this opens, so the cover flies into the
@@ -38,7 +34,7 @@ export function GameCard({ game, dimmed = false, priority = false }: Props) {
           <CoverImage
             image={game.cover}
             className={styles.cover}
-            sizes="(max-width: 860px) 45vw, 22vw"
+            sizes="(max-width: 860px) 45vw, 26vw"
             priority={priority}
             decorative
           />

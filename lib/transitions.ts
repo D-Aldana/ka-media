@@ -15,6 +15,8 @@ export const NAV = {
   page: ["nav-page"],
   /** Along to the next story — the same depth, one frame over. */
   advance: ["nav-advance"],
+  /** Not a trip at all: the Work grid re-sorting under a filter. */
+  filter: ["nav-filter"],
 };
 
 /**
@@ -25,4 +27,13 @@ export const NAV = {
  */
 export function coverName(kind: "game" | "single", slug: string): string {
   return `cover-${kind}-${slug.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
+}
+
+/**
+ * Names a Work card so the browser can follow it across a filter change. A
+ * card that survives the filter is the same photo in a new slot, and only a
+ * shared name tells the browser that.
+ */
+export function cardName(kind: "game" | "single", slug: string): string {
+  return `card-${kind}-${slug.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
 }

@@ -126,6 +126,9 @@ body:has([data-route="story"]) footer {
 :root {
   --vt-move: 520ms;
   --vt-advance: 460ms;
+  --vt-sort-out: 200ms;
+  --vt-sort-in: 380ms;
+  --vt-sort-stagger: 55ms;
 }
 
 /* The transition overlay sits above the live page and would otherwise swallow
@@ -205,6 +208,48 @@ body:has([data-route="story"]) footer {
 
 ::view-transition-image-pair(.morph) {
   animation: var(--vt-move) var(--ease) both vt-morph;
+}
+
+/* Filtering Work re-sorts the contact sheet rather than cutting to a new one.
+   Each card is its own snapshot here, so the browser can follow the photos
+   that survive the filter — they slide to the slot the shorter grid gives
+   them instead of being dissolved away and redrawn somewhere else. */
+::view-transition-group(.card-move) {
+  animation-duration: var(--vt-move);
+  animation-timing-function: var(--ease);
+}
+
+/* The two halves of a card that only moves are the same photo, so there is
+   nothing to cross-fade — holding each at full opacity keeps it from dipping
+   grey mid-slide. */
+::view-transition-old(.card-move),
+::view-transition-new(.card-move) {
+  animation: none;
+  opacity: 1;
+}
+
+/* Pulled off the sheet: out of focus, back and gone, fast enough that it
+   never competes with what is arriving. */
+::view-transition-old(.card-out) {
+  animation: var(--vt-sort-out) var(--ease) both vt-card-out;
+}
+
+/* Dealt into the gap it left: rises into focus once the old set has cleared,
+   a beat later for each column across, so the row reads left to right. */
+::view-transition-new(.card-in) {
+  animation: var(--vt-sort-in) var(--ease) var(--vt-sort-out) both vt-card-in;
+}
+
+::view-transition-new(.card-in-1) {
+  animation-delay: calc(var(--vt-sort-out) + var(--vt-sort-stagger));
+}
+
+::view-transition-new(.card-in-2) {
+  animation-delay: calc(var(--vt-sort-out) + var(--vt-sort-stagger) * 2);
+}
+
+::view-transition-new(.card-in-3) {
+  animation-delay: calc(var(--vt-sort-out) + var(--vt-sort-stagger) * 3);
 }
 
 @keyframes vt-sink {
@@ -330,6 +375,35 @@ body:has([data-route="story"]) footer {
 @keyframes vt-morph {
   35% {
     filter: blur(4px);
+  }
+}
+
+@keyframes vt-card-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(0.94);
+  }
+}
+
+@keyframes vt-card-in {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(18px) scale(0.985);
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
   }
 }
 

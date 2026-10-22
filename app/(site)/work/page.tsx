@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 
 import { PageTransition } from "@/components/site/PageTransition";
+import { CardSwap } from "@/components/work/CardSwap";
 import { FilterTabs, type FilterTab } from "@/components/work/FilterTabs";
 import { GameCard } from "@/components/work/GameCard";
+import { LabelIndex, type IndexEntry } from "@/components/work/LabelIndex";
 import { SingleCard } from "@/components/work/SingleCard";
 import { getWork } from "@/lib/content";
 import { sportLabel } from "@/lib/format";
+import { cardName } from "@/lib/transitions";
 import { SPORTS, type Label, type Sport, type WorkItem } from "@/lib/types";
 
 import styles from "./page.module.css";
@@ -87,11 +90,11 @@ function plural(count: number, word: string): string {
 /**
  * The filter lives in the URL, so this renders per request rather than
  * statically. Reading `?sport` and `?label` on the server keeps the grid in
- * the HTML and working without JS; the dimming still animates because a soft
- * navigation only swaps the card classNames.
+ * the HTML and working without JS; the cards re-sort rather than reload
+ * because the chips navigate soft, within the page.
  *
  * Each row's counts are taken within the other row's filter, so a chip always
- * says how many cards it would leave lit.
+ * says how many cards it would leave showing.
  */
 export default async function WorkPage({ searchParams }: Props) {
   const [params, { items, labels }] = await Promise.all([searchParams, getWork()]);
@@ -121,16 +124,17 @@ export default async function WorkPage({ searchParams }: Props) {
     })).filter((tab) => tab.count > 0 || tab.on),
   ];
 
-  const labelTabs: FilterTab[] = labels
+  const labelEntries: IndexEntry[] = labels
     .map((l) => ({
-      key: l.slug,
-      label: l.title,
-      // The lit chip clears itself, so the row needs no "all" of its own.
+      slug: l.slug,
+      title: l.title,
+      kind: l.kind,
+      // A lit line clears itself, so "everything" is never the only way back.
       href: workHref(sport, l.slug === labelSlug ? null : l.slug),
       count: inSport.filter((item) => item.labels.includes(l.slug)).length,
       on: l.slug === labelSlug,
     }))
-    .filter((tab) => tab.count > 0 || tab.on);
+    .filter((entry) => entry.count > 0 || entry.on);
 
   const games = shown.filter((item) => item.kind === "game").length;
   const singles = shown.length - games;
@@ -143,15 +147,12 @@ export default async function WorkPage({ searchParams }: Props) {
     .filter(Boolean)
     .join(" · ");
 
-  /* The first cards the visitor actually reads, which is not the first four
-     grid positions once a filter dims the top of the list. */
-  const eager = new Set(shown.slice(0, 4).map((item) => item._id));
   const filtered = sport !== "all" || label !== null;
 
   return (
     <PageTransition>
       <section className={styles.page} data-route="work">
-        <div className={[styles.head, labelTabs.length > 0 && styles.headTight].filter(Boolean).join(" ")}>
+        <div className={styles.head}>
           <div className={styles.headText}>
             <span className={styles.label} aria-live="polite">
               {summary}
@@ -161,27 +162,44 @@ export default async function WorkPage({ searchParams }: Props) {
           <FilterTabs tabs={sportTabs} label="Filter by sport" />
         </div>
 
-        {labelTabs.length > 0 && (
-          <FilterTabs tabs={labelTabs} label="Filter by label" small className={styles.labels} />
-        )}
+        <div
+          className={[styles.body, labelEntries.length === 0 && styles.bodyFull]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {labelEntries.length > 0 && (
+            <LabelIndex
+              entries={labelEntries}
+              allHref={workHref(sport, null)}
+              allCount={inSport.length}
+              anyOn={label !== null}
+            />
+          )}
 
-        {shown.length === 0 && (
-          <p className={styles.empty}>
-            {filtered ? "Nothing here yet." : "No work yet."}
-          </p>
-        )}
+          <div className={styles.main}>
+            {shown.length === 0 && (
+              <p className={styles.empty}>
+                {filtered ? "Nothing here yet." : "No work yet."}
+              </p>
+            )}
 
-        <div className={styles.grid}>
-          {items.map((item) => {
-            const dimmed = !matches(item, sport, labelSlug);
-            const priority = eager.has(item._id);
+            <div className={styles.grid}>
+              {shown.map((item, i) => {
+                // The first row holds the LCP image.
+                const priority = i < 3;
 
-            return item.kind === "game" ? (
-              <GameCard key={item._id} game={item} dimmed={dimmed} priority={priority} />
-            ) : (
-              <SingleCard key={item._id} single={item} dimmed={dimmed} priority={priority} />
-            );
-          })}
+                return (
+                  <CardSwap key={item._id} name={cardName(item.kind, item.slug)} index={i}>
+                    {item.kind === "game" ? (
+                      <GameCard game={item} priority={priority} />
+                    ) : (
+                      <SingleCard single={item} priority={priority} />
+                    )}
+                  </CardSwap>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
     </PageTransition>

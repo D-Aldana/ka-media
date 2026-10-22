@@ -1,17 +1,6 @@
 .card {
   display: flex;
   flex-direction: column;
-  transition:
-    opacity 0.7s var(--ease),
-    filter 0.7s ease,
-    transform 0.7s var(--ease);
-}
-
-.off {
-  opacity: 0.1;
-  filter: grayscale(1);
-  transform: scale(0.97);
-  pointer-events: none;
 }
 
 .frame {
