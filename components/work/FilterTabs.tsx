@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { NAV } from "@/lib/transitions";
+
 import styles from "./FilterTabs.module.css";
 
 export type FilterTab = {
@@ -38,6 +40,7 @@ export function FilterTabs({ tabs, label, small = false, className }: Props) {
           scroll={false}
           className={[styles.chip, tab.on && styles.on].filter(Boolean).join(" ")}
           aria-current={tab.on ? "page" : undefined}
+          transitionTypes={NAV.filter}
         >
           {tab.label} {tab.count}
         </Link>

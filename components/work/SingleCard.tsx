@@ -10,20 +10,16 @@ import styles from "./GameCard.module.css";
 
 type Props = {
   single: WorkSingle;
-  /** Filtered out: the card stays in place and fades back rather than moving. */
-  dimmed?: boolean;
   /** Set on the first row, which holds the LCP image. */
   priority?: boolean;
 };
 
 /** A single photo in the Work grid: a game card's frame, labelled `single`. */
-export function SingleCard({ single, dimmed = false, priority = false }: Props) {
+export function SingleCard({ single, priority = false }: Props) {
   return (
     <Link
       href={`/work/photo/${single.slug}`}
-      className={[styles.card, dimmed && styles.off].filter(Boolean).join(" ")}
-      tabIndex={dimmed ? -1 : undefined}
-      aria-hidden={dimmed || undefined}
+      className={styles.card}
       transitionTypes={NAV.forward}
     >
       <ViewTransition
