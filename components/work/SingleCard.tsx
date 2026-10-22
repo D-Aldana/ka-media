@@ -31,7 +31,7 @@ export function SingleCard({ single, priority = false }: Props) {
           <CoverImage
             image={single.image}
             className={styles.cover}
-            sizes="(max-width: 860px) 45vw, 22vw"
+            sizes="(max-width: 860px) 45vw, 26vw"
             priority={priority}
             decorative
           />

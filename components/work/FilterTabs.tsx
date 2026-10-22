@@ -16,8 +16,6 @@ type Props = {
   tabs: FilterTab[];
   /** Names the group for screen readers, e.g. "Filter by sport". */
   label: string;
-  /** The smaller, wrapping row the labels use under the sport chips. */
-  small?: boolean;
   className?: string;
 };
 
@@ -25,10 +23,10 @@ type Props = {
  * Links, not buttons: the filter lives in the URL so sport tiles and shared
  * links land pre-filtered, and the chips still work without JS.
  */
-export function FilterTabs({ tabs, label, small = false, className }: Props) {
+export function FilterTabs({ tabs, label, className }: Props) {
   return (
     <div
-      className={[styles.tabs, small && styles.small, className].filter(Boolean).join(" ")}
+      className={[styles.tabs, className].filter(Boolean).join(" ")}
       role="group"
       aria-label={label}
     >

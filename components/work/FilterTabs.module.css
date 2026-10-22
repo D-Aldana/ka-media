@@ -22,18 +22,6 @@
   border-color: var(--fg);
 }
 
-/* Labels: a quieter row that wraps on desktop rather than running off. */
-.small {
-  flex-wrap: wrap;
-}
-
-.small .chip {
-  height: 36px;
-  padding: 0 14px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-}
-
 .on {
   background: var(--fg);
   color: var(--bg);

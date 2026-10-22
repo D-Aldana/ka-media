@@ -1,0 +1,137 @@
+.index {
+  position: sticky;
+  top: calc(var(--nav-h) + 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: indexIn 0.8s var(--ease) 0.24s both;
+}
+
+@keyframes indexIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heading {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mute);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--mute);
+  /* The rule under a lit line reads as the heading's, one entry down. A long
+     label wraps, so it underlines the line rather than the words. */
+  border-bottom: 1px solid transparent;
+  transition:
+    color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+
+.count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--mute) 58%, var(--bg));
+  transition: color 0.3s var(--ease);
+}
+
+.row:hover,
+.row:focus-visible {
+  color: var(--fg);
+  border-color: var(--line-2);
+}
+
+.row:hover .count,
+.row:focus-visible .count {
+  color: var(--mute);
+}
+
+.on {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+
+.on .count {
+  color: var(--mute);
+}
+
+@media (max-width: 860px) {
+  /* No margin to sit in: the index lies down as a swipe row that bleeds past
+     the page padding, headings reading as dividers within it. */
+  .index {
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 calc(var(--pad) * -1);
+    padding: 0 var(--pad);
+    scrollbar-width: none;
+  }
+
+  .index::-webkit-scrollbar {
+    display: none;
+  }
+
+  .group {
+    display: contents;
+  }
+
+  .heading {
+    padding: 0;
+    border: 0;
+    white-space: nowrap;
+  }
+
+  .list {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  /* Tall enough to tap, now that the rows sit in a swipe row. */
+  .row {
+    gap: 6px;
+    padding: 12px 0;
+    white-space: nowrap;
+    border-bottom: 0;
+  }
+
+  .on .name {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}

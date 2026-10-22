@@ -4,6 +4,7 @@ import { PageTransition } from "@/components/site/PageTransition";
 import { CardSwap } from "@/components/work/CardSwap";
 import { FilterTabs, type FilterTab } from "@/components/work/FilterTabs";
 import { GameCard } from "@/components/work/GameCard";
+import { LabelIndex, type IndexEntry } from "@/components/work/LabelIndex";
 import { SingleCard } from "@/components/work/SingleCard";
 import { getWork } from "@/lib/content";
 import { sportLabel } from "@/lib/format";
@@ -123,16 +124,17 @@ export default async function WorkPage({ searchParams }: Props) {
     })).filter((tab) => tab.count > 0 || tab.on),
   ];
 
-  const labelTabs: FilterTab[] = labels
+  const labelEntries: IndexEntry[] = labels
     .map((l) => ({
-      key: l.slug,
-      label: l.title,
-      // The lit chip clears itself, so the row needs no "all" of its own.
+      slug: l.slug,
+      title: l.title,
+      kind: l.kind,
+      // A lit line clears itself, so "everything" is never the only way back.
       href: workHref(sport, l.slug === labelSlug ? null : l.slug),
       count: inSport.filter((item) => item.labels.includes(l.slug)).length,
       on: l.slug === labelSlug,
     }))
-    .filter((tab) => tab.count > 0 || tab.on);
+    .filter((entry) => entry.count > 0 || entry.on);
 
   const games = shown.filter((item) => item.kind === "game").length;
   const singles = shown.length - games;
@@ -150,7 +152,7 @@ export default async function WorkPage({ searchParams }: Props) {
   return (
     <PageTransition>
       <section className={styles.page} data-route="work">
-        <div className={[styles.head, labelTabs.length > 0 && styles.headTight].filter(Boolean).join(" ")}>
+        <div className={styles.head}>
           <div className={styles.headText}>
             <span className={styles.label} aria-live="polite">
               {summary}
@@ -160,31 +162,44 @@ export default async function WorkPage({ searchParams }: Props) {
           <FilterTabs tabs={sportTabs} label="Filter by sport" />
         </div>
 
-        {labelTabs.length > 0 && (
-          <FilterTabs tabs={labelTabs} label="Filter by label" small className={styles.labels} />
-        )}
+        <div
+          className={[styles.body, labelEntries.length === 0 && styles.bodyFull]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {labelEntries.length > 0 && (
+            <LabelIndex
+              entries={labelEntries}
+              allHref={workHref(sport, null)}
+              allCount={inSport.length}
+              anyOn={label !== null}
+            />
+          )}
 
-        {shown.length === 0 && (
-          <p className={styles.empty}>
-            {filtered ? "Nothing here yet." : "No work yet."}
-          </p>
-        )}
+          <div className={styles.main}>
+            {shown.length === 0 && (
+              <p className={styles.empty}>
+                {filtered ? "Nothing here yet." : "No work yet."}
+              </p>
+            )}
 
-        <div className={styles.grid}>
-          {shown.map((item, i) => {
-            // The first row holds the LCP image.
-            const priority = i < 4;
+            <div className={styles.grid}>
+              {shown.map((item, i) => {
+                // The first row holds the LCP image.
+                const priority = i < 3;
 
-            return (
-              <CardSwap key={item._id} name={cardName(item.kind, item.slug)} index={i}>
-                {item.kind === "game" ? (
-                  <GameCard game={item} priority={priority} />
-                ) : (
-                  <SingleCard single={item} priority={priority} />
-                )}
-              </CardSwap>
-            );
-          })}
+                return (
+                  <CardSwap key={item._id} name={cardName(item.kind, item.slug)} index={i}>
+                    {item.kind === "game" ? (
+                      <GameCard game={item} priority={priority} />
+                    ) : (
+                      <SingleCard single={item} priority={priority} />
+                    )}
+                  </CardSwap>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
     </PageTransition>
