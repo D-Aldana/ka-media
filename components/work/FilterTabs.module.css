@@ -29,8 +29,10 @@
 }
 
 @media (max-width: 860px) {
-  /* Swipe row that bleeds past the page padding. */
+  /* Swipe row that bleeds past the page padding. `stretch` is what keeps it
+     the width of the page: a shrink-wrapped scroller never scrolls. */
   .tabs {
+    align-self: stretch;
     flex-wrap: nowrap;
     overflow-x: auto;
     margin: 0 calc(var(--pad) * -1);

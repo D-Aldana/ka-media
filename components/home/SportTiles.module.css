@@ -99,6 +99,9 @@
     scroll-snap-type: x mandatory;
     margin: 0 calc(var(--pad) * -1);
     padding: 0 var(--pad);
+    /* Without this the first tile snaps flush to the screen edge, past the
+       padding the row sets for itself. */
+    scroll-padding-inline: var(--pad);
     scrollbar-width: none;
   }
 

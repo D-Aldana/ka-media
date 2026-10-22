@@ -219,14 +219,15 @@
     font-size: 22px;
   }
 
-  /* Swipe row that bleeds past the page padding. */
+  /* Swipe row, already full width — its own padding is the page gutter, and
+     scroll-padding is what stops the first photo snapping past it. */
   .photos {
     display: flex;
     gap: 12px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    margin: 0 calc(var(--pad) * -1);
     padding: 72px var(--pad) 0;
+    scroll-padding-inline: var(--pad);
     scrollbar-width: none;
   }
 
