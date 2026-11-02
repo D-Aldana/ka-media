@@ -1,36 +1,77 @@
 /* Only the looping strip is clipped; a short one stays scrollable. */
 .track {
   overflow-x: auto;
+  /* On the track rather than the row: a percentage translate resolves against
+     the animated element's own width, so padding there would skew the loop by
+     a fraction of it. */
+  padding-left: var(--pad);
+  /* Touch's horizontal pan is ours, via pointer events; vertical stays the
+     page's scroll. Desktop is untouched — the mouse scrolls it natively. */
+  touch-action: pan-y;
 }
 
 .track[data-looping] {
   overflow: hidden;
 }
 
-.strip {
-  display: flex;
-  gap: 20px;
+/* Two nested movers. `.strip` carries the marquee on its own clock, `.lane`
+   the scroll-linked drift on top of it. Both size to their contents, which is
+   what the loop's third is measured against. */
+.strip,
+.lane {
   width: max-content;
-  padding-left: var(--pad);
 }
 
-/* The list is rendered twice; -50% lands exactly on the second copy. */
+.lane {
+  --gap: 20px;
+  display: flex;
+  gap: var(--gap);
+}
+
+/* Closes the loop. Three copies in one row carry one gap fewer than three
+   whole copies, so without this the exact third the marquee travels would land
+   a gap short of the next copy and the row would jump every pass. */
+.track[data-looping] .lane {
+  padding-right: var(--gap);
+}
+
+/* The list is rendered three times; -100%/3 lands exactly on the next copy.
+   Delayed so the frames have arrived before the row starts to travel. */
 .track[data-looping] .strip {
-  animation: slide 60s linear infinite;
+  animation: slide 60s linear 0.9s infinite;
 }
 
 @keyframes slide {
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-100% / 3));
   }
 }
 
-.track:hover .strip {
-  animation-play-state: paused;
+/* Extra travel proportional to how far the page has scrolled — which makes the
+   apparent speed proportional to scroll velocity, and lets it ease itself off
+   rather than needing a settle of its own.
+   `scroll(root)` over the first screenful, not `view()`: the clipped track is
+   itself a scroll container, so a view timeline would measure the row against
+   a scrollport exactly its own height and never progress. */
+@supports (animation-timeline: scroll()) {
+  .track[data-looping] .lane {
+    animation-name: drift;
+    animation-fill-mode: both;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-timeline: scroll(root block);
+    animation-range: 0 110vh;
+  }
 }
 
-/* Scroll padding for the short strip; it would skew the loop's -50%. */
-.track:not([data-looping]) .strip::after {
+@keyframes drift {
+  to {
+    transform: translateX(-8vw);
+  }
+}
+
+/* Scroll padding for a strip that scrolls instead of looping. */
+.track:not([data-looping]) .lane::after {
   content: "";
   flex: 0 0 var(--pad);
 }
@@ -41,6 +82,26 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition:
+    opacity 0.45s var(--ease),
+    transform 0.45s var(--ease);
+}
+
+/* Only the real copy arrives; the duplicates are far off screen when it does.
+   `backwards` holds the frame hidden through its delay and then hands opacity
+   and transform back to the hover transitions above. */
+.frame[data-lead] {
+  animation: rise 0.9s var(--ease) backwards;
+  /* Capped at the most frames a wide screen can show, so nothing off screen
+     is still waiting once the row starts moving. */
+  animation-delay: calc(min(var(--i), 9) * 70ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
 }
 
 .cap {
@@ -63,19 +124,37 @@
   height: 100%;
 }
 
-.track:hover .media img {
-  filter: brightness(0.55);
+/* The strip recedes as a whole and the hovered frame comes forward. Carried on
+   the frame rather than the image, so a caption travels with its own cover
+   instead of staying lit above a dimmed one. */
+.track:hover .frame {
+  opacity: 0.5;
+  transform: scale(0.98);
 }
 
+.track .frame:hover,
+.track .frame:focus-visible {
+  opacity: 1;
+  transform: scale(1.02);
+  z-index: 1;
+}
+
+/* A touch further than the frame itself moves, so the cover has some depth of
+   its own inside it. */
 .track .frame:hover .media img,
 .track .frame:focus-visible .media img {
-  filter: none;
-  transform: scale(1.05);
+  transform: scale(1.04);
+}
+
+/* Matched to the frame's move; the cover's shared 1s zoom reads as a second
+   stage alongside it. */
+.media img {
+  transition-duration: 0.45s;
 }
 
 @media (max-width: 860px) {
-  .strip {
-    gap: 12px;
+  .lane {
+    --gap: 12px;
   }
 
   .track[data-looping] .strip {
@@ -96,13 +175,35 @@
   }
 }
 
-/* No drift; the strip becomes a plain scroller instead. */
+/* No travel of any kind; the strip becomes a plain scroller instead — and one
+   holding the games once, rather than three times over. */
 @media (prefers-reduced-motion: reduce) {
-  .strip {
+  .strip,
+  .lane,
+  .frame {
     animation: none !important;
+  }
+
+  .frame,
+  .media img {
+    transform: none !important;
   }
 
   .track[data-looping] {
     overflow-x: auto;
+  }
+
+  .track[data-looping] .frame:not([data-lead]) {
+    display: none;
+  }
+
+  /* No loop left to close. */
+  .track[data-looping] .lane {
+    padding-right: 0;
+  }
+
+  .track[data-looping] .lane::after {
+    content: "";
+    flex: 0 0 var(--pad);
   }
 }
