@@ -12,6 +12,12 @@ const easeOut = (t: number) => 1 - (1 - t) ** 3;
 /** Below this a press reads as a tap on a frame, not a pan of the strip. */
 const DRAG_THRESHOLD = 4;
 
+/** How much of the coasting speed decays per millisecond after release — tuned to read as a flick settling, not a hard stop. */
+const FRICTION = 0.0025;
+
+/** Below this the coast is imperceptible; stop rather than let the loop idle forever approaching zero. */
+const MIN_VELOCITY = 0.02;
+
 type Props = {
   looping: boolean;
   /** The frames, rendered on the server. */
@@ -23,7 +29,9 @@ type Props = {
  * The marquee is still the CSS animation on `.strip`; this only reaches for it
  * to ease the playback rate down and back up, because
  * `animation-play-state: paused` stops a 60s-wide row dead on whichever frame
- * the pointer happened to cross.
+ * the pointer happened to cross. Release also coasts the scroll offset at the
+ * drag's last speed, decaying to a stop — the momentum `overflow: hidden`
+ * otherwise has no native way to give it.
  *
  * Shares Filmstrip's stylesheet: the track, the row and the frames are one
  * component, split only where the client boundary falls.
@@ -35,8 +43,20 @@ export function Marquee({ looping, children }: Props) {
   const drag = useRef<{ x: number; scrollLeft: number } | null>(null);
   /** Outlives the drag itself, so the click it suppresses can still read it. */
   const dragged = useRef(false);
+  /** The drag's instantaneous speed, blended across samples so one jittery pointermove at release doesn't set the whole fling. */
+  const velocity = useRef(0);
+  /** The previous move's point and time, to turn positions into that speed. */
+  const lastMove = useRef<{ x: number; t: number } | null>(null);
+  /** The coast-to-a-stop after release; its own rAF loop, independent of the playback-rate ramp. */
+  const coasting = useRef(0);
 
-  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(raf.current);
+      cancelAnimationFrame(coasting.current);
+    },
+    [],
+  );
 
   const rateTo = (target: number) => {
     // Read late: the animation only exists once styles have resolved, and
@@ -76,6 +96,9 @@ export function Marquee({ looping, children }: Props) {
     // Each press is its own gesture — don't inherit a flag a prior one left
     // pending cleanup for.
     dragged.current = false;
+    cancelAnimationFrame(coasting.current);
+    velocity.current = 0;
+    lastMove.current = { x: event.clientX, t: performance.now() };
     drag.current = { x: event.clientX, scrollLeft: track.current?.scrollLeft ?? 0 };
     // Frozen, not eased down: a grab is a direct hold on the strip, not a hover.
     strip.current?.getAnimations()[0]?.pause();
@@ -92,12 +115,23 @@ export function Marquee({ looping, children }: Props) {
     dragged.current = true;
     // Still a scroll container with overflow hidden — it just has no scrollbar.
     track.current.scrollLeft = state.scrollLeft - dx;
+
+    // Blended with the running value rather than taken neat: a single sample
+    // is noisy, and the blend is what the finger was doing just before release.
+    const now = performance.now();
+    const last = lastMove.current;
+    if (last) {
+      const dt = now - last.t;
+      if (dt > 0) velocity.current = velocity.current * 0.7 + ((event.clientX - last.x) / dt) * 0.3;
+    }
+    lastMove.current = { x: event.clientX, t: now };
   };
 
   const up = (event: React.PointerEvent) => {
     if (!drag.current) return;
 
     drag.current = null;
+    lastMove.current = null;
     track.current?.releasePointerCapture(event.pointerId);
     // `pause()` in `down` left the animation in the paused play-state, which a
     // playbackRate ramp alone can't lift it out of — it needs an explicit
@@ -108,6 +142,35 @@ export function Marquee({ looping, children }: Props) {
       marquee.play();
     }
     rateTo(1);
+
+    // The release carries whatever speed the finger had, decaying it back to
+    // a stop instead of leaving the strip wherever the last pointermove put
+    // it — the native-scroll feel `overflow: hidden` can't give it for free.
+    if (dragged.current && Math.abs(velocity.current) > MIN_VELOCITY) {
+      let last = performance.now();
+
+      const coast = () => {
+        const el = track.current;
+        if (!el) return;
+
+        const now = performance.now();
+        const dt = now - last;
+        last = now;
+
+        velocity.current *= Math.exp(-FRICTION * dt);
+        const before = el.scrollLeft;
+        el.scrollLeft = before - velocity.current * dt;
+
+        // The browser clamps `scrollLeft` at the ends already; a frame that
+        // didn't move at all is a dead stop, not a speed going anywhere.
+        if (el.scrollLeft === before || Math.abs(velocity.current) < MIN_VELOCITY) return;
+
+        coasting.current = requestAnimationFrame(coast);
+      };
+
+      coasting.current = requestAnimationFrame(coast);
+    }
+
     // The click that follows a drag is what clears `dragged` — but a release
     // outside the element, or a captured pointer, can end the gesture without
     // one. Clear it on the next tick so a later, unrelated tap isn't eaten.
