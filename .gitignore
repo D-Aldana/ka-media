@@ -46,6 +46,9 @@ docs/
 # claude
 .claude/
 
+# instance state
+.instance/
+
 # keep the example, ignore real env files
 !.env.example
 
