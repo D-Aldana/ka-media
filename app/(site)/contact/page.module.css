@@ -86,6 +86,40 @@ a.frame:focus-visible {
   background: color-mix(in srgb, var(--tile) 84%, var(--fg));
 }
 
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 104px var(--pad) 0;
+}
+
+.faq dl {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin: 0;
+}
+
+.faqItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 56ch;
+}
+
+.faqQuestion {
+  font-size: clamp(17px, 1.5vw, 20px);
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+
+.faqAnswer {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--mute);
+}
+
 /* Reaching for one frame quiets the others, as on the sport tiles. */
 .strip:has(a.frame:hover) .frame:not(:hover) {
   opacity: 0.5;
@@ -162,6 +196,10 @@ a.frame:focus-visible {
   .value {
     margin-top: 6px;
     font-size: 22px;
+  }
+
+  .faq {
+    padding-top: 48px;
   }
 
 }

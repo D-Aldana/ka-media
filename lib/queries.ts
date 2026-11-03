@@ -157,7 +157,8 @@ export const CONTACT_QUERY = defineQuery(`
     "seo": {
       "title": coalesce(seo.title, null),
       "description": coalesce(seo.description, null)
-    }
+    },
+    "faq": faq[]{_key, question, answer}
   }
 `);
 

@@ -9,11 +9,29 @@ import { getAboutPage, getSettings } from "@/lib/content";
 
 import styles from "./page.module.css";
 
+const TITLE = "About Krystien Aldana";
+const DESCRIPTION =
+  "Krystien Aldana shoots game-day photography, highlight and recruiting films, and social-ready edits for teams in Prince George, BC.";
+
+/**
+ * Explicit openGraph/twitter so this doesn't silently inherit the root
+ * layout's homepage share copy — Next only merges metadata per top-level key.
+ */
 export const metadata: Metadata = {
-  title: "About Krystien Aldana",
-  description:
-    "Krystien Aldana shoots game-day photography, highlight and recruiting films, and social-ready edits for teams in Prince George, BC.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/about" },
+  openGraph: {
+    type: "website",
+    url: "/about",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default async function AboutPage() {

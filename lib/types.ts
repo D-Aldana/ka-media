@@ -176,6 +176,13 @@ export type ContactPage = {
     title: string | null;
     description: string | null;
   };
+  faq: FaqItem[];
+};
+
+export type FaqItem = {
+  _key: string;
+  question: string;
+  answer: string;
 };
 
 export type Settings = {

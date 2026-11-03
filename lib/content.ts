@@ -17,6 +17,7 @@ import {
 import type {
   AboutPage,
   ContactPage,
+  FaqItem,
   GamePage,
   FeaturedGame,
   GameSummary,
@@ -104,6 +105,7 @@ const EMPTY_CONTACT: ContactPage = {
   locationLabel: null,
   locationNote: null,
   seo: { title: null, description: null },
+  faq: [],
 };
 
 const EMPTY_ABOUT: AboutPage = {
@@ -353,8 +355,14 @@ export async function getAboutPage(): Promise<AboutPage> {
 export async function getContactPage(): Promise<ContactPage> {
   if (!isSanityConfigured) return placeholder.contactPage;
 
-  const raw = await fetchFrom<ContactPage | null>(CONTACT_QUERY, {}, [TAGS.contact]);
-  return raw ?? EMPTY_CONTACT;
+  // GROQ projects an unset array field as null, not [] — coalesced below
+  // the same way `services` is on the About page.
+  type RawContact = Omit<ContactPage, "faq"> & { faq: FaqItem[] | null };
+
+  const raw = await fetchFrom<RawContact | null>(CONTACT_QUERY, {}, [TAGS.contact]);
+  if (!raw) return EMPTY_CONTACT;
+
+  return { ...raw, faq: raw.faq ?? [] };
 }
 
 export async function getWork(): Promise<WorkData> {

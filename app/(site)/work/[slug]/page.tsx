@@ -26,17 +26,22 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const page = await getGame(slug);
+  const [page, settings] = await Promise.all([getGame(slug), getSettings()]);
   if (!page) return {};
 
   const { game } = page;
-  const description = game.blurb ?? `${game.sport} · ${formatDate(game.date)}`;
+  // Game titles already carry the date, so a blurb-less fallback names the
+  // sport and place without repeating the date — `game.title` already has it.
+  const description =
+    game.blurb ??
+    `${sportLabel(game.sport)} game-day photos from ${game.title} in ${settings.location}.`;
   const share = ogImage(game.cover);
 
   return {
-    // The search title carries the sport and city for the long-tail queries;
-    // shares keep the bare game title, which reads better in a link preview.
-    title: `${game.title} — ${sportLabel(game.sport)} in Prince George`,
+    // Kept under ~60 chars for the SERP cutoff — the date already lives in
+    // game.title, so only the sport needs adding. Shares keep the bare game
+    // title, which reads better in a link preview.
+    title: `${game.title} · ${sportLabel(game.sport)}`,
     description,
     alternates: { canonical: `/work/${game.slug}` },
     openGraph: {
