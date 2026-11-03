@@ -89,6 +89,9 @@ export default function StoryVideo({
       onPlaying={() => setStarted(true)}
       onTimeUpdate={tick}
       onEnded={finish}
+      // A bad upload (404, mid-transfer, corrupt file) must not freeze the
+      // deck on a dead poster — treat it as finished so the deck advances.
+      onError={finish}
     />
   );
 }

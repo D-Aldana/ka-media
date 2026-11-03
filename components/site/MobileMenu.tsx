@@ -122,7 +122,9 @@ export function MobileMenu({ settings }: { settings: Settings }) {
 
       <div className={styles.foot}>
         {settings.instagramUrl && (
-          <a href={settings.instagramUrl}>{settings.instagramHandle}</a>
+          <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer">
+            {settings.instagramHandle}
+          </a>
         )}
         {settings.location && <span>{settings.location.toLowerCase()}</span>}
       </div>

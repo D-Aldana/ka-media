@@ -62,6 +62,13 @@ export function HoverReel({ url, title, className, children }: Props) {
     fade.current = window.setTimeout(() => setArmed(false), FADE);
   };
 
+  // A bad upload must fall back to the cover showing through, not a dead
+  // black box sitting over it for as long as the pointer rests there.
+  const error = () => {
+    setPlaying(false);
+    setArmed(false);
+  };
+
   return (
     <span className={className} onPointerEnter={enter} onPointerLeave={leave}>
       {children}
@@ -76,6 +83,7 @@ export function HoverReel({ url, title, className, children }: Props) {
           playsInline
           preload="auto"
           onPlaying={() => setPlaying(true)}
+          onError={error}
         />
       )}
     </span>
