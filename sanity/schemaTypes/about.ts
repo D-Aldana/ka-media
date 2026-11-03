@@ -40,6 +40,22 @@ export const about = defineType({
       ],
     }),
     defineField({
+      name: "homePortrait",
+      title: "Home page portrait",
+      type: "image",
+      description:
+        "Photo for the home page credential card. Leave empty to reuse the About page portrait.",
+      options: { hotspot: { previews: FRAMES.portrait } },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          validation: (rule) => rule.max(160),
+        }),
+      ],
+    }),
+    defineField({
       name: "services",
       title: "What I shoot",
       type: "array",

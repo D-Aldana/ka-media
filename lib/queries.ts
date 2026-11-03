@@ -101,7 +101,7 @@ export const HOME_QUERY = defineQuery(`{
   "about": *[_type == "about"][0]{
     name,
     headline,
-    portrait${IMAGE},
+    "portrait": coalesce(homePortrait, portrait)${IMAGE},
     services[]{_key, title, description},
     "clients": coalesce(clients, [])
   }

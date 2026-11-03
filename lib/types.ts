@@ -136,6 +136,7 @@ export type AboutSummary = {
   /** Krystien's name, which only the home page's JSON-LD reads. */
   name: string;
   headline: string;
+  /** The About page's `homePortrait`, falling back to its `portrait`. */
   portrait: ContentImage | null;
   services: Service[];
   /** Teams and schools, as written. Empty hides the line. */
