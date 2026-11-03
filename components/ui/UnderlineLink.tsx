@@ -18,12 +18,20 @@ export function UnderlineLink({
   ...rest
 }: Props) {
   const classes = [styles.link, className].filter(Boolean).join(" ");
-  const external = href.startsWith("http") || href.startsWith("mailto:");
+  const web = href.startsWith("http");
+  const external = web || href.startsWith("mailto:");
 
-  // An external link leaves the app, so there is no transition to type.
+  // An external link leaves the app, so there is no transition to type. A web
+  // link (Instagram) opens in a new tab so the visitor never fully leaves the
+  // site; mailto hands off to the mail client instead, so it stays in place.
   if (external) {
     return (
-      <a href={href} className={classes} {...rest}>
+      <a
+        href={href}
+        className={classes}
+        {...(web ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...rest}
+      >
         {children}
       </a>
     );

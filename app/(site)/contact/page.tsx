@@ -119,8 +119,14 @@ function Frame({ label, value, note, href }: FrameProps) {
     </>
   );
 
+  const web = href?.startsWith("http");
+
   return href ? (
-    <a href={href} className={styles.frame}>
+    <a
+      href={href}
+      className={styles.frame}
+      {...(web ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
       {body}
     </a>
   ) : (
