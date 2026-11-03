@@ -218,8 +218,6 @@ export function AboutCredential({ about, settings }: Props) {
                   Non-transferable · Must be worn visibly at all times
                 </p>
               </div>
-
-              <span className={styles.gloss} aria-hidden="true" />
             </div>
           </CredentialTilt>
         </div>

@@ -28,7 +28,6 @@ export function CredentialTilt({ className, children }: Props) {
     frame.current = requestAnimationFrame(() => {
       el.style.setProperty("--rx", `${(0.5 - y) * 14}deg`);
       el.style.setProperty("--ry", `${(x - 0.5) * 18}deg`);
-      el.style.setProperty("--holo", `${x * 360}deg`);
       el.dataset.active = "";
     });
   }
@@ -39,7 +38,6 @@ export function CredentialTilt({ className, children }: Props) {
     cancelAnimationFrame(frame.current);
     el.style.removeProperty("--rx");
     el.style.removeProperty("--ry");
-    el.style.removeProperty("--holo");
     delete el.dataset.active;
   }
 
