@@ -19,7 +19,6 @@ export default async function HomePage() {
         <Hero featured={home.featured} settings={settings} />
         <SportTiles sports={home.sports} />
         {home.latest && <LatestGame game={home.latest} settings={settings} />}
-        <AboutSummary about={home.about} />
         <ContactCta settings={settings} />
       </div>
     </PageTransition>
