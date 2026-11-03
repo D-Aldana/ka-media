@@ -74,6 +74,7 @@ export const contactPage: ContactPage = {
   locationLabel: null,
   locationNote: null,
   seo: { title: null, description: null },
+  faq: [],
 };
 
 function storiesFor(gameIndex: number): StoryItem[] {

@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 /**
  * The Contact page's copy. The email, handle and location themselves stay in
@@ -102,6 +102,27 @@ export const contact = defineType({
           validation: (rule) => rule.max(160),
         }),
       ],
+    }),
+    defineField({
+      name: "faq",
+      title: "FAQ",
+      type: "array",
+      description:
+        "Shown below the contact frames, and marked up as FAQ schema for search and AI answer engines. Leave empty to fall back to the built-in defaults.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "faqItem",
+          fields: [
+            defineField({ name: "question", type: "string", validation: (rule) => rule.required() }),
+            defineField({ name: "answer", type: "text", rows: 2, validation: (rule) => rule.required() }),
+          ],
+          preview: {
+            select: { title: "question" },
+          },
+        }),
+      ],
+      validation: (rule) => rule.max(8),
     }),
   ],
   preview: { prepare: () => ({ title: "Contact" }) },

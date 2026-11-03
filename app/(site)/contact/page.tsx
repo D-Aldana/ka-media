@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Fragment, type CSSProperties } from "react";
 
+import { FaqSchema } from "@/components/site/JsonLd";
 import { PageTransition } from "@/components/site/PageTransition";
 
 import { instagramDm } from "@/lib/contact";
 import { getContactPage, getSettings } from "@/lib/content";
+import type { FaqItem } from "@/lib/types";
 
 import styles from "./page.module.css";
 
@@ -23,20 +25,48 @@ const DEFAULTS = {
   seoTitle: "Contact Krystien Aldana",
   seoDescription:
     "Get in touch with Krystien Aldana, a sports photographer and filmmaker in Prince George, BC.",
+  /** Only facts already established elsewhere on the site — no invented policy. */
+  faq: [
+    {
+      _key: "sports",
+      question: "What sports does ka-media shoot?",
+      answer: "Basketball, soccer and football game-day coverage, plus headshots and team photos.",
+    },
+    {
+      _key: "location",
+      question: "Where is ka-media based?",
+      answer: "Prince George, BC.",
+    },
+    {
+      _key: "reach",
+      question: "How do I get in touch?",
+      answer: "Email or Instagram DM — both are open, see the details above.",
+    },
+  ] satisfies FaqItem[],
 };
 
+/**
+ * Explicit openGraph/twitter so this doesn't silently inherit the root
+ * layout's homepage share copy — Next only merges metadata per top-level key.
+ */
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactPage();
+  const title = contact.seo.title || DEFAULTS.seoTitle;
+  const description = contact.seo.description || DEFAULTS.seoDescription;
 
   return {
-    title: contact.seo.title || DEFAULTS.seoTitle,
-    description: contact.seo.description || DEFAULTS.seoDescription,
+    title,
+    description,
     alternates: { canonical: "/contact" },
+    openGraph: { type: "website", url: "/contact", title, description },
+    twitter: { card: "summary", title, description },
   };
 }
 
 export default async function ContactPage() {
   const [contact, settings] = await Promise.all([getContactPage(), getSettings()]);
+
+  const faq = contact.faq.length > 0 ? contact.faq : DEFAULTS.faq;
 
   const frames = [
     {
@@ -85,6 +115,19 @@ export default async function ContactPage() {
               </li>
             ))}
         </ul>
+
+        <section className={styles.faq}>
+          <span className={styles.label}>faq</span>
+          <dl>
+            {faq.map((item) => (
+              <div key={item._key} className={styles.faqItem}>
+                <dt className={styles.faqQuestion}>{item.question}</dt>
+                <dd className={styles.faqAnswer}>{item.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+        <FaqSchema items={faq} />
       </div>
     </PageTransition>
   );

@@ -36,7 +36,6 @@ export function GameCard({ game, priority = false }: Props) {
             className={styles.cover}
             sizes="(max-width: 860px) 45vw, 26vw"
             priority={priority}
-            decorative
           />
           {game.hasVideo && (
             <span className={styles.play}>

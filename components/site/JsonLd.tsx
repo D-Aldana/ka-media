@@ -77,9 +77,24 @@ export function JsonLd({
     publisher: { "@id": person["@id"] },
   };
 
+  // Declares ka-media as a local service business with a service area —
+  // Person + WebSite alone say who runs the site, not what it offers or where.
+  const business = {
+    "@type": "ProfessionalService",
+    "@id": `${siteUrl}/#business`,
+    name: "ka-media",
+    url: siteUrl,
+    image: about.portrait?.url,
+    email,
+    address,
+    areaServed: locality ? `${locality}, ${region}` : undefined,
+    sameAs,
+    founder: { "@id": person["@id"] },
+  };
+
   return (
     <LdScript
-      graph={{ "@context": "https://schema.org", "@graph": [person, website] }}
+      graph={{ "@context": "https://schema.org", "@graph": [person, website, business] }}
     />
   );
 }
@@ -105,6 +120,25 @@ export function Breadcrumbs({ title, path }: { title: string; path: string }) {
           position: index + 1,
           name: entry.name,
           item: entry.item,
+        })),
+      }}
+    />
+  );
+}
+
+/** FAQPage schema for the Contact page's FAQ section. */
+export function FaqSchema({ items }: { items: { question: string; answer: string }[] }) {
+  if (items.length === 0) return null;
+
+  return (
+    <LdScript
+      graph={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: items.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
         })),
       }}
     />

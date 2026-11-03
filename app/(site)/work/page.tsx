@@ -18,6 +18,10 @@ type Props = { searchParams: Promise<{ sport?: string; label?: string }> };
 /**
  * Shared filter links describe what they open, not just "Work". Each one
  * canonicalises to `/work`, since the filter is the same work re-sorted.
+ *
+ * openGraph/twitter are set explicitly on every branch below so a shared
+ * filter link doesn't fall back to the root layout's homepage share copy —
+ * Next only merges metadata per top-level key.
  */
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const [params, { labels }] = await Promise.all([searchParams, getWork()]);
@@ -26,38 +30,58 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const alternates = { canonical: "/work" };
 
   if (label) {
+    const title = `${label.title} — Prince George sports photography`;
+    const description =
+      label.kind === "team"
+        ? `Every ${label.title} game and photo, shot in Prince George, BC.`
+        : `${label.title} — photos shot in Prince George, BC.`;
+
     return {
-      title: `${label.title} — Prince George sports photography`,
-      description:
-        label.kind === "team"
-          ? `Every ${label.title} game and photo, shot in Prince George, BC.`
-          : `${label.title} — photos shot in Prince George, BC.`,
+      title,
+      description,
       alternates,
+      openGraph: { type: "website", url: "/work", title, description },
+      twitter: { card: "summary", title, description },
     };
   }
 
   if (sport === "all") {
+    const title = "Work — Prince George sports photography";
+    const description =
+      "Every game and photo — basketball, soccer and football in Prince George, BC. Tap through any game as a story.";
+
     return {
-      title: "Work — Prince George sports photography",
-      description:
-        "Every game and photo — basketball, soccer and football in Prince George, BC. Tap through any game as a story.",
+      title,
+      description,
       alternates,
+      openGraph: { type: "website", url: "/work", title, description },
+      twitter: { card: "summary", title, description },
     };
   }
 
   if (sport === "other") {
+    const title = "Headshots, team photos and more — Prince George";
+    const description =
+      "Headshots, team photos and everything that isn't game action, shot in Prince George, BC.";
+
     return {
-      title: "Headshots, team photos and more — Prince George",
-      description:
-        "Headshots, team photos and everything that isn't game action, shot in Prince George, BC.",
+      title,
+      description,
       alternates,
+      openGraph: { type: "website", url: "/work", title, description },
+      twitter: { card: "summary", title, description },
     };
   }
 
+  const title = `${sportLabel(sport)} photography in Prince George`;
+  const description = `Every ${sport} game and photo shot in Prince George, BC. Tap through any game as a story.`;
+
   return {
-    title: `${sportLabel(sport)} photography in Prince George`,
-    description: `Every ${sport} game and photo shot in Prince George, BC. Tap through any game as a story.`,
+    title,
+    description,
     alternates,
+    openGraph: { type: "website", url: "/work", title, description },
+    twitter: { card: "summary", title, description },
   };
 }
 
