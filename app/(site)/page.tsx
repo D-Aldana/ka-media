@@ -1,4 +1,4 @@
-import { AboutSummary } from "@/components/home/AboutSummary";
+import { AboutCredential } from "@/components/home/AboutCredential";
 import { ContactCta } from "@/components/home/ContactCta";
 import { Hero } from "@/components/home/Hero";
 import { LatestGame } from "@/components/home/LatestGame";
@@ -19,6 +19,7 @@ export default async function HomePage() {
         <Hero featured={home.featured} settings={settings} />
         <SportTiles sports={home.sports} />
         {home.latest && <LatestGame game={home.latest} settings={settings} />}
+        <AboutCredential about={home.about} settings={settings} />
         <ContactCta settings={settings} />
       </div>
     </PageTransition>
