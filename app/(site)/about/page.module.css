@@ -161,10 +161,6 @@
   aspect-ratio: 4 / 5;
 }
 
-.photo:nth-child(2) {
-  margin-top: 80px;
-}
-
 .cta {
   display: flex;
   justify-content: space-between;
@@ -239,10 +235,6 @@
     width: 260px;
     flex-shrink: 0;
     scroll-snap-align: start;
-  }
-
-  .photo:nth-child(2) {
-    margin-top: 0;
   }
 
   .cta {
