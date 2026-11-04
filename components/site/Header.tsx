@@ -6,6 +6,7 @@ import { NAV } from "@/lib/transitions";
 import type { Settings } from "@/lib/types";
 
 import { MobileMenu } from "./MobileMenu";
+import { Wordmark } from "./Wordmark";
 import styles from "./Header.module.css";
 
 export function Header({ settings }: { settings: Settings }) {
@@ -19,7 +20,7 @@ export function Header({ settings }: { settings: Settings }) {
       style={{ viewTransitionName: "site-header" }}
     >
       <Link href="/" className={styles.wordmark} transitionTypes={NAV.page}>
-        ka-media
+        <Wordmark />
       </Link>
 
       <nav className={styles.links} aria-label="Main">

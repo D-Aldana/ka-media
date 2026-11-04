@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { NAV } from "@/lib/transitions";
 
 import styles from "./NotFound.module.css";
+import { Wordmark } from "./Wordmark";
 
 /** Ways back in. A 404 with one link is a dead end; these are the three
     places someone who mistyped a URL actually wanted. */
@@ -48,7 +49,7 @@ export function NotFound({ blurb = DEFAULT_BLURB, bare = false }: Props) {
     <div className={classes} data-route="not-found">
       {bare && (
         <Link href="/" className={styles.wordmark}>
-          ka-media
+          <Wordmark />
         </Link>
       )}
 

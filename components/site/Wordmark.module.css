@@ -1,0 +1,31 @@
+/*
+ * The mark's viewBox is 120 units from ascender to baseline plus 1.88 for the
+ * a's overshoot. A Hanken Grotesk k rises 0.70em, so 0.70em × 121.88 / 120
+ * makes the mark's k exactly as tall as a typed one, and the small negative
+ * vertical-align drops the overshoot below the baseline like the real a.
+ */
+.mark {
+  display: inline-block;
+  height: 0.711em;
+  width: calc(0.711em * 182.38 / 121.88);
+  vertical-align: -0.011em;
+  overflow: visible;
+}
+
+.wordmark {
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.lockup .mark {
+  margin-right: 0.02em;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
