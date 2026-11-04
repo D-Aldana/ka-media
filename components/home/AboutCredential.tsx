@@ -1,3 +1,4 @@
+import { KaMark } from "@/components/site/Wordmark";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { UnderlineLink } from "@/components/ui/UnderlineLink";
@@ -135,7 +136,9 @@ export function AboutCredential({ about, settings }: Props) {
 
               <div className={styles.card}>
                 <div className={styles.top}>
-                  <span className={styles.brand}>ka-media</span>
+                  <span className={styles.brand} role="img" aria-label="ka-media">
+                    <KaMark />
+                  </span>
                   <span className={styles.fine}>{season()} season</span>
                 </div>
 

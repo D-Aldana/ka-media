@@ -15,6 +15,7 @@ import { NAV } from "@/lib/transitions";
 import type { Settings } from "@/lib/types";
 
 import styles from "./MobileMenu.module.css";
+import { Wordmark } from "./Wordmark";
 
 /* False on the server and through hydration, true once mounted: the panel
    portals into the body, which only exists on the client. */
@@ -85,7 +86,9 @@ export function MobileMenu({ settings }: { settings: Settings }) {
       inert={!open}
     >
       <div className={styles.top}>
-        <span className={styles.wordmark}>ka-media</span>
+        <span className={styles.wordmark}>
+          <Wordmark />
+        </span>
         <button
           ref={closeRef}
           type="button"
