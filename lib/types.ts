@@ -1,7 +1,7 @@
-export type Sport = "basketball" | "soccer" | "football" | "other";
+export type Sport = "basketball" | "soccer" | "football" | "hockey" | "other";
 
 /** Must match `SPORT_OPTIONS` in `sanity/schemaTypes/sports.ts`. */
-export const SPORTS: Sport[] = ["basketball", "soccer", "football", "other"];
+export const SPORTS: Sport[] = ["basketball", "soccer", "football", "hockey", "other"];
 
 /**
  * The sports proper, without `other`: what the home tiles and the site's
