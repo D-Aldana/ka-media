@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PageTransition } from "@/components/site/PageTransition";
+import { ClientList } from "@/components/ui/ClientList";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Pill } from "@/components/ui/Pill";
 import { NAV } from "@/lib/transitions";
@@ -66,7 +67,7 @@ export default async function AboutPage() {
             {about.clients.length > 0 && (
               <p className={`${styles.clients} ${styles.rise} ${styles.d3}`}>
                 <span className={styles.label}>shot for</span>
-                <span>{about.clients.join(" · ")}</span>
+                <ClientList clients={about.clients} />
               </p>
             )}
           </div>

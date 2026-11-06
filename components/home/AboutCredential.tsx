@@ -1,4 +1,5 @@
 import { KaMark } from "@/components/site/Wordmark";
+import { ClientList } from "@/components/ui/ClientList";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { UnderlineLink } from "@/components/ui/UnderlineLink";
@@ -118,7 +119,7 @@ export function AboutCredential({ about, settings }: Props) {
         {about.clients.length > 0 && (
           <p className={styles.clients}>
             <span className={styles.label}>shot for</span>
-            <span>{about.clients.join(" · ")}</span>
+            <ClientList clients={about.clients} />
           </p>
         )}
         <UnderlineLink href="/about" transitionTypes={NAV.page}>
