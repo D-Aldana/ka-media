@@ -8,5 +8,6 @@ export const SPORT_OPTIONS = [
   { title: "Basketball", value: "basketball" },
   { title: "Soccer", value: "soccer" },
   { title: "Football", value: "football" },
+  { title: "Hockey", value: "hockey" },
   { title: "Other", value: "other" },
 ];
