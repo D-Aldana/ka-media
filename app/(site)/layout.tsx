@@ -29,7 +29,7 @@ const courier = Courier_Prime({
 const FALLBACK_TITLE =
   "ka-media — game-day sports photography in Prince George, BC";
 const FALLBACK_DESCRIPTION =
-  "Krystien Aldana shoots basketball, soccer and football in Prince George, BC — game-day photography, highlight films and social-ready edits.";
+  "Krystien Aldana shoots basketball, soccer, football and hockey in Prince George, BC — game-day photography, highlight films and social-ready edits.";
 
 /**
  * Async so the Studio's `seo` fields can override the copy below. Everything

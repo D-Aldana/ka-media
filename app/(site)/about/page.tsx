@@ -7,6 +7,7 @@ import { Pill } from "@/components/ui/Pill";
 import { NAV } from "@/lib/transitions";
 import { Reveal } from "@/components/ui/Reveal";
 import { getAboutPage, getSettings } from "@/lib/content";
+import { ogImage } from "@/lib/image";
 
 import styles from "./page.module.css";
 
@@ -17,23 +18,32 @@ const DESCRIPTION =
 /**
  * Explicit openGraph/twitter so this doesn't silently inherit the root
  * layout's homepage share copy — Next only merges metadata per top-level key.
+ * Async so the portrait can back the share image instead of shares going out
+ * with no preview photo.
  */
-export const metadata: Metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: "/about" },
-  openGraph: {
-    type: "website",
-    url: "/about",
+export async function generateMetadata(): Promise<Metadata> {
+  const about = await getAboutPage();
+  const share = ogImage(about.portrait);
+
+  return {
     title: TITLE,
     description: DESCRIPTION,
-  },
-  twitter: {
-    card: "summary",
-    title: TITLE,
-    description: DESCRIPTION,
-  },
-};
+    alternates: { canonical: "/about" },
+    openGraph: {
+      type: "website",
+      url: "/about",
+      title: TITLE,
+      description: DESCRIPTION,
+      images: share ? [share] : [],
+    },
+    twitter: {
+      card: share ? "summary_large_image" : "summary",
+      title: TITLE,
+      description: DESCRIPTION,
+      images: share ? [share.url] : [],
+    },
+  };
+}
 
 export default async function AboutPage() {
   const [about, settings] = await Promise.all([getAboutPage(), getSettings()]);
