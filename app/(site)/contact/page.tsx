@@ -6,6 +6,7 @@ import { PageTransition } from "@/components/site/PageTransition";
 
 import { instagramDm } from "@/lib/contact";
 import { getContactPage, getSettings } from "@/lib/content";
+import { ogImage } from "@/lib/image";
 import type { FaqItem } from "@/lib/types";
 
 import styles from "./page.module.css";
@@ -30,7 +31,7 @@ const DEFAULTS = {
     {
       _key: "sports",
       question: "What sports does ka-media shoot?",
-      answer: "Basketball, soccer and football game-day coverage, plus headshots and team photos.",
+      answer: "Basketball, soccer, football and hockey game-day coverage, plus headshots and team photos.",
     },
     {
       _key: "location",
@@ -50,16 +51,28 @@ const DEFAULTS = {
  * layout's homepage share copy — Next only merges metadata per top-level key.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const contact = await getContactPage();
+  const [contact, settings] = await Promise.all([getContactPage(), getSettings()]);
   const title = contact.seo.title || DEFAULTS.seoTitle;
   const description = contact.seo.description || DEFAULTS.seoDescription;
+  const share = ogImage(settings.seo.shareImage);
 
   return {
     title,
     description,
     alternates: { canonical: "/contact" },
-    openGraph: { type: "website", url: "/contact", title, description },
-    twitter: { card: "summary", title, description },
+    openGraph: {
+      type: "website",
+      url: "/contact",
+      title,
+      description,
+      images: share ? [share] : [],
+    },
+    twitter: {
+      card: share ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: share ? [share.url] : [],
+    },
   };
 }
 

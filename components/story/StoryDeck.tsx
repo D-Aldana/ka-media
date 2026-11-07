@@ -317,13 +317,14 @@ export function StoryDeck({
               <div
                 key={item._key}
                 className={`${deck.slide} ${i === index ? deck.on : ""}`}
+                aria-hidden={i !== index}
               >
                 <CoverImage
                   image={posterOf(item)}
                   className={deck.media}
                   sizes={sizes}
                   priority={i === 0}
-                  decorative
+                  decorative={i !== index}
                 />
                 {i === index && item._type === "storyVideo" && (
                   <StoryVideo

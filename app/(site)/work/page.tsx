@@ -48,7 +48,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   if (sport === "all") {
     const title = "Work — Prince George sports photography";
     const description =
-      "Every game and photo — basketball, soccer and football in Prince George, BC. Tap through any game as a story.";
+      "Every game and photo — basketball, soccer, football and hockey in Prince George, BC. Tap through any game as a story.";
 
     return {
       title,

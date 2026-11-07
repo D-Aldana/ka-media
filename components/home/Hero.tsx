@@ -20,7 +20,7 @@ export function Hero({ featured, settings }: Props) {
           Game-day photo &amp; film.
         </h1>
         <p className={`${styles.meta} ${styles.rise} ${styles.delayed}`}>
-          <span>Basketball, soccer, football</span>
+          <span>Basketball, soccer, football, hockey</span>
           <span>{settings.location}</span>
         </p>
         <Pill

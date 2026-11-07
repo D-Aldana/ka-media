@@ -24,10 +24,17 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const single = await getSingle(slug);
+  const [single, settings] = await Promise.all([getSingle(slug), getSettings()]);
   if (!single) return {};
 
-  const description = single.caption ?? `${single.sport} · ${formatDate(single.date)}`;
+  // A caption is the best copy when the editor wrote one; otherwise the
+  // photo's own (required) alt text reads far better than the bare
+  // "sport · date" this used to fall back to.
+  const description =
+    single.caption ??
+    (single.image?.alt
+      ? `${single.image.alt} — photography in ${settings.location}.`
+      : `${sportLabel(single.sport)} photography in ${settings.location}.`);
   const share = ogImage(single.image);
   const path = `/work/photo/${single.slug}`;
   const topic = single.sport === "other" ? "Photography" : `${sportLabel(single.sport)} photography`;
