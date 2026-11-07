@@ -154,6 +154,8 @@ export type AboutPage = {
   clients: string[];
   /** Three 4:5 frames under "What I shoot". */
   photos: (ContentImage | null)[];
+  /** Sanity's `_updatedAt`, for the sitemap's `lastmod`. */
+  updatedAt: string | null;
 };
 
 /**
@@ -178,6 +180,8 @@ export type ContactPage = {
     description: string | null;
   };
   faq: FaqItem[];
+  /** Sanity's `_updatedAt`, for the sitemap's `lastmod`. */
+  updatedAt: string | null;
 };
 
 export type FaqItem = {
