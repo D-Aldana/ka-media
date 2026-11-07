@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { getWork } from "@/lib/content";
+import { getAboutPage, getContactPage, getWork } from "@/lib/content";
 import { canonical } from "@/lib/site";
 
 /**
@@ -9,14 +9,26 @@ import { canonical } from "@/lib/site";
  * listed: each one canonicalises to `/work`.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { items } = await getWork();
+  const [{ items }, about, contact] = await Promise.all([
+    getWork(),
+    getAboutPage(),
+    getContactPage(),
+  ]);
   const newest = items[0]?.date;
 
   return [
     { url: canonical("/"), lastModified: newest, priority: 1 },
     { url: canonical("/work"), lastModified: newest, priority: 0.8 },
-    { url: canonical("/about"), priority: 0.5 },
-    { url: canonical("/contact"), priority: 0.5 },
+    {
+      url: canonical("/about"),
+      lastModified: about.updatedAt ?? undefined,
+      priority: 0.5,
+    },
+    {
+      url: canonical("/contact"),
+      lastModified: contact.updatedAt ?? undefined,
+      priority: 0.5,
+    },
     ...items.map((item) => ({
       url: canonical(item.kind === "game" ? `/work/${item.slug}` : `/work/photo/${item.slug}`),
       lastModified: item.date,

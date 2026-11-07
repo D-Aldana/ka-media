@@ -138,7 +138,8 @@ export const ABOUT_QUERY = defineQuery(`
     portrait${IMAGE},
     services[]{_key, title, description},
     "clients": coalesce(clients, []),
-    photos[0...3]${IMAGE}
+    photos[0...3]${IMAGE},
+    "updatedAt": _updatedAt
   }
 `);
 
@@ -158,7 +159,8 @@ export const CONTACT_QUERY = defineQuery(`
       "title": coalesce(seo.title, null),
       "description": coalesce(seo.description, null)
     },
-    "faq": faq[]{_key, question, answer}
+    "faq": faq[]{_key, question, answer},
+    "updatedAt": _updatedAt
   }
 `);
 

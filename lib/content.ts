@@ -106,6 +106,7 @@ const EMPTY_CONTACT: ContactPage = {
   locationNote: null,
   seo: { title: null, description: null },
   faq: [],
+  updatedAt: null,
 };
 
 const EMPTY_ABOUT: AboutPage = {
@@ -116,6 +117,7 @@ const EMPTY_ABOUT: AboutPage = {
   services: [],
   clients: [],
   photos: [],
+  updatedAt: null,
 };
 
 function fetchFrom<T>(
@@ -337,6 +339,7 @@ export async function getAboutPage(): Promise<AboutPage> {
     services: RawService[] | null;
     clients: string[] | null;
     photos: (RawImage | null)[] | null;
+    updatedAt: string | null;
   } | null>(ABOUT_QUERY, {}, [TAGS.about]);
 
   if (!raw) return EMPTY_ABOUT;
@@ -349,6 +352,7 @@ export async function getAboutPage(): Promise<AboutPage> {
     services: toServices(raw.services),
     clients: raw.clients ?? [],
     photos: (raw.photos ?? []).map(toContentImage),
+    updatedAt: raw.updatedAt ?? null,
   };
 }
 
