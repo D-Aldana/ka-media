@@ -1,6 +1,7 @@
 import { sportLabel } from "@/lib/format";
+import { videoThumbnail } from "@/lib/image";
 import { siteUrl } from "@/lib/site";
-import { GAME_SPORTS, type AboutSummary, type Settings } from "@/lib/types";
+import { GAME_SPORTS, type AboutSummary, type Settings, type StoryItem } from "@/lib/types";
 
 /**
  * `Prince George, BC` → the two address parts schema.org wants separately.
@@ -124,6 +125,47 @@ export function Breadcrumbs({ title, path }: { title: string; path: string }) {
       }}
     />
   );
+}
+
+/**
+ * One `VideoObject` per reel in a game's story, so each has a real shot at a
+ * video thumbnail in search results — Google requires `thumbnailUrl` and
+ * `contentUrl` for that, and the reel's poster (already required in the
+ * Studio) is what backs it.
+ */
+export function VideoSchema({
+  stories,
+  title,
+  uploadDate,
+  path,
+}: {
+  stories: StoryItem[];
+  title: string;
+  /** `game.date`, already `YYYY-MM-DD` — valid ISO 8601 on its own. */
+  uploadDate: string;
+  path: string;
+}) {
+  const videos = stories.flatMap((item, index) => {
+    if (item._type !== "storyVideo") return [];
+    const thumbnailUrl = videoThumbnail(item.poster);
+    if (!thumbnailUrl) return [];
+
+    return [
+      {
+        "@type": "VideoObject",
+        "@id": `${siteUrl}${path}#video-${index + 1}`,
+        name: item.caption || `${title} — reel ${index + 1}`,
+        description: item.caption || `${title} highlight film.`,
+        thumbnailUrl: [thumbnailUrl],
+        contentUrl: item.url,
+        uploadDate,
+      },
+    ];
+  });
+
+  if (videos.length === 0) return null;
+
+  return <LdScript graph={{ "@context": "https://schema.org", "@graph": videos }} />;
 }
 
 /** FAQPage schema for the Contact page's FAQ section. */

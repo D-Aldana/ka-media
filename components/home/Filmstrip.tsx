@@ -86,6 +86,7 @@ export function Filmstrip({ games }: { games: FeaturedGame[] }) {
               {game.reel ? (
                 <HoverReel
                   url={game.reel}
+                  poster={game.cover?.url}
                   title={`${game.title} — reel`}
                   className={styles.shot}
                 >

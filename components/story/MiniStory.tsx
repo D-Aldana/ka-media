@@ -156,6 +156,7 @@ export function MiniStory({
               <StoryVideo
                 key={cycle}
                 src={item.url}
+                poster={item.poster?.url}
                 title={`${label} — story ${i + 1}`}
                 playing={running}
                 onProgress={onProgress}

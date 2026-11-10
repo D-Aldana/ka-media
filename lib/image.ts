@@ -105,3 +105,18 @@ export function ogImage(image: ContentImage | null): {
 
   return { url: url.href, width: 1200, height: 630, alt: image.alt };
 }
+
+/**
+ * A still for a reel's `VideoObject.thumbnailUrl` — scaled down and forced to
+ * JPEG, same reasoning as `ogImage`: it's read by crawlers, not the browser,
+ * so the format has to be one every one of them decodes.
+ */
+export function videoThumbnail(image: ContentImage | null, width = 640): string | null {
+  if (!image) return null;
+
+  const url = new URL(image.url);
+  url.searchParams.set("w", String(width));
+  url.searchParams.set("fm", "jpg");
+  url.searchParams.set("q", "80");
+  return url.href;
+}

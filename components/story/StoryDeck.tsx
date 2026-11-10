@@ -329,6 +329,7 @@ export function StoryDeck({
                 {i === index && item._type === "storyVideo" && (
                   <StoryVideo
                     src={item.url}
+                    poster={item.poster?.url}
                     title={`${title} — story ${i + 1}`}
                     playing={running}
                     muted={!sound}
