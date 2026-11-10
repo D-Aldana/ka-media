@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 
 import { CoverImage } from "@/components/ui/CoverImage";
+import { videoThumbnail } from "@/lib/image";
 import { NAV, coverName } from "@/lib/transitions";
 import type { FeaturedGame } from "@/lib/types";
 
@@ -86,7 +87,7 @@ export function Filmstrip({ games }: { games: FeaturedGame[] }) {
               {game.reel ? (
                 <HoverReel
                   url={game.reel}
-                  poster={game.cover?.url}
+                  poster={videoThumbnail(game.cover) ?? undefined}
                   title={`${game.title} — reel`}
                   className={styles.shot}
                 >

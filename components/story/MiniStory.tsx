@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { CoverImage } from "@/components/ui/CoverImage";
+import { videoThumbnail } from "@/lib/image";
 import { NAV } from "@/lib/transitions";
 import type { ContentImage, StoryItem } from "@/lib/types";
 
@@ -156,7 +157,7 @@ export function MiniStory({
               <StoryVideo
                 key={cycle}
                 src={item.url}
-                poster={item.poster?.url}
+                poster={videoThumbnail(item.poster) ?? undefined}
                 title={`${label} — story ${i + 1}`}
                 playing={running}
                 onProgress={onProgress}

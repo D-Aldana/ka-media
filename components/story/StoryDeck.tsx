@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { ViewTransition, useCallback, useEffect, useRef, useState } from "react";
 
 import { CoverImage } from "@/components/ui/CoverImage";
+import { videoThumbnail } from "@/lib/image";
 import type { ContentImage, StoryItem } from "@/lib/types";
 
 import deck from "./deck.module.css";
@@ -329,7 +330,7 @@ export function StoryDeck({
                 {i === index && item._type === "storyVideo" && (
                   <StoryVideo
                     src={item.url}
-                    poster={item.poster?.url}
+                    poster={videoThumbnail(item.poster) ?? undefined}
                     title={`${title} — story ${i + 1}`}
                     playing={running}
                     muted={!sound}
