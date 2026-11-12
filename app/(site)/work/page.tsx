@@ -16,8 +16,10 @@ import styles from "./page.module.css";
 type Props = { searchParams: Promise<{ sport?: string; label?: string }> };
 
 /**
- * Shared filter links describe what they open, not just "Work". Each one
- * canonicalises to `/work`, since the filter is the same work re-sorted.
+ * The page title stays "Work — Prince George sports photography" for every
+ * filter — each one canonicalises to `/work`, since the filter is the same
+ * work re-sorted. The description still varies per filter for share
+ * previews.
  *
  * openGraph/twitter are set explicitly on every branch below so a shared
  * filter link doesn't fall back to the root layout's homepage share copy —
@@ -30,7 +32,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const alternates = { canonical: "/work" };
 
   if (label) {
-    const title = `${label.title} — Prince George sports photography`;
+    const title = "Work — Prince George sports photography";
     const description =
       label.kind === "team"
         ? `Every ${label.title} game and photo, shot in Prince George, BC.`
@@ -60,7 +62,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   if (sport === "other") {
-    const title = "Headshots, team photos and more — Prince George";
+    const title = "Work — Prince George sports photography";
     const description =
       "Headshots, team photos and everything that isn't game action, shot in Prince George, BC.";
 
@@ -73,7 +75,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     };
   }
 
-  const title = `${sportLabel(sport)} photography in Prince George`;
+  const title = "Work — Prince George sports photography";
   const description = `Every ${sport} game and photo shot in Prince George, BC. Tap through any game as a story.`;
 
   return {
