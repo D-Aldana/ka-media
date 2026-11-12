@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Breadcrumbs } from "@/components/site/JsonLd";
+import { Breadcrumbs, VideoSchema } from "@/components/site/JsonLd";
 import { PageTransition } from "@/components/site/PageTransition";
 import { splitStatLine } from "@/components/story/statLine";
 import { StoryCloseButton, StoryCloseLink } from "@/components/story/StoryClose";
@@ -76,6 +76,12 @@ export default async function GameStoryPage({ params }: Props) {
     <PageTransition>
       <section className={styles.page} data-route="story">
         <Breadcrumbs title={game.title} path={`/work/${game.slug}`} />
+        <VideoSchema
+          stories={game.stories}
+          title={game.title}
+          uploadDate={game.date}
+          path={`/work/${game.slug}`}
+        />
         <StoryCloseLink className={styles.close} />
 
         <div className={styles.left}>

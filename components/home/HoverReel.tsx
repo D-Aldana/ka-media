@@ -9,6 +9,9 @@ const FADE = 350;
 
 type Props = {
   url: string;
+  /** The game's cover still — also what crawlers see, since they never
+   *  trigger the hover player. */
+  poster?: string;
   /** Names the reel for assistive tech. */
   title: string;
   className?: string;
@@ -22,7 +25,7 @@ type Props = {
  * these are full-size MP4s with no transcoding behind them, so the strip must
  * never pull one in on its own. Mouse only — a tap belongs to the link.
  */
-export function HoverReel({ url, title, className, children }: Props) {
+export function HoverReel({ url, poster, title, className, children }: Props) {
   const [armed, setArmed] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [enabled, setEnabled] = useState(false);
@@ -77,6 +80,7 @@ export function HoverReel({ url, title, className, children }: Props) {
           ref={video}
           className={[styles.reel, playing && styles.on].filter(Boolean).join(" ")}
           src={url}
+          poster={poster}
           aria-label={title}
           muted
           loop

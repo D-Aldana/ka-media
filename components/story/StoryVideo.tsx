@@ -9,6 +9,9 @@ export const STORY_CAP = 60;
 
 type Props = {
   src: string;
+  /** Shown natively until the first frame decodes — also what crawlers and
+   *  link scrapers see, since they never run the player. */
+  poster?: string;
   /** Names the reel for assistive tech. */
   title: string;
   playing: boolean;
@@ -32,6 +35,7 @@ type Props = {
  */
 export default function StoryVideo({
   src,
+  poster,
   title,
   playing,
   muted = true,
@@ -81,6 +85,7 @@ export default function StoryVideo({
       ref={ref}
       className={[styles.video, started && styles.on].filter(Boolean).join(" ")}
       src={src}
+      poster={poster}
       aria-label={title}
       muted={muted}
       playsInline
